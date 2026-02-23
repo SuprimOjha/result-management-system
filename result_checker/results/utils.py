@@ -2,7 +2,7 @@ import pandas as pd
 from django.core.exceptions import ValidationError
 from .models import StudentResult
 
-def process_excel_file(excel_path, semester, program):
+def process_excel_file(excel_path, semester, program, school=None):
     try:
         # Read Excel file
         df = pd.read_excel(excel_path)
@@ -61,6 +61,7 @@ def process_excel_file(excel_path, semester, program):
                         'faculty': str(row.get('faculty', '')).strip(),
                         'program': program,
                         'semester': semester,
+                        'school': school,
                         
                         # Subject 1
                         'subject_1': str(row.get('subject_1', '')).strip(),

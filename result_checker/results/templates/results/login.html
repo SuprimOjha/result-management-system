@@ -339,7 +339,14 @@
       <p>Sign in to your admin panel to manage student results and school data</p>
     </div>
 
-    <form id="loginForm" action="/school/login/" method="POST">
+    {% if messages %}
+      {% for message in messages %}
+        <p style="margin-bottom:12px;color:#b91c1c;font-size:.9rem;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
+
+    <form id="loginForm" action="{% url 'login' %}" method="POST">
+      {% csrf_token %}
       <div class="form-group">
         <i class="fas fa-envelope input-icon"></i>
         <input type="email" id="email" name="email" placeholder="School Email" required autocomplete="email">
@@ -360,7 +367,7 @@
           <input type="checkbox" name="remember_me">
           Remember me
         </label>
-        <a href="school_forgot_password.html" class="forgot-link">Forgot Password?</a>
+        <a href="#" class="forgot-link">Forgot Password?</a>
       </div>
 
       <button type="submit" id="loginBtn" class="login-btn">

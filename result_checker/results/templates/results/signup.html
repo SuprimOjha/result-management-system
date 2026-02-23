@@ -4,139 +4,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResultHub | Signup</title>
+  <title>ResultHub | School Signup</title>
   <link rel="icon" type="image/png" href="{% static 'images/resulthub2.png' %}">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .card {
-      background-color: white;
-      padding: 30px 25px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      width: 100%;
-      max-width: 400px;
-      text-align: center;
-    }
-
-    .logo {
-      font-size: 32px;
-      font-weight: bold;
-      color: #333;
-      margin-bottom: 5px;
-    }
-
-    .tagline {
-      font-size: 12px;
-      color: #777;
-      margin-bottom: 20px;
-    }
-
-    h2 {
-      margin-bottom: 10px;
-      color: #333;
-    }
-
-    p {
-      font-size: 14px;
-      color: #555;
-      margin-bottom: 20px;
-    }
-
-    input[type="text"],
-    input[type="email"],
-    input[type="password"] {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #28a745;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      background-color: #aaa;
-      cursor: not-allowed;
-    }
-
-    .divider {
-      margin: 20px 0;
-      font-size: 13px;
-      color: #555;
-    }
-
-    a {
-      color: #007bff;
-      text-decoration: none;
-    }
-
-    a:hover {
-      text-decoration: underline;
-    }
-
-    .eye-btn {
-      margin-left: 5px;
-      cursor: pointer;
-      font-size: 12px;
-      background: none;
-      border: none;
-      color: #007bff;
-    }
+    body{font-family:Inter,Arial,sans-serif;background:#eef2ff;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:16px}
+    .card{background:#fff;padding:28px;border-radius:14px;box-shadow:0 10px 25px rgba(0,0,0,.08);width:100%;max-width:420px}
+    h2{margin:0 0 8px;color:#1e3a8a} p{margin:0 0 18px;color:#475569}
+    input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;margin-bottom:12px}
+    button{width:100%;padding:11px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+    a{color:#2563eb;text-decoration:none}
   </style>
 </head>
 <body>
-
   <div class="card">
+    <h2>Create School Admin Account</h2>
+    <p>Each school gets its own admin dashboard and published results.</p>
 
-    <div class="logo">ResultHub</div>
-    <div class="tagline">School Admin Portal</div>
+    {% if messages %}
+      {% for message in messages %}
+        <p style="color:#b91c1c;margin-bottom:10px;">{{ message }}</p>
+      {% endfor %}
+    {% endif %}
 
-    <h2>Create Account</h2>
-    <p>Register your school to manage student results</p>
-
-    <form id="signupForm" action="/school/signup/" method="POST">
-
+    <form action="{% url 'signup' %}" method="POST">
+      {% csrf_token %}
       <input type="text" id="school_name" name="school_name" placeholder="School Name" required>
       <input type="email" id="email" name="email" placeholder="School Email" required>
-
-      <div style="position: relative;">
-        <input type="password" id="password" name="password" placeholder="Password" required>
-      </div>
-
-      <div style="position: relative;">
-        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
-      </div>
-
-      <button type="submit" id="signupBtn">Sign Up</button>
+      <input type="password" id="password" name="password" placeholder="Password" required>
+      <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm Password" required>
+      <button type="submit">Create Account</button>
     </form>
 
-    <div class="divider">or</div>
-
-    <p>Already have an account? <a href="school_login.html">Log In</a></p>
-
+    <p style="margin-top:16px;">Already registered? <a href="{% url 'login' %}">Log in</a></p>
   </div>
-
- 
-
 </body>
 </html>
