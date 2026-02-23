@@ -1,4 +1,4 @@
-# ![Schooli Logo](images/resulthub.png) Schooli – Result Management System
+# ![Schooli Logo](static/images/resulthub.png) Schooli – Result Management System
 
 Schooli is a secure and user-friendly web-based Result Management System developed for managing and publishing student examination results digitally. The system allows administrators to upload and manage results, while students can check their results easily by selecting their college and entering their symbol number — without requiring a login.
 📌 Project Overview
