@@ -1,0 +1,423 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schoooli | Admin Login</title>
+  <link rel="icon" type="image/png" href="{% static 'images/resulthub2.png' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #1e40af;
+      --primary-dark: #1e3a8a;
+      --secondary-color: #3b82f6;
+      --success-color: #10b981;
+      --text-primary: #111827;
+      --text-secondary: #6b7280;
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      line-height: 1.6;
+    }
+
+    .login-container {
+      background: var(--bg-secondary);
+      padding: 2.5rem;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      max-width: 420px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .logo-section {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .logo {
+      font-size: 2rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+
+    .tagline {
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 400;
+    }
+
+    .welcome-text {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .welcome-text h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .welcome-text p {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+    }
+
+    .form-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 1rem 1rem 1rem 2.5rem;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      background: #fafbff;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgb(30 64 175 / 0.1);
+      background: var(--bg-secondary);
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+    }
+
+    .password-container {
+      position: relative;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.25rem;
+      border-radius: var(--radius-sm);
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary-color);
+      background: rgb(30 64 175 / 0.1);
+    }
+
+    .checkbox-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      font-size: 0.875rem;
+    }
+
+    .checkbox-row label {
+      display: flex;
+      align-items: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-weight: 400;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      width: auto;
+      margin-right: 0.5rem;
+      accent-color: var(--primary-color);
+    }
+
+    .forgot-link {
+      color: var(--primary-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: opacity 0.2s ease;
+    }
+
+    .forgot-link:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-btn:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .login-btn:active {
+      transform: translateY(0);
+    }
+
+    .login-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .divider {
+      text-align: center;
+      margin: 2rem 0;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      position: relative;
+    }
+
+    .divider::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--border-color);
+      z-index: 1;
+    }
+
+    .divider span {
+      background: var(--bg-secondary);
+      padding: 0 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .register-link {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .register-link p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    .register-link a {
+      color: var(--primary-color);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+
+    .security-badges {
+      display: flex;
+      justify-content: space-around;
+      gap: 1rem;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .security-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-weight: 500;
+    }
+
+    .security-badge i {
+      color: var(--success-color);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 2rem 1.5rem;
+        margin: 0.5rem;
+      }
+
+      .welcome-text h1 {
+        font-size: 1.375rem;
+      }
+
+      .logo {
+        font-size: 1.75rem;
+      }
+    }
+
+    /* Loading animation */
+    .login-btn.loading::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 20px;
+      height: 20px;
+      margin: -10px 0 0 -10px;
+      border: 2px solid transparent;
+      border-top-color: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-section">
+      <div class="logo">Schoooli</div>
+      <div class="tagline">School Admin Portal</div>
+    </div>
+
+    <div class="welcome-text">
+      <h1>Welcome Back</h1>
+      <p>Sign in to your admin panel to manage student results and school data</p>
+    </div>
+
+    <form id="loginForm" action="/school/login/" method="POST">
+      <div class="form-group">
+        <i class="fas fa-envelope input-icon"></i>
+        <input type="email" id="email" name="email" placeholder="School Email" required autocomplete="email">
+      </div>
+
+      <div class="form-group">
+        <div class="password-container">
+          <i class="fas fa-lock input-icon"></i>
+          <input type="password" id="password" name="password" placeholder="Password" required autocomplete="current-password">
+          <button type="button" class="password-toggle" id="togglePassword" title="Toggle password visibility">
+            <i class="fas fa-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="checkbox-row">
+        <label>
+          <input type="checkbox" name="remember_me">
+          Remember me
+        </label>
+        <a href="school_forgot_password.html" class="forgot-link">Forgot Password?</a>
+      </div>
+
+      <button type="submit" id="loginBtn" class="login-btn">
+        Sign In to Admin Panel
+      </button>
+    </form>
+
+    <div class="divider">
+      <span>or</span>
+    </div>
+
+    <div class="register-link">
+      <p>New to Schoooli? <a href="{% url 'signup' %}">Create Admin Account</a></p>
+    </div>
+
+    <div class="security-badges">
+      <div class="security-badge">
+        <i class="fas fa-lock"></i>
+        <span>SSL Secured</span>
+      </div>
+      <div class="security-badge">
+        <i class="fas fa-shield-alt"></i>
+        <span>Encrypted</span>
+      </div>
+      <div class="security-badge">
+        <i class="fas fa-users"></i>
+        <span>GDPR Compliant</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Password toggle functionality
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const eyeIcon = togglePassword.querySelector('i');
+
+    togglePassword.addEventListener('click', function() {
+      const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput.setAttribute('type', type);
+      
+      eyeIcon.classList.toggle('fa-eye');
+      eyeIcon.classList.toggle('fa-eye-slash');
+    });
+
+    // Form submission with loading state
+    document.getElementById('loginForm').addEventListener('submit', function() {
+      const btn = document.getElementById('loginBtn');
+      btn.disabled = true;
+      btn.textContent = 'Signing In...';
+      btn.classList.add('loading');
+    });
+
+    // Basic form validation
+    document.getElementById('email').addEventListener('input', function() {
+      this.setCustomValidity('');
+    });
+  </script>
+</body>
+</html>

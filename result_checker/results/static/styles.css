@@ -1,0 +1,198 @@
+
+/* ===================================
+   Team Section with Images
+   =================================== */
+
+.team-section {
+    padding: 4rem 0;
+    background-color: var(--background-light);
+}
+
+.team-section-header {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 3rem;
+}
+
+.team-section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.team-section-subtitle {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+}
+
+.team-members-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Limit card width when there are fewer cards */
+.team-members-grid .team-member-card {
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.team-member-card {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    transition: all var(--transition-base);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.team-member-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Team Member Image Container */
+.team-member-image {
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #F0F9FF 0%, #E0E7FF 100%);
+}
+
+/* Ensure single cards don't stretch */
+.team-member-card:only-child,
+.team-member-card:first-child:nth-last-child(1),
+.team-member-card:first-child:nth-last-child(2),
+.team-member-card:first-child:nth-last-child(2) ~ .team-member-card {
+    justify-self: center;
+}
+
+.team-member-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform var(--transition-slow);
+}
+
+.team-member-card:hover .team-member-image img {
+    transform: scale(1.1);
+}
+
+/* Image Overlay with Social Links */
+.team-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, 
+        rgba(99, 102, 241, 0) 0%, 
+        rgba(99, 102, 241, 0.8) 70%, 
+        rgba(99, 102, 241, 0.95) 100%
+    );
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    transition: opacity var(--transition-base);
+}
+
+.team-member-card:hover .team-image-overlay {
+    opacity: 1;
+}
+
+.team-social-links-overlay {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    transform: translateY(20px);
+    transition: transform var(--transition-base);
+}
+
+.team-member-card:hover .team-social-links-overlay {
+    transform: translateY(0);
+}
+
+.team-social-links-overlay a {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    color: var(--primary-color);
+    transition: all var(--transition-base);
+}
+
+.team-social-links-overlay a:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-5px) rotate(360deg);
+}
+
+/* Team Member Content */
+.team-member-content {
+    padding: 2rem;
+    text-align: center;
+}
+
+.team-member-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.team-member-role {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.team-member-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+/* Bottom Social Links (Always Visible) */
+.team-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.team-social-links a {
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--background-light);
+    border-radius: 50%;
+    color: var(--text-secondary);
+    transition: all var(--transition-base);
+}
+
+.team-social-links a:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-3px);
+}

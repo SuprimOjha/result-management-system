@@ -1,0 +1,471 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result - {{ result.symbol_number }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background: #f5f5f5;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            padding: 30px 40px;
+            border-bottom: 3px double #000;
+        }
+
+        .school-name {
+            font-size: 26px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .school-address {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .result-heading {
+            font-size: 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-top: 15px;
+            padding: 8px 0;
+            border-top: 2px solid #000;
+            border-bottom: 2px solid #000;
+        }
+
+        /* Student Info Section */
+        .student-info {
+            padding: 30px 40px;
+            background: #fff;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .info-table td {
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .info-table td:first-child {
+            font-weight: bold;
+            width: 180px;
+            color: #333;
+        }
+
+        .info-table td:last-child {
+            color: #000;
+        }
+
+        /* Marks Table */
+        .marks-section {
+            padding: 0 40px 30px 40px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        .marks-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+            margin-bottom: 25px;
+        }
+
+        .marks-table th,
+        .marks-table td {
+            border: 1px solid #000;
+            padding: 12px 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .marks-table th {
+            background: #000;
+            color: white;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+
+        .marks-table td:nth-child(2) {
+            text-align: left;
+            padding-left: 15px;
+        }
+
+        .marks-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .grade-cell {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        /* Summary Section */
+        .summary-section {
+            padding: 0 40px 30px 40px;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid #000;
+        }
+
+        .summary-table td {
+            padding: 12px 15px;
+            border: 1px solid #000;
+            font-size: 14px;
+        }
+
+        .summary-table td:first-child {
+            font-weight: bold;
+            width: 50%;
+            background: #f5f5f5;
+        }
+
+        .summary-table td:last-child {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .status-pass {
+            color: #27ae60;
+        }
+
+        .status-fail {
+            color: #e74c3c;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 20px 40px;
+            border-top: 2px solid #000;
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 5px 0;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            padding: 20px 40px;
+            text-align: center;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            margin: 0 10px;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .btn-print {
+            background: #2c3e50;
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: #1a252f;
+        }
+
+        .btn-back {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background: #7f8c8d;
+        }
+
+        /* Not Found */
+        .not-found {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .not-found-icon {
+            font-size: 60px;
+            color: #e74c3c;
+            margin-bottom: 20px;
+        }
+
+        .not-found h2 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+        }
+
+        .not-found p {
+            color: #666;
+            margin: 10px 0;
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+            }
+
+            .action-buttons {
+                display: none !important;
+            }
+
+            .footer {
+                page-break-inside: avoid;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .header,
+            .student-info,
+            .marks-section,
+            .summary-section,
+            .action-buttons {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+
+            .school-name {
+                font-size: 20px;
+            }
+
+            .marks-table,
+            .summary-table {
+                font-size: 12px;
+            }
+
+            .btn {
+                display: block;
+                margin: 10px 0;
+            }
+        }
+        .school-logo {
+            margin-bottom: 15px;
+            width: 120px;
+            height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if found %}
+        <!-- Header -->
+<div class="header">
+    {% if school_settings.logo %}
+        <img src="{{ school_settings.logo.url }}" class="school-logo">
+    {% endif %}
+
+    <div class="school-name">{{ school_settings.school_name }}</div>
+
+    <div class="school-address">
+        {{ school_settings.address }} |
+        Phone: {{ school_settings.phone }} |
+        Email: {{ school_settings.email }}
+    </div>
+
+    <div class="result-heading">Academic Result Sheet</div>
+</div>
+
+        <!-- Student Information -->
+        <div class="student-info">
+            <table class="info-table">
+                <tr>
+                    <td>Symbol Number:</td>
+                    <td>{{ result.symbol_number }}</td>
+                </tr>
+                <tr>
+                    <td>Student Name:</td>
+                    <td>{{ result.full_name }}</td>
+                </tr>
+                <tr>
+                    <td>Faculty:</td>
+                    <td>{{ result.faculty }}</td>
+                </tr>
+                <tr>
+                    <td>Program:</td>
+                    <td>{{ result.program }}</td>
+                </tr>
+                <tr>
+                    <td>Semester:</td>
+                    <td>{{ result.semester }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Marks Table -->
+        <div class="marks-section">
+            <div class="section-title">Subject-wise Marks</div>
+            <table class="marks-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">S.N.</th>
+                        <th style="width: 50%;">Subject Name</th>
+                        <th style="width: 20%;">Marks Obtained</th>
+                        <th style="width: 20%;">Grade</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if result.subject_1 %}
+                    <tr>
+                        <td>1</td>
+                        <td>{{ result.subject_1 }}</td>
+                        <td>{{ result.marks_1 }}</td>
+                        <td class="grade-cell">{{ result.grade_1 }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if result.subject_2 %}
+                    <tr>
+                        <td>2</td>
+                        <td>{{ result.subject_2 }}</td>
+                        <td>{{ result.marks_2 }}</td>
+                        <td class="grade-cell">{{ result.grade_2 }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if result.subject_3 %}
+                    <tr>
+                        <td>3</td>
+                        <td>{{ result.subject_3 }}</td>
+                        <td>{{ result.marks_3 }}</td>
+                        <td class="grade-cell">{{ result.grade_3 }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if result.subject_4 %}
+                    <tr>
+                        <td>4</td>
+                        <td>{{ result.subject_4 }}</td>
+                        <td>{{ result.marks_4 }}</td>
+                        <td class="grade-cell">{{ result.grade_4 }}</td>
+                    </tr>
+                    {% endif %}
+                    
+                    {% if result.subject_5 %}
+                    <tr>
+                        <td>5</td>
+                        <td>{{ result.subject_5 }}</td>
+                        <td>{{ result.marks_5 }}</td>
+                        <td class="grade-cell">{{ result.grade_5 }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Summary -->
+        <div class="summary-section">
+            <div class="section-title">Overall Result</div>
+            <table class="summary-table">
+                <tr>
+                    <td>Total Marks Obtained:</td>
+                    <td>{{ result.total_marks }}</td>
+                </tr>
+                <tr>
+                    <td>Percentage:</td>
+                    <td>{{ result.percentage }}%</td>
+                </tr>
+                <tr>
+                    <td>Final Grade:</td>
+                    <td>{{ result.final_grade }}</td>
+                </tr>
+                <tr>
+                    <td>Result Status:</td>
+                    <td class="{% if result.result_status == 'PASS' %}status-pass{% else %}status-fail{% endif %}">
+                        {{ result.result_status }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p><strong>Note:</strong> The details of the examination/marks here in this website may be amended according to the prevailing laws even after uploading at the website.</p>
+            <p>If there is a dispute/conflict in the supplied/written examination, the original decision will be final.</p>
+            <p style="margin-top: 15px;"><strong>Issued Date:</strong> {% now "d F, Y" %}</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <button onclick="window.print()" class="btn btn-print">🖨️ Print Result</button>
+            <a href="{% url 'home' %}" class="btn btn-back">← Back to Search</a>
+        </div>
+
+        {% else %}
+        <!-- Not Found -->
+        <div class="not-found">
+            <div class="not-found-icon">⚠️</div>
+            <h2>Result Not Found</h2>
+            <p>No result found for symbol number: <strong>{{ symbol_number }}</strong></p>
+            <p style="margin-top: 20px;">{{ message }}</p>
+            <a href="{% url 'home' %}" class="btn btn-back" style="margin-top: 30px; display: inline-block;">← Try Again</a>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Print functionality
+        window.addEventListener('beforeprint', function() {
+            document.body.style.background = 'white';
+        });
+
+        window.addEventListener('afterprint', function() {
+            document.body.style.background = '#f5f5f5';
+        });
+    </script>
+</body>
+</html>

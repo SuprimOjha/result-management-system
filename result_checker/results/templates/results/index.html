@@ -1,0 +1,2077 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ResultHub</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'styles.css' %}">
+  <link rel="icon" type="image/png" href="{% static 'images/resulthub2.png' %}">
+  <style>
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 15px; }
+
+  :root {
+    --navy:        #0a1628;
+    --navy-2:      #112240;
+    --blue:        #1e40af;
+    --blue-2:      #2563eb;
+    --blue-light:  #eff6ff;
+    --blue-mid:    #60a5fa;
+    --emerald:     #059669;
+    --emerald-bg:  #ecfdf5;
+    --amber:       #d97706;
+    --amber-bg:    #fffbeb;
+    --rose:        #e11d48;
+    --rose-bg:     #fff1f2;
+    --violet:      #7c3aed;
+    --violet-bg:   #f5f3ff;
+    --teal:        #0d9488;
+    --teal-bg:     #f0fdfa;
+    --slate:       #64748b;
+    --border:      #e2e8f0;
+    --bg:          #f8fafc;
+    --white:       #ffffff;
+    --text:        #0f172a;
+    --text-mid:    #334155;
+    --text-muted:  #64748b;
+    --radius:      14px;
+    --radius-sm:   9px;
+    --shadow-sm:   0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+    --shadow:      0 4px 16px rgba(0,0,0,.08),0 2px 4px rgba(0,0,0,.04);
+    --shadow-lg:   0 12px 40px rgba(0,0,0,.12),0 4px 12px rgba(0,0,0,.06);
+    --shadow-xl:   0 24px 60px rgba(0,0,0,.16);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    background: var(--white);
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+  img { display: block; max-width: 100%; }
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+  .section-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--blue-light); color: var(--blue-2);
+    font-size: .72rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 5px 14px;
+    border-radius: 99px; margin-bottom: 14px;
+    border: 1px solid rgba(37,99,235,.15);
+  }
+
+  .section-label.dark { background: rgba(255,255,255,.1); color: rgba(255,255,255,.8); border-color: rgba(255,255,255,.15); }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.35rem; font-weight: 700;
+    color: var(--navy); line-height: 1.18;
+    letter-spacing: -.5px; margin-bottom: 14px;
+  }
+  .section-title.light { color: #fff; }
+
+  .section-sub {
+    font-size: .95rem; color: var(--text-muted);
+    max-width: 560px; line-height: 1.75;
+    margin-bottom: 0;
+  }
+  .section-sub.light { color: rgba(255,255,255,.6); }
+
+  .section-center { text-align: center; }
+  .section-center .section-sub { margin: 0 auto; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 26px; border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem; font-weight: 600;
+    cursor: pointer; border: none; text-decoration: none;
+    transition: all .2s; white-space: nowrap;
+  }
+  .btn-lg { padding: 15px 34px; font-size: .95rem; }
+  .btn-sm { padding: 9px 18px; font-size: .8rem; }
+
+  .btn-primary  { background: var(--blue-2); color: #fff; box-shadow: 0 3px 12px rgba(37,99,235,.28); }
+  .btn-primary:hover { background: #1d4ed8; box-shadow: 0 6px 20px rgba(37,99,235,.38); transform: translateY(-2px); }
+
+  .btn-outline  { background: transparent; color: var(--blue-2); border: 2px solid var(--blue-2); }
+  .btn-outline:hover { background: var(--blue-light); transform: translateY(-2px); }
+
+  .btn-white    { background: #fff; color: var(--navy); box-shadow: var(--shadow); }
+  .btn-white:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+
+  .btn-ghost-white { background: rgba(255,255,255,.12); color: #fff; border: 1.5px solid rgba(255,255,255,.3); backdrop-filter: blur(8px); }
+  .btn-ghost-white:hover { background: rgba(255,255,255,.22); }
+
+  .btn-violet   { background: var(--violet); color: #fff; box-shadow: 0 3px 12px rgba(124,58,237,.3); }
+  .btn-violet:hover { background: #6d28d9; }
+
+
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 900;
+    background: rgba(255,255,255,.93);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(226,232,240,.6);
+    transition: box-shadow .25s;
+  }
+  .navbar.scrolled { box-shadow: var(--shadow); }
+
+  .nav-content {
+    display: flex; align-items: center;
+    height: 68px; gap: 28px;
+  }
+
+  .logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; flex-shrink: 0;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.22rem; font-weight: 700; color: var(--navy);
+  }
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem; flex-shrink: 0;
+  }
+
+  .nav-links {
+    display: flex; gap: 2px; list-style: none; margin-right: auto;margin-left: auto;
+  }
+  .nav-links a {
+    display: block; padding: 7px 13px;
+    font-size: .84rem; font-weight: 500;
+    color: var(--text-mid); text-decoration: none;
+    border-radius: 8px; transition: all .17s;
+  }
+  .nav-links a:hover { color: var(--blue-2); background: var(--blue-light); }
+
+  .nav-buttons { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+  .btn-text {
+    padding: 7px 14px; border-radius: 8px;
+    font-size: .84rem; font-weight: 600;
+    color: var(--text-mid); text-decoration: none;
+    transition: background .15s;
+  }
+  .btn-text:hover { background: var(--bg); color: var(--navy); }
+
+  .btn-primary-small {
+    padding: 8px 18px; border-radius: 9px;
+    background: var(--blue-2); color: #fff;
+    font-size: .84rem; font-weight: 600;
+    text-decoration: none; transition: all .17s;
+    box-shadow: 0 2px 8px rgba(37,99,235,.25);
+  }
+  .btn-primary-small:hover { background: #1d4ed8; box-shadow: 0 4px 14px rgba(37,99,235,.38); }
+
+  .mobile-menu-btn {
+    display: none; flex-direction: column; gap: 5px;
+    background: none; border: none; cursor: pointer;
+    padding: 8px; margin-left: auto;
+  }
+  .mobile-menu-btn span {
+    display: block; width: 22px; height: 2px;
+    background: var(--navy); border-radius: 99px;
+    transition: all .28s cubic-bezier(.4,0,.2,1);
+  }
+
+  .mobile-drawer {
+    display: none; position: fixed;
+    top: 68px; left: 0; right: 0; bottom: 0;
+    background: rgba(255,255,255,.98);
+    backdrop-filter: blur(12px);
+    z-index: 800; padding: 20px;
+    flex-direction: column; gap: 4px;
+    overflow-y: auto;
+    animation: drawerIn .25s ease;
+  }
+  .mobile-drawer.open { display: flex; }
+  .mobile-drawer a {
+    display: flex; align-items: center; gap: 10px;
+    padding: 13px 16px; font-size: .95rem; font-weight: 500;
+    color: var(--text-mid); text-decoration: none;
+    border-radius: 10px; transition: background .15s;
+  }
+  .mobile-drawer a i { width: 18px; text-align: center; font-size: .88rem; }
+  .mobile-drawer a:hover { background: var(--blue-light); color: var(--blue-2); }
+  .mob-divider { height: 1px; background: var(--border); margin: 8px 0; }
+  .mob-action {
+    padding: 13px 16px; border-radius: 10px;
+    font-weight: 600; text-align: center;
+    font-size: .92rem;
+  }
+  .mob-signup { background: var(--blue-2); color: #fff !important; margin-top: 4px; justify-content: center; }
+
+  @keyframes drawerIn { from { opacity:0; transform:translateY(-8px); } to { opacity:1; transform:translateY(0); } }
+
+
+  .hero {
+    padding: 132px 0 88px;
+    background: linear-gradient(155deg, #f0f7ff 0%, #ffffff 42%, #f5f3ff 100%);
+    position: relative; overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 650px; height: 650px;
+    background: radial-gradient(circle, rgba(37,99,235,.07) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,.07) 0%, transparent 68%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 64px;
+    position: relative; z-index: 1;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); border: 1px solid var(--border);
+    padding: 6px 14px 6px 8px; border-radius: 99px;
+    font-size: .75rem; font-weight: 600; color: var(--text-mid);
+    margin-bottom: 22px; box-shadow: var(--shadow-sm);
+    animation: fadeUp .6s ease both;
+  }
+  .hero-badge-pip {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--emerald), #34d399);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: .65rem;
+  }
+
+  .hero-text h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.1rem; font-weight: 800;
+    color: var(--navy); line-height: 1.1;
+    letter-spacing: -.8px; margin-bottom: 20px;
+    animation: fadeUp .6s .1s ease both;
+  }
+  .hero-text h1 .accent {
+    color: var(--blue-2); position: relative; display: inline-block;
+  }
+  .hero-text h1 .accent::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0; right: 0;
+    height: 3px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--blue-2), var(--violet));
+  }
+
+  .hero-text p {
+    font-size: 1rem; color: var(--text-muted);
+    line-height: 1.78; margin-bottom: 34px; max-width: 480px;
+    animation: fadeUp .6s .18s ease both;
+  }
+
+  .hero-buttons {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-bottom: 40px;
+    animation: fadeUp .6s .26s ease both;
+  }
+
+  .hero-trust {
+    display: flex; align-items: center; gap: 14px;
+    animation: fadeUp .6s .34s ease both;
+  }
+  .trust-avatars { display: flex; }
+  .trust-avatars span {
+    width: 34px; height: 34px; border-radius: 50%;
+    border: 2.5px solid #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .7rem; font-weight: 700; color: #fff;
+    margin-left: -10px;
+  }
+  .trust-avatars span:first-child { margin-left: 0; }
+  .trust-text { font-size: .8rem; color: var(--text-muted); }
+  .trust-text strong { color: var(--navy); }
+
+  .hero-image { position: relative; animation: fadeUp .6s .15s ease both; }
+
+  .hero-result-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+    padding: 28px;
+    animation: floatCard 4s ease-in-out infinite;
+  }
+
+  @keyframes floatCard {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .rc-head {
+    display: flex; align-items: center; gap: 12px; margin-bottom: 22px;
+  }
+  .rc-icon {
+    width: 46px; height: 46px; border-radius: 13px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1.1rem; flex-shrink: 0;
+  }
+  .rc-title { font-size: .9rem; font-weight: 700; }
+  .rc-sub { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+
+  .rc-subject-row {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 13px; background: var(--bg); border-radius: 10px;
+    margin-bottom: 9px; font-size: .8rem;
+  }
+  .rc-subject-row i { color: var(--blue-2); width: 15px; }
+  .rc-subject-name { flex: 1; font-weight: 600; }
+  .rc-bar { flex: 1.2; height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .rc-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--blue-2), var(--violet)); animation: barGrow 1.5s ease both; }
+  .rc-score { font-weight: 700; font-size: .78rem; min-width: 46px; text-align: right; }
+  .rc-grade {
+    width: 27px; height: 27px; border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .72rem; font-weight: 700;
+  }
+  .grade-a { background: var(--emerald-bg); color: var(--emerald); }
+  .grade-b { background: var(--blue-light); color: var(--blue-2); }
+  .grade-c { background: var(--amber-bg); color: var(--amber); }
+
+  .rc-footer {
+    margin-top: 16px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .rc-pct { font-size: .8rem; color: var(--text-muted); }
+  .rc-pass {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--emerald-bg); color: var(--emerald);
+    font-size: .74rem; font-weight: 700;
+    padding: 5px 13px; border-radius: 99px;
+  }
+
+  .float-chip {
+    position: absolute; background: var(--white);
+    border: 1px solid var(--border); border-radius: 12px;
+    box-shadow: var(--shadow); padding: 10px 14px;
+    font-size: .75rem; font-weight: 600;
+    display: flex; align-items: center; gap: 9px; white-space: nowrap;
+  }
+  .chip-a { top: -18px; right: -14px; animation: chipA 3.2s ease-in-out infinite; }
+  .chip-b { bottom: -14px; left: -14px; animation: chipB 3.8s ease-in-out infinite; }
+  .chip-ico {
+    width: 28px; height: 28px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center; font-size: .82rem;
+  }
+  .chip-ico-blue  { background: var(--blue-light); color: var(--blue-2); }
+  .chip-ico-green { background: var(--emerald-bg); color: var(--emerald); }
+
+  @keyframes chipA { 0%,100%{transform:translateY(0) rotate(-2deg);} 50%{transform:translateY(-8px) rotate(2deg);} }
+  @keyframes chipB { 0%,100%{transform:translateY(0) rotate(1deg);} 50%{transform:translateY(-6px) rotate(-1deg);} }
+  @keyframes barGrow { from { width: 0; } }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);} to{opacity:1;transform:translateY(0);} }
+
+  .stats-bar {
+    background: var(--navy); padding: 38px 0;
+  }
+  .stats-bar-inner {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 20px; text-align: center;
+  }
+  .stat-block .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.3rem; font-weight: 700; color: #fff; line-height: 1;
+    margin-bottom: 5px;
+  }
+  .stat-block .lbl {
+    font-size: .76rem; color: rgba(255,255,255,.45);
+    text-transform: uppercase; letter-spacing: .7px;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .stat-block .lbl i { font-size: .72rem; }
+
+
+  .result-check {
+    padding: 96px 0;
+    background: linear-gradient(140deg, #f0f7ff 0%, #f5f3ff 100%);
+    position: relative; overflow: hidden;
+  }
+  .result-check::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 4px;
+    background: linear-gradient(90deg, var(--blue-2), var(--violet), var(--emerald));
+  }
+
+  .result-check-wrapper {
+    display: grid; grid-template-columns: 1.1fr 0.9fr;
+    gap: 64px; align-items: center;
+  }
+
+  /* Form card */
+  .result-form-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 22px; padding: 40px;
+    box-shadow: var(--shadow-xl);
+  }
+
+  .rfc-head { margin-bottom: 28px; }
+  .rfc-head h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.75rem; font-weight: 700; color: var(--navy); margin-bottom: 8px;
+  }
+  .rfc-head p { font-size: .86rem; color: var(--text-muted); line-height: 1.6; }
+
+  .form-group { margin-bottom: 18px; }
+
+  .form-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .77rem; font-weight: 700;
+    color: var(--text-mid); margin-bottom: 7px; letter-spacing: .3px;
+  }
+  .form-label i { color: var(--blue-2); font-size: .8rem; }
+
+  .form-ctrl, .form-sel {
+    width: 100%; height: 48px;
+    border: 1.5px solid var(--border); border-radius: 11px;
+    padding: 0 14px;
+    font-family: 'DM Sans', sans-serif; font-size: .88rem;
+    color: var(--text); background: var(--white); outline: none;
+    transition: all .16s; -webkit-appearance: none; appearance: none;
+  }
+  .form-ctrl:focus, .form-sel:focus {
+    border-color: var(--blue-2);
+    box-shadow: 0 0 0 3px rgba(37,99,235,.1);
+  }
+  .form-ctrl::placeholder { color: #b8c2cc; }
+
+  .sel-wrap { position: relative; }
+  .sel-wrap::after {
+    content: '\f078';
+    font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--text-muted); font-size: .72rem; pointer-events: none;
+  }
+
+  .btn-check {
+    width: 100%; height: 52px; border: none; border-radius: 11px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: .94rem; font-weight: 700;
+    cursor: pointer; transition: all .2s; margin-top: 4px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 18px rgba(37,99,235,.35);
+  }
+  .btn-check:hover { transform: translateY(-2px); box-shadow: 0 7px 24px rgba(37,99,235,.45); }
+  .btn-check:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+  .no-result-msg {
+    display: none; margin-top: 16px;
+    background: var(--rose-bg); border: 1px solid rgba(225,29,72,.15);
+    border-radius: 10px; padding: 14px 16px;
+    font-size: .84rem; font-weight: 600; color: var(--rose);
+    text-align: center; gap: 8px; align-items: center;
+  }
+  .no-result-msg.show { display: flex; }
+
+  #resultDisplay { display: none; margin-top: 18px; }
+
+  .result-output-card {
+    background: linear-gradient(140deg, var(--navy), var(--navy-2));
+    border-radius: 15px; padding: 24px; color: #fff;
+    animation: fadeUp .4s ease;
+  }
+  .roc-head {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: 18px; padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    gap: 10px; flex-wrap: wrap;
+  }
+  .roc-name { font-family: 'Playfair Display', serif; font-size: 1.08rem; }
+  .roc-meta { font-size: .72rem; opacity: .55; margin-top: 3px; }
+  .roc-status {
+    padding: 4px 13px; border-radius: 99px;
+    font-size: .7rem; font-weight: 700; flex-shrink: 0;
+  }
+  .roc-pass { background: rgba(5,150,105,.25); color: #34d399; border: 1px solid rgba(52,211,153,.25); }
+  .roc-fail { background: rgba(225,29,72,.25); color: #fca5a5; border: 1px solid rgba(252,165,165,.25); }
+
+  .roc-subjects { margin-bottom: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .roc-row { display: flex; align-items: center; gap: 9px; font-size: .79rem; }
+  .roc-sname { flex: 1; opacity: .8; }
+  .roc-bar { flex: 1.4; height: 5px; background: rgba(255,255,255,.12); border-radius: 99px; overflow: hidden; }
+  .roc-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--blue-mid), #a78bfa); }
+  .roc-score { min-width: 42px; text-align: right; font-weight: 700; font-size: .77rem; }
+
+  .roc-totals {
+    display: grid; grid-template-columns: repeat(3,1fr); gap: 10px;
+    border-top: 1px solid rgba(255,255,255,.1); padding-top: 14px;
+  }
+  .roc-tot-cell { text-align: center; }
+  .roc-tot-val { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; }
+  .roc-tot-lbl { font-size: .62rem; opacity: .5; text-transform: uppercase; letter-spacing: .5px; margin-top: 3px; }
+
+  .roc-print-btn {
+    width: 100%; margin-top: 14px; height: 38px;
+    background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.2);
+    border-radius: 9px; color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: .8rem; font-weight: 600; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .15s;
+  }
+  .roc-print-btn:hover { background: rgba(255,255,255,.2); }
+
+  .check-info-side h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; font-weight: 700; color: var(--navy);
+    margin-bottom: 14px; line-height: 1.22;
+  }
+  .check-info-side p { font-size: .9rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 30px; }
+
+  .check-steps { display: flex; flex-direction: column; gap: 16px; }
+  .cs-item { display: flex; align-items: flex-start; gap: 14px; }
+  .cs-ico {
+    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .cs-blue   { background: var(--blue-light); color: var(--blue-2); }
+  .cs-violet { background: var(--violet-bg); color: var(--violet); }
+  .cs-green  { background: var(--emerald-bg); color: var(--emerald); }
+  .cs-amber  { background: var(--amber-bg); color: var(--amber); }
+  .cs-title { font-size: .9rem; font-weight: 700; margin-bottom: 3px; }
+  .cs-desc  { font-size: .78rem; color: var(--text-muted); line-height: 1.55; }
+
+
+  .features { padding: 96px 0; background: var(--white); }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px; flex-wrap: wrap; gap: 10px;
+  }
+  .see-all {
+    font-size: .8rem; font-weight: 700; color: var(--blue-2);
+    text-decoration: none; letter-spacing: .5px; transition: gap .15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .see-all:hover { gap: 10px; }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 24px; margin-top: 40px;
+  }
+
+  .feature-card {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius); overflow: hidden;
+    transition: all .22s; position: relative;
+  }
+  .feature-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue-2), var(--violet));
+    transform: scaleX(0); transform-origin: left; transition: transform .28s;
+  }
+  .feature-card:hover { background: var(--white); box-shadow: var(--shadow-lg); transform: translateY(-5px); border-color: transparent; }
+  .feature-card:hover::after { transform: scaleX(1); }
+
+  .feature-image {
+    padding: 28px; background: linear-gradient(135deg,#f0f7ff,#f5f3ff);
+    display: flex; justify-content: center; align-items: center;
+    min-height: 130px;
+  }
+
+  .feat-icon-wrap {
+    width: 72px; height: 72px; border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; box-shadow: var(--shadow);
+  }
+  .fi-blue   { background: var(--white); color: var(--blue-2); }
+  .fi-green  { background: var(--white); color: var(--emerald); }
+  .fi-amber  { background: var(--white); color: var(--amber); }
+  .fi-violet { background: var(--white); color: var(--violet); }
+  .fi-rose   { background: var(--white); color: var(--rose); }
+  .fi-navy   { background: var(--white); color: var(--navy); }
+
+  .feature-content { padding: 24px; }
+  .feature-content h3 { font-size: .95rem; font-weight: 700; margin-bottom: 9px; }
+  .feature-content p { font-size: .82rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; }
+  .btn-outline-sm {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 16px; border-radius: 8px;
+    border: 1.5px solid var(--border); background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .78rem; font-weight: 600; color: var(--text-mid);
+    text-decoration: none; cursor: pointer; transition: all .17s;
+  }
+  .btn-outline-sm:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
+
+  .how-it-works { padding: 96px 0; background: var(--bg); }
+
+  .steps-grid {
+    display: grid; grid-template-columns: repeat(4,1fr);
+    gap: 24px; margin-top: 52px; position: relative;
+  }
+  .steps-grid::before {
+    content: '';
+    position: absolute; top: 34px; left: 70px; right: 70px; height: 1.5px;
+    background: linear-gradient(90deg, transparent, var(--blue-2) 30%, var(--blue-2) 70%, transparent);
+    opacity: .25;
+  }
+
+  .step-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px 22px; text-align: center;
+    transition: all .22s; position: relative; z-index: 1;
+  }
+  .step-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-5px); border-color: var(--blue-2); }
+
+  .step-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem; font-weight: 700; color: #fff;
+    width: 52px; height: 52px; border-radius: 14px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 14px;
+    box-shadow: 0 4px 14px rgba(37,99,235,.3);
+  }
+
+  .step-icon { font-size: 1.4rem; margin-bottom: 12px; display: block; }
+
+  .step-card h3 { font-size: .92rem; font-weight: 700; margin-bottom: 8px; }
+  .step-card p  { font-size: .8rem; color: var(--text-muted); line-height: 1.6; }
+
+
+  .why-us {
+    padding: 96px 0;
+    background: linear-gradient(155deg, var(--navy) 0%, var(--navy-2) 100%);
+    position: relative; overflow: hidden;
+  }
+  .why-us::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(37,99,235,.14) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .why-us::after {
+    content: '';
+    position: absolute; bottom: -150px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,.1) 0%, transparent 68%);
+    pointer-events: none;
+  }
+
+  .why-inner {
+    display: grid; grid-template-columns: 1.15fr 0.85fr;
+    gap: 72px; align-items: center; position: relative; z-index: 1;
+  }
+
+  .why-list { display: flex; flex-direction: column; gap: 14px; margin-top: 32px; }
+
+  .why-item {
+    display: flex; align-items: flex-start; gap: 14px;
+    padding: 17px; border-radius: 12px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.07);
+    transition: background .18s;
+  }
+  .why-item:hover { background: rgba(255,255,255,.09); }
+
+  .why-ico {
+    width: 42px; height: 42px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .wico-blue   { background: rgba(37,99,235,.22); color: var(--blue-mid); }
+  .wico-green  { background: rgba(5,150,105,.22); color: #34d399; }
+  .wico-violet { background: rgba(124,58,237,.22); color: #c4b5fd; }
+  .wico-amber  { background: rgba(217,119,6,.22); color: #fcd34d; }
+  .wico-rose   { background: rgba(225,29,72,.22); color: #fca5a5; }
+  .wico-teal   { background: rgba(13,148,136,.2); color: #5eead4; }
+
+  .why-item-title { font-size: .88rem; font-weight: 700; color: #fff; margin-bottom: 3px; }
+  .why-item-desc  { font-size: .78rem; color: rgba(255,255,255,.52); line-height: 1.55; }
+
+  .why-visual { position: relative; z-index: 1; }
+
+  .why-big-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 20px; padding: 32px 28px; text-align: center;
+    margin-bottom: 16px;
+  }
+  .why-big-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 4rem; font-weight: 800; color: #fff; line-height: 1;
+  }
+  .why-big-lbl { font-size: .88rem; color: rgba(255,255,255,.5); margin-top: 8px; }
+
+  .why-mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .why-mini-card {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 13px; padding: 18px; text-align: center;
+  }
+  .why-mini-num { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-weight: 700; color: #fff; }
+  .why-mini-lbl { font-size: .7rem; color: rgba(255,255,255,.4); margin-top: 5px; }
+
+
+  .pricing { padding: 96px 0; background: var(--white); }
+
+  .pricing-toggle-row {
+    display: flex; align-items: center; gap: 14px;
+    justify-content: center; margin-top: 24px; margin-bottom: 52px;
+  }
+  .pt-lbl { font-size: .85rem; font-weight: 600; color: var(--text-muted); }
+  .toggle-pill {
+    width: 48px; height: 26px; border-radius: 99px; background: var(--blue-2);
+    position: relative; cursor: pointer; transition: background .2s;
+  }
+  .toggle-knob {
+    width: 20px; height: 20px; border-radius: 50%; background: #fff;
+    position: absolute; top: 3px; left: 3px; transition: transform .22s;
+    box-shadow: 0 1px 4px rgba(0,0,0,.2);
+  }
+  .toggle-pill.yearly .toggle-knob { transform: translateX(22px); }
+  .save-badge {
+    background: var(--emerald-bg); color: var(--emerald);
+    font-size: .7rem; font-weight: 700; padding: 3px 10px; border-radius: 99px;
+    border: 1px solid rgba(5,150,105,.2);
+  }
+
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 24px; align-items: start;
+  }
+
+  .price-card {
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 32px; transition: all .22s;
+    position: relative; overflow: hidden;
+  }
+  .price-card:hover { box-shadow: var(--shadow-lg); }
+  .price-card.featured {
+    background: linear-gradient(155deg, var(--navy), var(--navy-2));
+    border-color: transparent; box-shadow: var(--shadow-xl);
+    transform: scale(1.04);
+  }
+
+  .pop-badge {
+    position: absolute; top: 18px; right: 18px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    color: #fff; font-size: .64rem; font-weight: 700;
+    padding: 4px 11px; border-radius: 99px; letter-spacing: .5px;
+    text-transform: uppercase;
+  }
+
+  .price-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; margin-bottom: 18px;
+  }
+  .pi-start { background: var(--blue-light); color: var(--blue-2); }
+  .pi-pro   { background: rgba(255,255,255,.15); color: #fff; }
+  .pi-ent   { background: var(--violet-bg); color: var(--violet); }
+
+  .price-name {
+    font-size: .76rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--text-muted); margin-bottom: 9px;
+  }
+  .price-card.featured .price-name { color: rgba(255,255,255,.5); }
+
+  .price-row { display: flex; align-items: flex-end; gap: 3px; margin-bottom: 4px; }
+  .price-cur { font-size: 1.1rem; font-weight: 700; color: var(--text-muted); padding-bottom: 6px; }
+  .price-num { font-family: 'Playfair Display', serif; font-size: 2.9rem; font-weight: 800; color: var(--navy); line-height: 1; }
+  .price-card.featured .price-cur, .price-card.featured .price-num { color: #fff; }
+  .price-period { font-size: .78rem; color: var(--text-muted); margin-bottom: 12px; }
+  .price-card.featured .price-period { color: rgba(255,255,255,.45); }
+  .price-desc { font-size: .8rem; color: var(--text-muted); line-height: 1.55; margin-bottom: 22px; }
+  .price-card.featured .price-desc { color: rgba(255,255,255,.55); }
+  .price-hr { height: 1px; background: var(--border); margin-bottom: 20px; }
+  .price-card.featured .price-hr { background: rgba(255,255,255,.1); }
+
+  .price-features { list-style: none; margin-bottom: 28px; display: flex; flex-direction: column; gap: 11px; }
+  .price-features li { display: flex; align-items: center; gap: 10px; font-size: .82rem; }
+  .price-features li i { font-size: .76rem; flex-shrink: 0; }
+  .ico-yes  { color: var(--emerald); }
+  .ico-no   { color: var(--text-muted); opacity: .4; }
+  .price-card.featured .price-features li { color: rgba(255,255,255,.82); }
+  .price-card.featured .ico-yes { color: #34d399; }
+
+  .btn-plan { width: 100%; justify-content: center; border-radius: 10px; height: 46px; font-size: .88rem; }
+  .btn-plan-outline { background: transparent; color: var(--blue-2); border: 1.5px solid var(--blue-2); }
+  .btn-plan-outline:hover { background: var(--blue-light); }
+  .btn-plan-white  { background: #fff; color: var(--navy); box-shadow: var(--shadow); }
+  .btn-plan-white:hover { box-shadow: var(--shadow-lg); }
+  .btn-plan-violet { background: var(--violet-bg); color: var(--violet); border: 1.5px solid rgba(124,58,237,.2); }
+  .btn-plan-violet:hover { background: #ede9fe; }
+
+  .testimonials { padding: 96px 0; background: var(--bg); }
+
+  .testi-grid {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 22px; margin-top: 52px;
+  }
+
+  .testi-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 28px; transition: all .22s;
+    position: relative;
+  }
+  .testi-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+
+  .testi-card.testi-featured {
+    background: linear-gradient(140deg, var(--navy), var(--navy-2));
+    border-color: transparent; color: #fff;
+  }
+
+  .testi-quote { font-size: 2.2rem; color: var(--blue-2); opacity: .12; float: right; margin-top: -6px; line-height: 1; }
+  .testi-featured .testi-quote { color: #fff; }
+
+  .testi-stars { display: flex; gap: 3px; color: var(--amber); font-size: .8rem; margin-bottom: 14px; }
+
+  .testi-text {
+    font-size: .88rem; line-height: 1.76; color: var(--text-muted);
+    font-style: italic; margin-bottom: 20px;
+  }
+  .testi-featured .testi-text { color: rgba(255,255,255,.68); }
+
+  .testi-footer {
+    display: flex; align-items: center; gap: 12px;
+    padding-top: 16px; border-top: 1px solid var(--border);
+  }
+  .testi-featured .testi-footer { border-top-color: rgba(255,255,255,.1); }
+
+  .testi-av {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .82rem; font-weight: 700; color: #fff; flex-shrink: 0;
+  }
+  .testi-name { font-size: .86rem; font-weight: 700; }
+  .testi-featured .testi-name { color: #fff; }
+  .testi-role { font-size: .72rem; color: var(--text-muted); margin-top: 2px; }
+  .testi-featured .testi-role { color: rgba(255,255,255,.45); }
+
+  .cta-banner {
+    padding: 88px 0;
+    background: linear-gradient(135deg, var(--blue-2) 0%, var(--violet) 100%);
+    position: relative; overflow: hidden;
+  }
+  .cta-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  .cta-inner {
+    text-align: center; position: relative; z-index: 1;
+  }
+  .cta-inner h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.55rem; font-weight: 800; color: #fff;
+    margin-bottom: 14px; letter-spacing: -.5px; line-height: 1.2;
+  }
+  .cta-inner p {
+    font-size: .95rem; color: rgba(255,255,255,.78);
+    margin-bottom: 34px; max-width: 480px; margin-left: auto; margin-right: auto;
+    line-height: 1.72;
+  }
+  .cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    
+  .footer {
+    background: var(--navy); padding: 68px 0 0;
+    color: rgba(255,255,255,.65);
+  }
+
+  .footer-content {
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+    gap: 40px; margin-bottom: 48px;
+  }
+
+  .footer-logo-wrap {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; margin-bottom: 14px;
+  }
+  .footer-logo-icon {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: .95rem; flex-shrink: 0;
+  }
+  .footer-logo-name { font-family: 'Playfair Display', serif; font-size: 1.12rem; color: #fff; }
+  .footer-section > p { font-size: .8rem; line-height: 1.72; margin-bottom: 20px; }
+  .footer-socials { display: flex; gap: 8px; }
+  .footer-social {
+    width: 34px; height: 34px; border-radius: 8px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,.55); font-size: .78rem; text-decoration: none; transition: all .15s;
+  }
+  .footer-social:hover { background: var(--blue-2); color: #fff; border-color: var(--blue-2); }
+
+  .footer-section h4 {
+    font-size: .78rem; font-weight: 700; color: #fff;
+    text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px;
+  }
+  .footer-section ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-section ul li a {
+    color: rgba(255,255,255,.5); text-decoration: none;
+    font-size: .82rem; transition: color .15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .footer-section ul li a:hover { color: #fff; }
+  .footer-section ul li a::before {
+    content: '\f054'; font-family: 'Font Awesome 6 Free'; font-weight: 900;
+    font-size: .52rem; opacity: .4;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,.07);
+    padding: 20px 0;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom p { font-size: .78rem; color: rgba(255,255,255,.3); }
+  .footer-badges { display: flex; gap: 10px; }
+  .footer-badge {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 7px; padding: 5px 12px;
+    font-size: .7rem; color: rgba(255,255,255,.4);
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  /* ══════════════════════════════════════
+     RESPONSIVE
+  ══════════════════════════════════════ */
+  @media (max-width: 1080px) {
+    .hero-content { grid-template-columns: 1fr; }
+    .hero-image { display: none; }
+    .result-check-wrapper { grid-template-columns: 1fr; }
+    .check-info-side { order: -1; }
+    .why-inner { grid-template-columns: 1fr; }
+    .why-visual { display: none; }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
+    .price-card.featured { transform: none; }
+    .testi-grid { grid-template-columns: repeat(2,1fr); }
+    .team-members-grid { grid-template-columns: repeat(3,1fr); }
+    .footer-content { grid-template-columns: 1fr 1fr; }
+    .stats-bar-inner { grid-template-columns: repeat(2,1fr); }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links, .nav-buttons { display: none; }
+    .mobile-menu-btn { display: flex; }
+    .hero { padding: 108px 0 64px; }
+    .hero-text h1 { font-size: 2.2rem; }
+    .section-title { font-size: 1.85rem; }
+    .features-grid { grid-template-columns: 1fr; }
+    .steps-grid { grid-template-columns: 1fr 1fr; }
+    .steps-grid::before { display: none; }
+    .testi-grid { grid-template-columns: 1fr; }
+    .team-members-grid { grid-template-columns: repeat(2,1fr); }
+    .footer-content { grid-template-columns: 1fr; gap: 28px; }
+    .cta-inner h2 { font-size: 1.95rem; }
+    .why-big-num { font-size: 3rem; }
+  }
+
+  @media (max-width: 500px) {
+    .hero-text h1 { font-size: 1.85rem; }
+    .steps-grid { grid-template-columns: 1fr; }
+    .team-members-grid { grid-template-columns: 1fr; }
+    .hero-buttons { flex-direction: column; }
+    .section-title { font-size: 1.65rem; }
+  }
+  </style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="nav-content">
+
+      <a href="#" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        Schooli
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#Blogs">Blogs</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#check-results">Check Results</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+
+      <div class="nav-buttons">
+        <a href="{% url 'login' %}" class="btn-text">Login</a>
+        <a href="{% url 'signup' %}" class="btn-primary-small"><i class="fas fa-user-plus"></i> Sign up</a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Drawer -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <a href="#about"         onclick="closeMob()"><i class="fas fa-info-circle"></i> About Us</a>
+  <a href="#how-it-works"  onclick="closeMob()"><i class="fas fa-list-ol"></i> How It Works</a>
+  <a href="#features"      onclick="closeMob()"><i class="fas fa-star"></i> Features</a>
+  <a href="#why-us"        onclick="closeMob()"><i class="fas fa-shield-alt"></i> Why Us</a>
+  <a href="#pricing"       onclick="closeMob()"><i class="fas fa-tags"></i> Pricing</a>
+  <a href="#check-results" onclick="closeMob()"><i class="fas fa-search"></i> Check Results</a>
+  <a href="#contact"       onclick="closeMob()"><i class="fas fa-envelope"></i> Contact</a>
+  <div class="mob-divider"></div>
+  <a href="{% url 'login' %}"  onclick="closeMob()"><i class="fas fa-sign-in-alt"></i> Login</a>
+  <a href="{% url 'signup' %}" onclick="closeMob()" class="mob-signup"><i class="fas fa-user-plus"></i> Sign Up Free</a>
+</div>
+
+<section class="hero" id="home">
+  <div class="container">
+    <div class="hero-content">
+
+      <div class="hero-text">
+        <div class="hero-badge">
+          <span class="hero-badge-pip"><i class="fas fa-bolt"></i></span>
+          Instant Result Verification System
+        </div>
+        <h1>A New Way of<br>Checking Your <span class="accent">Results</span></h1>
+        <p>Access your academic results instantly. Select your school, enter your symbol number and view your complete grade report — anytime, anywhere, on any device.</p>
+        <div class="hero-buttons">
+          <a href="#check-results" class="btn btn-primary btn-lg">
+            <i class="fas fa-search"></i> Check Results Now
+          </a>
+          <a href="#how-it-works" class="btn btn-outline btn-lg">
+            <i class="fas fa-play-circle"></i> Learn How
+          </a>
+        </div>
+        <div class="hero-trust">
+          <div class="trust-avatars">
+            <span style="background:#4f46e5">P</span>
+            <span style="background:#059669">R</span>
+            <span style="background:#d97706">A</span>
+            <span style="background:#e11d48">S</span>
+          </div>
+          <div class="trust-text"><strong>10,000+</strong> students checked results this month</div>
+        </div>
+      </div>
+
+      <div class="hero-image">
+        <div class="hero-result-card">
+          <div class="rc-head">
+            <div class="rc-icon"><i class="fas fa-file-alt"></i></div>
+            <div>
+              <div class="rc-title">Result Card — 3rd Semester</div>
+              <div class="rc-sub">Symbol No: 11201042 · Suprim Ojha</div>
+            </div>
+          </div>
+          <div class="rc-subject-row">
+            <i class="fas fa-calculator"></i>
+            <span class="rc-subject-name">Mathematics</span>
+            <div class="rc-bar"><div class="rc-bar-fill" style="width:90%"></div></div>
+            <span class="rc-score">90/100</span>
+            <span class="rc-grade grade-a">A</span>
+          </div>
+          <div class="rc-subject-row">
+            <i class="fas fa-flask"></i>
+            <span class="rc-subject-name">Physics</span>
+            <div class="rc-bar"><div class="rc-bar-fill" style="width:82%"></div></div>
+            <span class="rc-score">82/100</span>
+            <span class="rc-grade grade-b">B</span>
+          </div>
+          <div class="rc-subject-row">
+            <i class="fas fa-atom"></i>
+            <span class="rc-subject-name">Chemistry</span>
+            <div class="rc-bar"><div class="rc-bar-fill" style="width:76%"></div></div>
+            <span class="rc-score">76/100</span>
+            <span class="rc-grade grade-b">B</span>
+          </div>
+          <div class="rc-footer">
+            <span class="rc-pct">Total: 248/300 · 82.6%</span>
+            <span class="rc-pass"><i class="fas fa-check-circle"></i> PASSED</span>
+          </div>
+        </div>
+        <div class="float-chip chip-a">
+          <div class="chip-ico chip-ico-blue"><i class="fas fa-upload"></i></div>
+          Excel Uploaded Successfully
+        </div>
+        <div class="float-chip chip-b">
+          <div class="chip-ico chip-ico-green"><i class="fas fa-users"></i></div>
+          342 Students · Batch 2024
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="container">
+    <div class="stats-bar-inner">
+      <div class="stat-block">
+        <div class="num">25,000+</div>
+        <div class="lbl"><i class="fas fa-user-graduate"></i> Students</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">800+</div>
+        <div class="lbl"><i class="fas fa-school"></i> Schools &amp; Colleges</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">99.9%</div>
+        <div class="lbl"><i class="fas fa-server"></i> Uptime</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">4.9<span style="font-size:1.6rem">★</span></div>
+        <div class="lbl"><i class="fas fa-star"></i> Average Rating</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<section class="result-check" id="check-results">
+  <div class="container">
+    <div class="result-check-wrapper">
+
+      <!-- Form card -->
+      <div>
+        <div class="result-form-card">
+          <div class="rfc-head">
+            <div class="section-label"><i class="fas fa-search"></i> Student Portal</div>
+            <h2>Check Your Result</h2>
+            <p>Select your school, enter your symbol number and view your result instantly — no login required.</p>
+          </div>
+
+          <form id="resultForm" onsubmit="checkResult(event)">
+
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-school"></i> Select Your School / College</label>
+              <div class="sel-wrap">
+                <select class="form-sel" id="schoolSelect" required>
+                  <option value="">— Choose your institution —</option>
+                  <optgroup label="Government Schools">
+                    <option value="ghs001">Government Higher Secondary School, Kathmandu</option>
+                    <option value="ghs002">Government Higher Secondary School, Pokhara</option>
+                    <option value="ghs003">Bal Batika Secondary School, Lalitpur</option>
+                  </optgroup>
+                  <optgroup label="Private Colleges">
+                    <option value="pc001">Tribhuvan Multiple Campus, Tansen</option>
+                    <option value="pc002">National College of Computer Studies, Kathmandu</option>
+                    <option value="pc003">Prime College, Nayabazar</option>
+                  </optgroup>
+                  <optgroup label="Technical Institutes">
+                    <option value="ti001">Institute of Engineering, Pulchowk</option>
+                    <option value="ti002">Nepal Engineering College, Bhaktapur</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-hashtag"></i> Symbol Number <span style="color:var(--rose)">*</span></label>
+              <input class="form-ctrl" type="text" id="symbolInput"
+                placeholder="e.g. 11201042" required maxlength="12"
+                oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-book-open"></i> Examination Type</label>
+              <div class="sel-wrap">
+                <select class="form-sel" id="examSelect" required>
+                  <option value="">— Select examination —</option>
+                  <option value="semester1">Semester 1</option>
+                  <option value="semester2">Semester 2</option>
+                  <option value="semester3">Semester 3</option>
+                  <option value="semester4">Semester 4</option>
+                  <option value="annual">Annual Examination</option>
+                  <option value="midterm">Mid-Term</option>
+                  <option value="back">Back Paper / Supplementary</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-check" id="checkBtn">
+              <i class="fas fa-search"></i> View My Result
+            </button>
+          </form>
+
+          <div class="no-result-msg" id="noResultMsg">
+            <i class="fas fa-exclamation-circle"></i>
+            No result found. Please verify your symbol number and try again.
+          </div>
+
+          <div id="resultDisplay">
+            <div class="result-output-card">
+              <div class="roc-head">
+                <div>
+                  <div class="roc-name" id="roc-name">—</div>
+                  <div class="roc-meta" id="roc-meta">—</div>
+                </div>
+                <span class="roc-status" id="roc-status">—</span>
+              </div>
+              <div class="roc-subjects" id="roc-subjects"></div>
+              <div class="roc-totals">
+                <div class="roc-tot-cell">
+                  <div class="roc-tot-val" id="roc-total">—</div>
+                  <div class="roc-tot-lbl">Total Marks</div>
+                </div>
+                <div class="roc-tot-cell">
+                  <div class="roc-tot-val" id="roc-obtained">—</div>
+                  <div class="roc-tot-lbl">Obtained</div>
+                </div>
+                <div class="roc-tot-cell">
+                  <div class="roc-tot-val" id="roc-pct">—</div>
+                  <div class="roc-tot-lbl">Percentage</div>
+                </div>
+              </div>
+              <button class="roc-print-btn" onclick="printResult()">
+                <i class="fas fa-print"></i> Print / Save as PDF
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="check-info-side">
+        <div class="section-label"><i class="fas fa-graduation-cap"></i> How to check</div>
+        <h2>Find Your Results in Under 30 Seconds</h2>
+        <p>Our platform connects directly to your institution's uploaded result sheets. Simply pick your school, enter your symbol number and get instant access to your complete grades.</p>
+
+        <div class="check-steps">
+          <div class="cs-item">
+            <div class="cs-ico cs-blue"><i class="fas fa-school"></i></div>
+            <div>
+              <div class="cs-title">Select Your School</div>
+              <div class="cs-desc">Choose your institution from the dropdown list of registered schools and colleges.</div>
+            </div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-ico cs-violet"><i class="fas fa-hashtag"></i></div>
+            <div>
+              <div class="cs-title">Enter Symbol Number</div>
+              <div class="cs-desc">Type your unique symbol/registration number exactly as printed on your admit card.</div>
+            </div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-ico cs-green"><i class="fas fa-mouse-pointer"></i></div>
+            <div>
+              <div class="cs-title">View &amp; Download</div>
+              <div class="cs-desc">Your result appears instantly. Download a printable PDF or share it digitally.</div>
+            </div>
+          </div>
+          <div class="cs-item">
+            <div class="cs-ico cs-amber"><i class="fas fa-lock"></i></div>
+            <div>
+              <div class="cs-title">100% Secure</div>
+              <div class="cs-desc">All result data is encrypted end-to-end. Only you can view your results with your symbol number.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <div class="section-label"><i class="fas fa-star"></i> Platform Features</div>
+        <h2 class="section-title">POPULAR FEATURES</h2>
+      </div>
+      <a href="#" class="see-all">SEE ALL <i class="fas fa-arrow-right"></i></a>
+    </div>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-blue"><i class="fas fa-file-excel"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Upload and manage Excel result sheets</h3>
+          <p>Seamlessly upload .xlsx or .csv files containing student results and manage them efficiently. Our system auto-parses, validates and calculates grades instantly.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-green"><i class="fas fa-bolt"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Instant result verification for students</h3>
+          <p>Students check results instantly by entering their symbol number. No registration, no login — fully public access with subject-wise grade breakdown.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-amber"><i class="fas fa-file-pdf"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Export and download results easily</h3>
+          <p>Generate official-looking PDF marksheets with college header, subject-wise grades and signature areas. Download individual or batch results in one click.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-violet"><i class="fas fa-print"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Bulk print all student results</h3>
+          <p>Print all student results in one go — filtered by class, department or semester. Includes summary sheet with pass/fail counts and grade distribution.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-rose"><i class="fas fa-chart-bar"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Real-time analytics dashboard</h3>
+          <p>Visual grade distribution charts, top performer leaderboards, pass rates and class averages — all live as new results are entered or uploaded.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <div class="feature-image">
+          <div class="feat-icon-wrap fi-navy"><i class="fas fa-shield-alt"></i></div>
+        </div>
+        <div class="feature-content">
+          <h3>Role-based access control</h3>
+          <p>Separate portals for Admins, Teachers and Students. Teachers can only manage their own subjects; admins control all records with full audit logs.</p>
+          <a href="#" class="btn-outline-sm">Learn more <i class="fas fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="how-it-works" id="how-it-works">
+  <div class="container">
+    <div class="section-center">
+      <div class="section-label" style="margin:0 auto 14px"><i class="fas fa-list-ol"></i> Process</div>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-sub" style="margin:0 auto 0">Four simple steps — from result upload to instant student verification. The whole workflow takes minutes, not days.</p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-number">01</div>
+        <span class="step-icon"><i class="fas fa-file-excel" style="color:var(--emerald)"></i></span>
+        <h3>Upload Excel File</h3>
+        <p>Administrators upload the result Excel sheet to the secure admin portal. Supports .xlsx, .xls and .csv formats.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">02</div>
+        <span class="step-icon"><i class="fas fa-cogs" style="color:var(--blue-2)"></i></span>
+        <h3>System Processing</h3>
+        <p>Our system automatically processes, validates data and calculates grades, percentages and pass/fail status.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">03</div>
+        <span class="step-icon"><i class="fas fa-search" style="color:var(--violet)"></i></span>
+        <h3>Students Check Results</h3>
+        <p>Students select their school, enter their symbol number and view their complete result instantly — no account needed.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-number">04</div>
+        <span class="step-icon"><i class="fas fa-download" style="color:var(--amber)"></i></span>
+        <h3>Download &amp; Share</h3>
+        <p>Download result slips in PDF format, print marksheets or share results digitally with universities and employers.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="why-us" id="why-us">
+  <div class="container">
+    <div class="why-inner">
+
+      <div>
+        <div class="section-label dark"><i class="fas fa-shield-alt"></i> Why ResultHub</div>
+        <h2 class="section-title light">Built for Schools &amp; Colleges That Care</h2>
+        <p class="section-sub light">We understand the complexity of managing academic results at scale. ResultHub was designed with educators and administrators in mind — simple, powerful and trusted by 800+ institutions.</p>
+
+        <div class="why-list">
+          <div class="why-item">
+            <div class="why-ico wico-blue"><i class="fas fa-bolt"></i></div>
+            <div>
+              <div class="why-item-title">Lightning Fast Performance</div>
+              <div class="why-item-desc">Results load in milliseconds. Our infrastructure handles thousands of concurrent queries without any slowdown.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-ico wico-green"><i class="fas fa-lock"></i></div>
+            <div>
+              <div class="why-item-title">Bank-Grade Security</div>
+              <div class="why-item-desc">All data is encrypted at rest and in transit. Role-based access ensures only authorised users can modify records.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-ico wico-violet"><i class="fas fa-cloud-upload-alt"></i></div>
+            <div>
+              <div class="why-item-title">Zero Setup Required</div>
+              <div class="why-item-desc">Upload your existing Excel sheets and go live in minutes. No IT expertise needed — if you can use Excel, you can use ResultHub.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-ico wico-amber"><i class="fas fa-headset"></i></div>
+            <div>
+              <div class="why-item-title">24/7 Expert Support</div>
+              <div class="why-item-desc">Our support team is available around the clock during exam seasons to resolve any issues within minutes.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-ico wico-rose"><i class="fas fa-mobile-alt"></i></div>
+            <div>
+              <div class="why-item-title">Mobile-First Design</div>
+              <div class="why-item-desc">Students check results from any device — phone, tablet or desktop. Works perfectly even on slow mobile connections.</div>
+            </div>
+          </div>
+          <div class="why-item">
+            <div class="why-ico wico-teal"><i class="fas fa-history"></i></div>
+            <div>
+              <div class="why-item-title">Complete Audit Trail</div>
+              <div class="why-item-desc">Every change is logged with timestamp and user identity. Full history always available for dispute resolution.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="why-visual">
+        <div class="why-big-card">
+          <div class="why-big-num">98.7%</div>
+          <div class="why-big-lbl"><i class="fas fa-check-circle" style="color:#34d399;margin-right:6px"></i> Customer Satisfaction Rate</div>
+        </div>
+        <div class="why-mini-grid">
+          <div class="why-mini-card">
+            <div class="why-mini-num">5 min</div>
+            <div class="why-mini-lbl">Setup Time</div>
+          </div>
+          <div class="why-mini-card">
+            <div class="why-mini-num">0%</div>
+            <div class="why-mini-lbl">Breach Record</div>
+          </div>
+          <div class="why-mini-card">
+            <div class="why-mini-num">800+</div>
+            <div class="why-mini-lbl">Institutions</div>
+          </div>
+          <div class="why-mini-card">
+            <div class="why-mini-num">24/7</div>
+            <div class="why-mini-lbl">Live Support</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-center">
+      <div class="section-label" style="margin:0 auto 14px"><i class="fas fa-tags"></i> Pricing Plans</div>
+      <h2 class="section-title">Simple, Transparent Pricing</h2>
+      <p class="section-sub" style="margin:0 auto 0">No hidden fees. Choose the plan that fits your institution's size. Upgrade or downgrade anytime — no contracts.</p>
+    </div>
+
+    <div class="pricing-toggle-row">
+      <span class="pt-lbl">Monthly</span>
+      <div class="toggle-pill" id="pToggle">
+        <div class="toggle-knob"></div>
+      </div>
+      <span class="pt-lbl">Yearly</span>
+      <span class="save-badge"><i class="fas fa-tag"></i> Save 20%</span>
+    </div>
+
+    <div class="pricing-grid">
+
+      <div class="price-card">
+        <div class="price-icon pi-start"><i class="fas fa-seedling"></i></div>
+        <div class="price-name">Starter</div>
+        <div class="price-row">
+          <span class="price-cur">$</span>
+          <span class="price-num" data-m="0" data-y="0">0</span>
+        </div>
+        <div class="price-period">/month · Free forever</div>
+        <p class="price-desc">Perfect for small schools getting started with digital result management.</p>
+        <div class="price-hr"></div>
+        <ul class="price-features">
+          <li><i class="fas fa-check ico-yes"></i> Up to 200 students</li>
+          <li><i class="fas fa-check ico-yes"></i> Excel upload (basic)</li>
+          <li><i class="fas fa-check ico-yes"></i> Symbol number lookup</li>
+          <li><i class="fas fa-check ico-yes"></i> Basic result display</li>
+          <li><i class="fas fa-times ico-no"></i> <span style="opacity:.45">PDF marksheet download</span></li>
+          <li><i class="fas fa-times ico-no"></i> <span style="opacity:.45">Analytics dashboard</span></li>
+          <li><i class="fas fa-times ico-no"></i> <span style="opacity:.45">Priority support</span></li>
+        </ul>
+        <a href="{% url 'signup' %}" class="btn btn-plan btn-plan-outline">
+          <i class="fas fa-rocket"></i> Get Started Free
+        </a>
+      </div>
+
+      <!-- Professional (featured) -->
+      <div class="price-card featured">
+        <div class="pop-badge"><i class="fas fa-fire"></i> Most Popular</div>
+        <div class="price-icon pi-pro"><i class="fas fa-rocket"></i></div>
+        <div class="price-name">Professional</div>
+        <div class="price-row">
+          <span class="price-cur">$</span>
+          <span class="price-num" data-m="29" data-y="23">29</span>
+        </div>
+        <div class="price-period">/month · billed monthly</div>
+        <p class="price-desc">For growing institutions needing full-featured result management and reporting.</p>
+        <div class="price-hr"></div>
+        <ul class="price-features">
+          <li><i class="fas fa-check ico-yes"></i> Up to 2,000 students</li>
+          <li><i class="fas fa-check ico-yes"></i> Unlimited Excel uploads</li>
+          <li><i class="fas fa-check ico-yes"></i> Symbol + Roll No lookup</li>
+          <li><i class="fas fa-check ico-yes"></i> PDF marksheet download</li>
+          <li><i class="fas fa-check ico-yes"></i> Analytics &amp; grade reports</li>
+          <li><i class="fas fa-check ico-yes"></i> Bulk print all results</li>
+          <li><i class="fas fa-check ico-yes"></i> Email support</li>
+        </ul>
+        <a href="#signup" class="btn btn-plan btn-plan-white">
+          <i class="fas fa-star"></i> Start Free Trial
+        </a>
+      </div>
+
+      <!-- Enterprise -->
+      <div class="price-card">
+        <div class="price-icon pi-ent"><i class="fas fa-building"></i></div>
+        <div class="price-name">Enterprise</div>
+        <div class="price-row">
+          <span class="price-cur">$</span>
+          <span class="price-num" data-m="79" data-y="63">79</span>
+        </div>
+        <div class="price-period">/month · billed monthly</div>
+        <p class="price-desc">For large universities and multi-branch institutions with advanced requirements.</p>
+        <div class="price-hr"></div>
+        <ul class="price-features">
+          <li><i class="fas fa-check ico-yes"></i> Unlimited students</li>
+          <li><i class="fas fa-check ico-yes"></i> Multi-department support</li>
+          <li><i class="fas fa-check ico-yes"></i> Custom branding &amp; domain</li>
+          <li><i class="fas fa-check ico-yes"></i> REST API access</li>
+          <li><i class="fas fa-check ico-yes"></i> Advanced analytics &amp; exports</li>
+          <li><i class="fas fa-check ico-yes"></i> Dedicated account manager</li>
+          <li><i class="fas fa-check ico-yes"></i> 24/7 phone &amp; chat support</li>
+        </ul>
+        <a href="#contact" class="btn btn-plan btn-plan-violet">
+          <i class="fas fa-envelope"></i> Contact Sales
+        </a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-center">
+      <div class="section-label" style="margin:0 auto 14px"><i class="fas fa-quote-left"></i> Testimonials</div>
+      <h2 class="section-title">Trusted by Educators Nationwide</h2>
+      <p class="section-sub" style="margin:0 auto 0">Hear from administrators, teachers and students who rely on ResultHub every examination season.</p>
+    </div>
+
+    <div class="testi-grid">
+
+      <div class="testi-card testi-featured">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="testi-text">"ResultHub completely transformed how we publish results. What used to take three days of manual work is now done in under 30 minutes. Our students love how instantly they can check their grades."</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#2563eb,#818cf8)">MK</div>
+          <div>
+            <div class="testi-name">Mr. Mahesh Karki</div>
+            <div class="testi-role">Principal, National Higher Secondary School</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="testi-text">"As a teacher, I used to spend hours entering results into spreadsheets. Now I just upload our Excel file and everything is handled automatically. The PDF marksheets look incredibly professional."</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#059669,#34d399)">SR</div>
+          <div>
+            <div class="testi-name">Ms. Sita Rana</div>
+            <div class="testi-role">Science Teacher, Prime College</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+        </div>
+        <p class="testi-text">"I was anxious waiting for results but checking was so easy — I typed my symbol number and got my complete grade card in seconds. I even downloaded my marksheet for my university application!"</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#7c3aed,#c4b5fd)">AP</div>
+          <div>
+            <div class="testi-name">Anita Poudel</div>
+            <div class="testi-role">Student, Grade 12</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="testi-text">"The analytics dashboard is brilliant. I can see at a glance how many students passed, the grade distribution and top performers. This helps us plan improvement programmes effectively."</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#d97706,#fcd34d)">RB</div>
+          <div>
+            <div class="testi-name">Dr. Ram Bahadur</div>
+            <div class="testi-role">Academic Director, Tribhuvan Campus</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="testi-text">"The support team is outstanding. During our exam season when we had an issue at midnight, they responded within 10 minutes and resolved it completely. That kind of reliability is invaluable."</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#e11d48,#fca5a5)">PS</div>
+          <div>
+            <div class="testi-name">Prakash Shrestha</div>
+            <div class="testi-role">IT Admin, Nepal Engineering College</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card">
+        <i class="fas fa-quote-right testi-quote"></i>
+        <div class="testi-stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="testi-text">"We switched from a complicated ERP system to ResultHub and it's so much simpler. Parents can also check their child's results through the portal. It's a truly complete solution for our institution."</p>
+        <div class="testi-footer">
+          <div class="testi-av" style="background:linear-gradient(135deg,#0d9488,#5eead4)">GD</div>
+          <div>
+            <div class="testi-name">Geeta Devi</div>
+            <div class="testi-role">Registrar, Bal Batika Secondary School</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section class="team-section" id="about">
+  <div class="container">
+
+    <div class="team-section-header">
+      <div class="section-label" style="margin:0 auto 14px"><i class="fas fa-users"></i> Our Team</div>
+      <h2 class="team-section-title">Experienced &amp; Professional Team</h2>
+      <p class="team-section-subtitle">
+        You can rely on our amazing features list and also our customer services will be a great experience for you without doubt and in no time.
+      </p>
+    </div>
+
+    <div class="team-members-grid">
+      {% for member in team_members %}
+      <div class="team-member-card">
+        <div class="team-member-image">
+          {% if member.photo %}
+            <img src="{{ member.photo.url }}" alt="{{ member.name }}">
+          {% else %}
+            <img src="https://ui-avatars.com/api/?name={{ member.name|urlencode }}&size=400&background=1e40af&color=fff&font-size=0.4" alt="{{ member.name }}">
+          {% endif %}
+          <div class="team-image-overlay">
+            <ul class="team-social-links-overlay">
+              {% if member.facebook %}<li><a href="{{ member.facebook }}" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a></li>{% endif %}
+              {% if member.twitter %}<li><a href="{{ member.twitter }}" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>{% endif %}
+              {% if member.instagram %}<li><a href="{{ member.instagram }}" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>{% endif %}
+              {% if member.linkedin %}<li><a href="{{ member.linkedin }}" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></li>{% endif %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="team-member-content">
+          <h5 class="team-member-name">{{ member.name }}</h5>
+          <p class="team-member-role">{{ member.role }}</p>
+          <p class="team-member-description">{{ member.description }}</p>
+          <ul class="team-social-links">
+            {% if member.facebook %}<li><a href="{{ member.facebook }}" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a></li>{% endif %}
+            {% if member.twitter %}<li><a href="{{ member.twitter }}" aria-label="Twitter"><i class="fab fa-twitter"></i></a></li>{% endif %}
+            {% if member.instagram %}<li><a href="{{ member.instagram }}" aria-label="Instagram"><i class="fab fa-instagram"></i></a></li>{% endif %}
+            {% if member.linkedin %}<li><a href="{{ member.linkedin }}" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a></li>{% endif %}
+          </ul>
+        </div>
+      </div>
+      {% empty %}
+        <p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px;font-size:.9rem">No team members added yet.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-banner">
+  <div class="container">
+    <div class="cta-inner">
+      <div class="section-label dark" style="margin:0 auto 18px"><i class="fas fa-rocket"></i> Get Started Today</div>
+      <h2>Ready to Modernise Your<br>Result Management?</h2>
+      <p>Join 800+ institutions already using ResultHub. Set up in 5 minutes — no credit card required, no complicated setup.</p>
+      <div class="cta-btns">
+        <a href="#signup" class="btn btn-white btn-lg"><i class="fas fa-rocket"></i> Start For Free</a>
+        <a href="#contact" class="btn btn-ghost-white btn-lg"><i class="fas fa-envelope"></i> Contact Sales</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer" id="contact">
+  <div class="container">
+    <div class="footer-content">
+
+      <div class="footer-section">
+        <a href="#" class="footer-logo-wrap">
+          <div class="footer-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+          <span class="footer-logo-name">ResultHub</span>
+        </a>
+        <p>Modern digital platform for academic result management and student result verification. Trusted by schools and colleges across the nation.</p>
+        <div class="footer-socials">
+          <a href="#" class="footer-social" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+          <a href="#" class="footer-social" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+          <a href="#" class="footer-social" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="footer-social" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#" class="footer-social" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+
+      <div class="footer-section">
+        <h4>Quick Links</h4>
+        <ul>
+          <li><a href="#how-it-works">How it works</a></li>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#check-results">Check Results</a></li>
+          <li><a href="#pricing">Pricing</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#why-us">Why ResultHub</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+          <li><a href="#about">Our Team</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="#contact">Contact Us</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#help">Help Center</a></li>
+          <li><a href="#docs">Documentation</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-section">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="#privacy">Privacy Policy</a></li>
+          <li><a href="#terms">Terms of Service</a></li>
+          <li><a href="#security">Data Security</a></li>
+          <li><a href="#cookies">Cookie Policy</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2026 ResultHub. All rights reserved. Made with <i class="fas fa-heart" style="color:var(--rose);font-size:.72rem"></i> for educators.</p>
+      <div class="footer-badges">
+        <div class="footer-badge"><i class="fas fa-shield-alt"></i> SSL Secured</div>
+        <div class="footer-badge"><i class="fas fa-lock"></i> GDPR Compliant</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="{% static 'script.js' %}"></script>
+<script>
+/* ══════════════════════════════════════════
+   RESULTHUB — INLINE JAVASCRIPT
+══════════════════════════════════════════ */
+
+// ── NAVBAR SCROLL ──
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+// ── MOBILE MENU ──
+const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileDrawer  = document.getElementById('mobileDrawer');
+let menuOpen = false;
+
+mobileMenuBtn.addEventListener('click', () => {
+  menuOpen = !menuOpen;
+  mobileDrawer.classList.toggle('open', menuOpen);
+  const spans = mobileMenuBtn.querySelectorAll('span');
+  if (menuOpen) {
+    spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
+    spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
+    spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans.forEach(s => s.style.cssText = '');
+  }
+});
+
+function closeMob() {
+  menuOpen = false;
+  mobileDrawer.classList.remove('open');
+  mobileMenuBtn.querySelectorAll('span').forEach(s => s.style.cssText = '');
+}
+
+// Close drawer on outside click
+document.addEventListener('click', e => {
+  if (menuOpen && !mobileDrawer.contains(e.target) && !mobileMenuBtn.contains(e.target)) closeMob();
+});
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const id = a.getAttribute('href');
+    const target = document.querySelector(id);
+    if (target) { e.preventDefault(); target.scrollIntoView({ behavior:'smooth', block:'start' }); closeMob(); }
+  });
+});
+
+// ── PRICING TOGGLE ──
+let priceYearly = false;
+function togglePrice() {
+  priceYearly = !priceYearly;
+  document.getElementById('pToggle').classList.toggle('yearly', priceYearly);
+  document.querySelectorAll('.price-num').forEach(el => {
+    el.textContent = priceYearly ? el.dataset.y : el.dataset.m;
+  });
+  document.querySelectorAll('.price-period').forEach(el => {
+    if (el.textContent.includes('month')) {
+      el.textContent = priceYearly ? '/month · billed yearly' : '/month · billed monthly';
+    }
+  });
+}
+
+// ── RESULT CHECKER ──
+// Demo dataset — replace with a real Django API endpoint in production
+// e.g., fetch(`/api/result/?school=${school}&symbol=${symbol}&exam=${exam}`)
+const DEMO_DATA = {
+  '11201001': { name:'Priya Sharma',  school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:96},{n:'DBMS',max:100,obt:94},{n:'Operating Systems',max:100,obt:92},{n:'Mathematics',max:100,obt:88},{n:'English',max:100,obt:85}] },
+  '11201002': { name:'Rohit Nair',    school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:75},{n:'DBMS',max:100,obt:80},{n:'Operating Systems',max:100,obt:72},{n:'Mathematics',max:100,obt:78},{n:'English',max:100,obt:70}] },
+  '11202001': { name:'Deepika Reddy', school:'ti001', dept:'Electronics',      sem:'4th Sem',  subjects:[{n:'Circuit Theory',max:100,obt:62},{n:'Microprocessors',max:100,obt:58},{n:'EM Theory',max:100,obt:60},{n:'Digital Electronics',max:100,obt:55},{n:'Communication',max:100,obt:52}] },
+  '11203001': { name:'Arun Mehta',    school:'ti002', dept:'Mechanical',       sem:'2nd Sem',  subjects:[{n:'Engineering Mechanics',max:100,obt:28},{n:'Thermodynamics',max:100,obt:35},{n:'Fluid Mechanics',max:100,obt:22},{n:'Materials Science',max:100,obt:30},{n:'Manufacturing',max:100,obt:25}] },
+  '11201003': { name:'Vikram Joshi',  school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:92},{n:'DBMS',max:100,obt:90},{n:'Operating Systems',max:100,obt:90},{n:'Mathematics',max:100,obt:88},{n:'English',max:100,obt:90}] },
+  '11204001': { name:'Sneha Patil',   school:'pc003', dept:'Business Admin',   sem:'1st Sem',  subjects:[{n:'Accounting',max:100,obt:88},{n:'Economics',max:100,obt:84},{n:'Management',max:100,obt:90},{n:'Statistics',max:100,obt:82},{n:'Business Law',max:100,obt:80}] },
+  '11201042': { name:'Priya Sharma',  school:'ghs001',dept:'Science',          sem:'3rd Sem',  subjects:[{n:'Mathematics',max:100,obt:90},{n:'Physics',max:100,obt:82},{n:'Chemistry',max:100,obt:76},{n:'English',max:100,obt:85},{n:'Computer Science',max:100,obt:92}] },
+};
+
+function calcGrade(p) {
+  if (p >= 90) return 'A+';
+  if (p >= 80) return 'A';
+  if (p >= 70) return 'B+';
+  if (p >= 60) return 'B';
+  if (p >= 50) return 'C+';
+  if (p >= 40) return 'C';
+  return 'F';
+}
+
+let currentResult = null;
+
+function checkResult(e) {
+  e.preventDefault();
+  const sym    = document.getElementById('symbolInput').value.trim();
+  const school = document.getElementById('schoolSelect').value;
+  const exam   = document.getElementById('examSelect').value;
+  const btn    = document.getElementById('checkBtn');
+
+  // Reset
+  document.getElementById('resultDisplay').style.display = 'none';
+  document.getElementById('noResultMsg').classList.remove('show');
+
+  // Loading state
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
+
+  setTimeout(() => {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-search"></i> View My Result';
+
+    const data = DEMO_DATA[sym];
+
+    if (!data) {
+      document.getElementById('noResultMsg').classList.add('show');
+      return;
+    }
+
+    // Calculate totals
+    let totMax = 0, totObt = 0;
+    data.subjects.forEach(s => { totMax += s.max; totObt += s.obt; });
+    const pct    = Math.round(totObt / totMax * 100);
+    const passed = pct >= 40;
+
+    currentResult = { ...data, sym, exam, totMax, totObt, pct, passed };
+
+    // Populate card
+    document.getElementById('roc-name').textContent    = data.name;
+    document.getElementById('roc-meta').textContent    = `Symbol: ${sym} · ${data.sem} · ${data.dept}`;
+    document.getElementById('roc-total').textContent   = totMax;
+    document.getElementById('roc-obtained').textContent= totObt;
+    document.getElementById('roc-pct').textContent     = pct + '%';
+
+    const statusEl = document.getElementById('roc-status');
+    statusEl.textContent = passed ? 'PASSED' : 'FAILED';
+    statusEl.className   = 'roc-status ' + (passed ? 'roc-pass' : 'roc-fail');
+
+    // Subject rows
+    document.getElementById('roc-subjects').innerHTML = data.subjects.map(s => {
+      const sp = Math.round(s.obt / s.max * 100);
+      return `<div class="roc-row">
+        <span class="roc-sname">${s.n}</span>
+        <div class="roc-bar"><div class="roc-bar-fill" style="width:${sp}%"></div></div>
+        <span class="roc-score">${s.obt}/${s.max} <small style="opacity:.6">(${calcGrade(sp)})</small></span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('resultDisplay').style.display = 'block';
+    document.getElementById('resultDisplay').scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }, 900);
+}
+
+function printResult() {
+  const r = currentResult;
+  if (!r) return;
+  const today = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
+  const rows = r.subjects.map((s,i) => {
+    const sp = Math.round(s.obt/s.max*100);
+    return `<tr style="background:${i%2===0?'#f8fafc':'#fff'}">
+      <td>${s.n}</td><td>${s.max}</td><td>${s.obt}</td>
+      <td>${sp}%</td><td>${calcGrade(sp)}</td>
+      <td style="color:${sp>=40?'#059669':'#e11d48'};font-weight:600">${sp>=40?'Pass':'Fail'}</td>
+    </tr>`;
+  }).join('');
+
+  const w = window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html><head><title>Result — ${r.name}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'DM Sans',sans-serif;color:#0f172a;padding:28px 32px;background:#fff}
+    .hd{background:#0a1628;color:#fff;padding:24px 28px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between}
+    .cn{font-family:'Playfair Display',serif;font-size:1.4rem}
+    .cs{font-size:.7rem;opacity:.45;margin-top:3px}
+    .badge{font-size:.7rem;font-weight:700;padding:5px 16px;border-radius:99px;background:${r.passed?'rgba(5,150,105,.25)':'rgba(225,29,72,.25)'};color:${r.passed?'#34d399':'#fca5a5'};border:1px solid ${r.passed?'rgba(52,211,153,.3)':'rgba(252,165,165,.3)'}}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #e2e8f0;border-top:none;border-radius:0}
+    .ic{padding:12px 18px;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
+    .ic:nth-child(3n){border-right:none}
+    .il{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#64748b;margin-bottom:3px}
+    .iv{font-size:.86rem;font-weight:700}
+    .body{padding:22px 0}
+    table{width:100%;border-collapse:collapse;font-size:.82rem}
+    thead tr{background:#0a1628;color:#fff}
+    th{padding:10px 14px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;text-align:left}
+    td{padding:9px 14px;border-bottom:1px solid #e2e8f0}
+    .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;background:#0a1628;border-radius:10px;padding:16px 20px;color:#fff;margin-top:20px}
+    .tv{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700}
+    .tl{font-size:.62rem;opacity:.5;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+    .footer{padding:14px 0;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:.7rem;color:#64748b;margin-top:20px}
+    .sigs{display:flex;justify-content:space-between;padding:0 20px;margin-top:40px}
+    .sig{border-top:1px solid #0a1628;padding-top:6px;font-size:.7rem;color:#64748b;text-align:center;min-width:140px}
+    @media print{body{padding:10px}@page{margin:12mm}}
+  </style>
+  </head><body>
+  <div class="hd">
+    <div><div class="cn">College of Excellence</div><div class="cs">Affiliated to State University · NAAC Accredited</div></div>
+    <div class="badge">${r.passed?'✓ PASSED':'✗ FAILED'}</div>
+  </div>
+  <div class="info-grid">
+    <div class="ic"><div class="il">Student Name</div><div class="iv">${r.name}</div></div>
+    <div class="ic"><div class="il">Symbol Number</div><div class="iv">${r.sym}</div></div>
+    <div class="ic"><div class="il">Department</div><div class="iv">${r.dept}</div></div>
+    <div class="ic"><div class="il">Semester</div><div class="iv">${r.sem}</div></div>
+    <div class="ic"><div class="il">Academic Year</div><div class="iv">2023–24</div></div>
+    <div class="ic"><div class="il">Exam Date</div><div class="iv">${today}</div></div>
+  </div>
+  <div class="body">
+    <table><thead><tr><th>Subject</th><th>Max</th><th>Obtained</th><th>%</th><th>Grade</th><th>Remarks</th></tr></thead>
+    <tbody>${rows}</tbody></table>
+  </div>
+  <div class="totals">
+    <div><div class="tv">${r.totMax}</div><div class="tl">Total Marks</div></div>
+    <div><div class="tv">${r.totObt}</div><div class="tl">Obtained</div></div>
+    <div><div class="tv">${r.pct}%</div><div class="tl">Percentage</div></div>
+  </div>
+  <div class="sigs">
+    <div class="sig">Class Teacher</div>
+    <div class="sig">Head of Department</div>
+    <div class="sig">Controller of Examinations</div>
+    <div class="sig">Principal</div>
+  </div>
+  <div class="footer">
+    <span>ResultHub — Academic Result Management System</span>
+    <span>Printed: ${today}</span>
+    <span style="font-style:italic;opacity:.6">Computer-generated document.</span>
+  </div>
+  </body></html>`);
+  w.document.close();
+  setTimeout(() => w.print(), 700);
+}
+
+// ── SCROLL REVEAL ANIMATIONS ──
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.feature-card,.step-card,.testi-card,.price-card,.why-item,.team-member-card,.stat-block').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(22px)';
+  el.style.transition = 'opacity .55s ease, transform .55s ease';
+  revealObserver.observe(el);
+});
+</script>
+</body>
+</html>
