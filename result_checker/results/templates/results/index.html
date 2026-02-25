@@ -1150,61 +1150,31 @@
           <div class="rfc-head">
             <div class="section-label"><i class="fas fa-search"></i> Student Portal</div>
             <h2>Check Your Result</h2>
-            <p>Select your school, enter your symbol number and view your result instantly — no login required.</p>
+            <p>Enter your symbol number and view your published result instantly — no login required.</p>
           </div>
 
-          <form id="resultForm" onsubmit="checkResult(event)">
-
-            <div class="form-group">
-              <label class="form-label"><i class="fas fa-school"></i> Select Your School / College</label>
-              <div class="sel-wrap">
-                <select class="form-sel" id="schoolSelect" required>
-                  <option value="">— Choose your institution —</option>
-                  <optgroup label="Government Schools">
-                    <option value="ghs001">Government Higher Secondary School, Kathmandu</option>
-                    <option value="ghs002">Government Higher Secondary School, Pokhara</option>
-                    <option value="ghs003">Bal Batika Secondary School, Lalitpur</option>
-                  </optgroup>
-                  <optgroup label="Private Colleges">
-                    <option value="pc001">Tribhuvan Multiple Campus, Tansen</option>
-                    <option value="pc002">National College of Computer Studies, Kathmandu</option>
-                    <option value="pc003">Prime College, Nayabazar</option>
-                  </optgroup>
-                  <optgroup label="Technical Institutes">
-                    <option value="ti001">Institute of Engineering, Pulchowk</option>
-                    <option value="ti002">Nepal Engineering College, Bhaktapur</option>
-                  </optgroup>
-                </select>
-              </div>
-            </div>
+          <form id="resultForm" action="{% url 'search_result' %}" method="post">
+            {% csrf_token %}
 
             <div class="form-group">
               <label class="form-label"><i class="fas fa-hashtag"></i> Symbol Number <span style="color:var(--rose)">*</span></label>
-              <input class="form-ctrl" type="text" id="symbolInput"
-                placeholder="e.g. 11201042" required maxlength="12"
-                oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label"><i class="fas fa-book-open"></i> Examination Type</label>
-              <div class="sel-wrap">
-                <select class="form-sel" id="examSelect" required>
-                  <option value="">— Select examination —</option>
-                  <option value="semester1">Semester 1</option>
-                  <option value="semester2">Semester 2</option>
-                  <option value="semester3">Semester 3</option>
-                  <option value="semester4">Semester 4</option>
-                  <option value="annual">Annual Examination</option>
-                  <option value="midterm">Mid-Term</option>
-                  <option value="back">Back Paper / Supplementary</option>
-                </select>
-              </div>
+              <input class="form-ctrl" type="text" name="symbol_number"
+                placeholder="e.g. 11201042" required maxlength="20">
             </div>
 
             <button type="submit" class="btn-check" id="checkBtn">
               <i class="fas fa-search"></i> View My Result
             </button>
           </form>
+
+          <div style="margin:12px 0 18px; font-size:.9rem; color:#334155;">
+            <strong>Schools currently publishing results:</strong>
+            {% for school in published_schools %}
+              <span style="display:inline-block;background:#eff6ff;color:#1d4ed8;padding:3px 9px;border-radius:999px;margin:6px 6px 0 0;">{{ school.school_name }}</span>
+            {% empty %}
+              <span style="color:#64748b;">No school has published results yet.</span>
+            {% endfor %}
+          </div>
 
           <div class="no-result-msg" id="noResultMsg">
             <i class="fas fa-exclamation-circle"></i>

@@ -305,16 +305,16 @@
         {% if found %}
         <!-- Header -->
 <div class="header">
-    {% if school_settings.logo %}
+    {% if school_settings and school_settings.logo %}
         <img src="{{ school_settings.logo.url }}" class="school-logo">
     {% endif %}
 
-    <div class="school-name">{{ school_settings.school_name }}</div>
+    <div class="school-name">{% if school_settings %}{{ school_settings.school_name }}{% else %}ResultHub{% endif %}</div>
 
     <div class="school-address">
-        {{ school_settings.address }} |
+        {% if school_settings %}{{ school_settings.address }} |
         Phone: {{ school_settings.phone }} |
-        Email: {{ school_settings.email }}
+        Email: {{ school_settings.email }}{% endif %}
     </div>
 
     <div class="result-heading">Academic Result Sheet</div>

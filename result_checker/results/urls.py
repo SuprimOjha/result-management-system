@@ -9,7 +9,8 @@ urlpatterns = [
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('ui', views.home, name='ui'),
     path('results/<str:symbol_number>/', views.result_detail, name='result_detail'),
-    path('login/', views.login, name='login'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
     path('signup/', views.signup, name='signup'),
 ]
 
