@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-#$%6vblr%6#^pbb*5^q$@x%i7$$6ip-dj*s)qgqd+ig=f5#y%8
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "schoooli.onrender.com",
+    "result-management-system-wn3x.onrender.com",
 ]
 
 # Application definition
