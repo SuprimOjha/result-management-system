@@ -2,15 +2,12 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.ui, name='home'),
-    path('search/', views.search_result, name='search_result'),
-    path('upload/', views.upload_excel, name='upload_excel'),
-    path('results/', views.result_list, name='result_list'),
-    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('ui', views.home, name='ui'),
-    path('results/<str:symbol_number>/', views.result_detail, name='result_detail'),
-    path('login/', views.login, name='login'),
+    path('', views.home, name='home'),
     path('signup/', views.signup, name='signup'),
+    path('verify-otp/', views.verify_otp, name='verify_otp'),
+    path('login/', views.login_view, name='login'),
+    path('logout/', views.logout_view, name='logout'),
+    path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('check-result/', views.check_result, name='check_result'),
+    path('schools/', views.get_schools, name='get_schools'),
 ]
-
-handler404 = "results.views.custom_404"

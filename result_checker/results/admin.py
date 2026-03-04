@@ -1,21 +1,13 @@
+# results/admin.py
 from django.contrib import admin
-from .models import SchoolSettings, StudentResult, ExcelUpload, TeamMember
+from .models import School, Result
 
-@admin.register(StudentResult)
-class StudentResultAdmin(admin.ModelAdmin):
-    list_display = ('symbol_number', 'full_name', 'program', 'semester', 'percentage', 'result_status')
-    list_filter = ('program', 'semester', 'result_status')
-    search_fields = ('symbol_number', 'full_name')
-    list_per_page = 20
+@admin.register(School)
+class SchoolAdmin(admin.ModelAdmin):
+    list_display = ('code', 'name')
 
-@admin.register(ExcelUpload)
-class ExcelUploadAdmin(admin.ModelAdmin):
-    list_display = ('program', 'semester', 'uploaded_at', 'excel_file')
-    list_filter = ('program', 'semester')
-    date_hierarchy = 'uploaded_at'
-
-admin.site.register(SchoolSettings)
-
-@admin.register(TeamMember)
-class TeamMemberAdmin(admin.ModelAdmin):
-    list_display = ('name', 'role')
+@admin.register(Result)
+class ResultAdmin(admin.ModelAdmin):
+    list_display = ('student_name', 'symbol_number', 'school', 'semester', 'exam_type', 'obtained_marks', 'total_marks', 'status')
+    search_fields = ('student_name', 'symbol_number', 'roll_number')
+    list_filter = ('school', 'semester', 'exam_type', 'status')

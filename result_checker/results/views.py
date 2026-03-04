@@ -1,216 +1,141 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.db.models import Q
-from .forms import ExcelUploadForm, ResultSearchForm
-from .models import SchoolSettings, StudentResult, ExcelUpload, TeamMember
-from .utils import process_excel_file
+import random
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from django.contrib.auth import login
-from django.contrib.auth.hashers import make_password
-import os
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.http import JsonResponse
+from .models import Result, School
 
-def home(request):
-    form = ResultSearchForm()
-    return render(request, 'results/home.html', {'form': form})
-
-def search_result(request):
-    if request.method == 'POST':
-        form = ResultSearchForm(request.POST)
-        if form.is_valid():
-            symbol_number = form.cleaned_data['symbol_number'].strip()
-            
-            try:
-                result = StudentResult.objects.get(symbol_number=symbol_number)
-
-                context = {
-                    'result': result,
-                    'symbol_number': symbol_number,
-                    'found': True,
-                    'school_settings': SchoolSettings.objects.first()
-                }
-
-                subjects = []
-                for i in range(1, 6):
-                    subject_name = getattr(result, f'subject_{i}', '')
-                    marks = getattr(result, f'marks_{i}', 0)
-                    grade = getattr(result, f'grade_{i}', '')
-
-                    if subject_name:
-                        subjects.append({
-                            'name': subject_name,
-                            'marks': marks,
-                            'grade': grade
-                        })
-
-                context['subjects'] = subjects
-
-            except StudentResult.DoesNotExist:
-                context = {
-                    'found': False,
-                    'symbol_number': symbol_number,
-                    'message': 'No result found for this symbol number.',
-                    'school_settings': SchoolSettings.objects.first()
-                }
-
-            return render(request, 'results/result_display.html', context)
-
-    return redirect('home')
+# ------------------ MAIN PAGE ------------------
 
 
 
-@login_required
-def upload_excel(request):
-    if request.method == 'POST' and request.FILES.get('excel_file'):
-        excel_file = request.FILES['excel_file']
-        semester = request.POST.get('semester', '')
-        program = request.POST.get('program', '')
-        
-        try:
-            # Save the uploaded file
-            upload = ExcelUpload.objects.create(
-                excel_file=excel_file,
-                semester=semester,
-                program=program
-            )
-            
-            print(f"\n{'='*60}")
-            print(f"UPLOAD DEBUG: Starting file processing")
-            print(f"File: {excel_file.name}")
-            print(f"Semester: {semester}")
-            print(f"Program: {program}")
-            print(f"File saved at: {upload.excel_file.path}")
-            print(f"{'='*60}\n")
-            
-            # Process the Excel file
-            records_processed = process_excel_file(
-                upload.excel_file.path,
-                semester,
-                program
-            )
-            
-            messages.success(request, f'Successfully processed {records_processed} records!')
-            
-            # Show summary in console
-            print(f"\n{'='*60}")
-            print(f"UPLOAD SUMMARY")
-            print(f"Records processed: {records_processed}")
-            print(f"{'='*60}")
-            
-            return redirect('upload_excel')
-            
-        except Exception as e:
-            error_msg = f'Error: {str(e)}'
-            print(f"\n❌ UPLOAD ERROR: {error_msg}")
-            messages.error(request, error_msg)
-    
-    uploads = ExcelUpload.objects.all().order_by('-uploaded_at')[:10]
-    return render(request, 'results/upload_excel.html', {'uploads': uploads})
 
-
-@login_required
-def result_list(request):
-    search_query = request.GET.get('search', '')
-    
-    if search_query:
-        results = StudentResult.objects.filter(
-            Q(symbol_number__icontains=search_query) |
-            Q(full_name__icontains=search_query) |
-            Q(program__icontains=search_query)
-        )
-    else:
-        results = StudentResult.objects.all()
-    
-    return render(request, 'results/result_list.html', {
-        'results': results,
-        'search_query': search_query
-    })
-
-
-@login_required
-def result_detail(request, symbol_number):
-    result = get_object_or_404(StudentResult, symbol_number=symbol_number)
-    
-    # Get all subjects
-    subjects = []
-    for i in range(1, 6):
-        subject_name = getattr(result, f'subject_{i}', '')
-        if subject_name:
-            subjects.append({
-                'name': subject_name,
-                'marks': getattr(result, f'marks_{i}', 0),
-                'grade': getattr(result, f'grade_{i}', '')
-            })
-    
-    return render(request, 'results/result_detail.html', {
-        'result': result,
-        'subjects': subjects,
-        'school_settings': SchoolSettings.objects.first()
-    })
-
-def ui(request):
-    team_members = TeamMember.objects.all()
-    
-    # Get school settings (assuming you have only one)
-    school_settings = SchoolSettings.objects.first()  # returns None if not set
-
-    context = {
-        'team_members': team_members,
-        'school_settings': school_settings,  # pass to template
-    }
-    return render(request, 'results/index.html', context)
-
-def custom_404(request, exception):
-    return render(request, "results/404.html", status=404)
-
-@login_required
-def admin_dashboard(request):
-    return render(request, "results/admin_dashboard.html")
+# ------------------ SIGNUP ------------------
 
 def signup(request):
     if request.method == "POST":
-        school_name = request.POST.get("school_name")
         email = request.POST.get("email")
         password = request.POST.get("password")
-        confirm_password = request.POST.get("confirm_password")
-
-        if password != confirm_password:
-            messages.error(request, "Passwords do not match")
-            return redirect("signup")
 
         if User.objects.filter(username=email).exists():
             messages.error(request, "Email already registered")
             return redirect("signup")
 
-        # Create user
-        user = User.objects.create(
-            username=email,
-            email=email,
-            password=make_password(password)
+        otp = random.randint(100000, 999999)
+
+        request.session["signup_email"] = email
+        request.session["signup_password"] = password
+        request.session["signup_otp"] = otp
+
+        send_mail(
+            "Your OTP Code",
+            f"Your OTP for account verification is: {otp}",
+            settings.EMAIL_HOST_USER,
+            [email],
+            fail_silently=False,
         )
 
-        # Optional: store school_name in profile later
-        login(request, user)
-
-        return redirect("admin_panel")
+        return redirect("verify_otp")
 
     return render(request, "results/signup.html")
 
-from django.contrib.auth import authenticate, login
 
-def login(request):
+# ------------------ VERIFY OTP ------------------
+
+def verify_otp(request):
+    if request.method == "POST":
+        entered_otp = request.POST.get("otp")
+        saved_otp = request.session.get("signup_otp")
+
+        if str(entered_otp) == str(saved_otp):
+            email = request.session.get("signup_email")
+            password = request.session.get("signup_password")
+
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password
+            )
+
+            login(request, user)
+
+            # Clear session
+            request.session.flush()
+
+            return redirect("admin_dashboard")
+
+        else:
+            messages.error(request, "Invalid OTP")
+
+    return render(request, "results/verify_otp.html")
+
+
+# ------------------ LOGIN ------------------
+
+def login_view(request):
     if request.method == "POST":
         email = request.POST.get("email")
         password = request.POST.get("password")
 
         user = authenticate(request, username=email, password=password)
 
-        if user is not None:
+        if user:
             login(request, user)
-            return redirect("admin_panel")
+            return redirect("admin_dashboard")
         else:
-            messages.error(request, "Invalid email or password")
-            return redirect("login")
+            messages.error(request, "Invalid credentials")
 
     return render(request, "results/login.html")
+
+
+# ------------------ LOGOUT ------------------
+
+def logout_view(request):
+    logout(request)
+    return redirect("home")
+
+
+# ------------------ ADMIN DASHBOARD ------------------
+
+@login_required
+def admin_dashboard(request):
+    return render(request, "results/admin_dashboard.html")
+
+
+def home(request):
+    # send schools to populate the dropdown
+    schools = School.objects.all()
+    return render(request, 'results/index.html', {'schools': schools})
+
+def get_schools(request):
+    schools = list(School.objects.values('code', 'name'))
+    return JsonResponse({'schools': schools})
+
+def check_result(request):
+    symbol = request.GET.get('symbol')
+    school_code = request.GET.get('school')
+    exam_type = request.GET.get('exam')
+
+    try:
+        school = School.objects.get(code=school_code)
+        # get the result entered by admin
+        result = Result.objects.get(symbol_number=symbol, school=school, exam_type=exam_type)
+        data = {
+            "name": result.student_name,
+            "roll": result.roll_number,
+            "symbol": result.symbol_number,
+            "department": result.department,
+            "semester": result.semester,
+            "total": result.total_marks,
+            "obtained": result.obtained_marks,
+            "grade": result.grade,
+            "status": result.status
+        }
+        return JsonResponse({"success": True, "result": data})
+    except (School.DoesNotExist, Result.DoesNotExist):
+        return JsonResponse({"success": False})

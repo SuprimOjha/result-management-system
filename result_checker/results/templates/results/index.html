@@ -999,7 +999,7 @@
 
       <a href="#" class="logo">
         <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-        Schooli
+        Schoooli
       </a>
 
       <ul class="nav-links">
@@ -1818,7 +1818,7 @@
     </div>
 
     <div class="footer-bottom">
-      <p>&copy; 2026 ResultHub. All rights reserved. Made with <i class="fas fa-heart" style="color:var(--rose);font-size:.72rem"></i> for educators.</p>
+      <p>&copy; 2026 ResultHub. All rights reserved. Made by Result-Management-System Group.</p>
       <div class="footer-badges">
         <div class="footer-badge"><i class="fas fa-shield-alt"></i> SSL Secured</div>
         <div class="footer-badge"><i class="fas fa-lock"></i> GDPR Compliant</div>
@@ -1828,81 +1828,9 @@
 </footer>
 
 <script src="{% static 'script.js' %}"></script>
-<script>
-/* ══════════════════════════════════════════
-   RESULTHUB — INLINE JAVASCRIPT
-══════════════════════════════════════════ */
-
-// ── NAVBAR SCROLL ──
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
-});
-
-// ── MOBILE MENU ──
-const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-const mobileDrawer  = document.getElementById('mobileDrawer');
-let menuOpen = false;
-
-mobileMenuBtn.addEventListener('click', () => {
-  menuOpen = !menuOpen;
-  mobileDrawer.classList.toggle('open', menuOpen);
-  const spans = mobileMenuBtn.querySelectorAll('span');
-  if (menuOpen) {
-    spans[0].style.cssText = 'transform:rotate(45deg) translate(5px,5px)';
-    spans[1].style.cssText = 'opacity:0;transform:scaleX(0)';
-    spans[2].style.cssText = 'transform:rotate(-45deg) translate(5px,-5px)';
-  } else {
-    spans.forEach(s => s.style.cssText = '');
-  }
-});
-
-function closeMob() {
-  menuOpen = false;
-  mobileDrawer.classList.remove('open');
-  mobileMenuBtn.querySelectorAll('span').forEach(s => s.style.cssText = '');
-}
-
-// Close drawer on outside click
-document.addEventListener('click', e => {
-  if (menuOpen && !mobileDrawer.contains(e.target) && !mobileMenuBtn.contains(e.target)) closeMob();
-});
-
-// ── SMOOTH SCROLL ──
-document.querySelectorAll('a[href^="#"]').forEach(a => {
-  a.addEventListener('click', e => {
-    const id = a.getAttribute('href');
-    const target = document.querySelector(id);
-    if (target) { e.preventDefault(); target.scrollIntoView({ behavior:'smooth', block:'start' }); closeMob(); }
-  });
-});
-
-// ── PRICING TOGGLE ──
-let priceYearly = false;
-function togglePrice() {
-  priceYearly = !priceYearly;
-  document.getElementById('pToggle').classList.toggle('yearly', priceYearly);
-  document.querySelectorAll('.price-num').forEach(el => {
-    el.textContent = priceYearly ? el.dataset.y : el.dataset.m;
-  });
-  document.querySelectorAll('.price-period').forEach(el => {
-    if (el.textContent.includes('month')) {
-      el.textContent = priceYearly ? '/month · billed yearly' : '/month · billed monthly';
-    }
-  });
-}
-
-// ── RESULT CHECKER ──
-// Demo dataset — replace with a real Django API endpoint in production
-// e.g., fetch(`/api/result/?school=${school}&symbol=${symbol}&exam=${exam}`)
-const DEMO_DATA = {
-  '11201001': { name:'Priya Sharma',  school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:96},{n:'DBMS',max:100,obt:94},{n:'Operating Systems',max:100,obt:92},{n:'Mathematics',max:100,obt:88},{n:'English',max:100,obt:85}] },
-  '11201002': { name:'Rohit Nair',    school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:75},{n:'DBMS',max:100,obt:80},{n:'Operating Systems',max:100,obt:72},{n:'Mathematics',max:100,obt:78},{n:'English',max:100,obt:70}] },
-  '11202001': { name:'Deepika Reddy', school:'ti001', dept:'Electronics',      sem:'4th Sem',  subjects:[{n:'Circuit Theory',max:100,obt:62},{n:'Microprocessors',max:100,obt:58},{n:'EM Theory',max:100,obt:60},{n:'Digital Electronics',max:100,obt:55},{n:'Communication',max:100,obt:52}] },
-  '11203001': { name:'Arun Mehta',    school:'ti002', dept:'Mechanical',       sem:'2nd Sem',  subjects:[{n:'Engineering Mechanics',max:100,obt:28},{n:'Thermodynamics',max:100,obt:35},{n:'Fluid Mechanics',max:100,obt:22},{n:'Materials Science',max:100,obt:30},{n:'Manufacturing',max:100,obt:25}] },
-  '11201003': { name:'Vikram Joshi',  school:'pc002', dept:'Computer Science', sem:'3rd Sem',  subjects:[{n:'Data Structures',max:100,obt:92},{n:'DBMS',max:100,obt:90},{n:'Operating Systems',max:100,obt:90},{n:'Mathematics',max:100,obt:88},{n:'English',max:100,obt:90}] },
-  '11204001': { name:'Sneha Patil',   school:'pc003', dept:'Business Admin',   sem:'1st Sem',  subjects:[{n:'Accounting',max:100,obt:88},{n:'Economics',max:100,obt:84},{n:'Management',max:100,obt:90},{n:'Statistics',max:100,obt:82},{n:'Business Law',max:100,obt:80}] },
-  '11201042': { name:'Priya Sharma',  school:'ghs001',dept:'Science',          sem:'3rd Sem',  subjects:[{n:'Mathematics',max:100,obt:90},{n:'Physics',max:100,obt:82},{n:'Chemistry',max:100,obt:76},{n:'English',max:100,obt:85},{n:'Computer Science',max:100,obt:92}] },
-};
+<script>// ── RESULT CHECKER ──
+// Replaces DEMO_DATA with real Django API call
+let currentResult = null;
 
 function calcGrade(p) {
   if (p >= 90) return 'A+';
@@ -1914,9 +1842,7 @@ function calcGrade(p) {
   return 'F';
 }
 
-let currentResult = null;
-
-function checkResult(e) {
+async function checkResult(e) {
   e.preventDefault();
   const sym    = document.getElementById('symbolInput').value.trim();
   const school = document.getElementById('schoolSelect').value;
@@ -1926,43 +1852,68 @@ function checkResult(e) {
   // Reset
   document.getElementById('resultDisplay').style.display = 'none';
   document.getElementById('noResultMsg').classList.remove('show');
+// Populate school select dynamically
+async function loadSchools() {
+  const schoolSelect = document.getElementById('schoolSelect');
+  try {
+    const res = await fetch('/schools/');
+    const data = await res.json();
+    schoolSelect.innerHTML = '<option value="">Select School</option>'; // default
+    data.schools.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value = s.code;
+      opt.textContent = s.name;
+      schoolSelect.appendChild(opt);
+    });
+  } catch (err) {
+    console.error('Failed to load schools:', err);
+  }
+}
 
+// Call on page load
+window.addEventListener('DOMContentLoaded', loadSchools);
   // Loading state
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
 
-  setTimeout(() => {
+  try {
+    // Fetch from Django API
+    const response = await fetch(`/check-result/?school=${school}&symbol=${sym}&exam=${exam}`);
+    const data = await response.json();
+
     btn.disabled = false;
     btn.innerHTML = '<i class="fas fa-search"></i> View My Result';
 
-    const data = DEMO_DATA[sym];
-
-    if (!data) {
+    if (!data.success) {
       document.getElementById('noResultMsg').classList.add('show');
       return;
     }
 
-    // Calculate totals
+    const r = data.result;
+
+    // If your backend also provides subject-wise details, use them; otherwise, you can add a separate API for subjects
+    const subjects = r.subjects || []; // fallback to empty array
+
     let totMax = 0, totObt = 0;
-    data.subjects.forEach(s => { totMax += s.max; totObt += s.obt; });
+    subjects.forEach(s => { totMax += s.max; totObt += s.obt; });
     const pct    = Math.round(totObt / totMax * 100);
     const passed = pct >= 40;
 
-    currentResult = { ...data, sym, exam, totMax, totObt, pct, passed };
+    currentResult = { ...r, sym, exam, totMax, totObt, pct, passed, subjects };
 
     // Populate card
-    document.getElementById('roc-name').textContent    = data.name;
-    document.getElementById('roc-meta').textContent    = `Symbol: ${sym} · ${data.sem} · ${data.dept}`;
-    document.getElementById('roc-total').textContent   = totMax;
-    document.getElementById('roc-obtained').textContent= totObt;
-    document.getElementById('roc-pct').textContent     = pct + '%';
+    document.getElementById('roc-name').textContent     = r.name;
+    document.getElementById('roc-meta').textContent     = `Symbol: ${sym} · ${r.semester} · ${r.department}`;
+    document.getElementById('roc-total').textContent    = totMax;
+    document.getElementById('roc-obtained').textContent = totObt;
+    document.getElementById('roc-pct').textContent      = pct + '%';
 
     const statusEl = document.getElementById('roc-status');
     statusEl.textContent = passed ? 'PASSED' : 'FAILED';
     statusEl.className   = 'roc-status ' + (passed ? 'roc-pass' : 'roc-fail');
 
     // Subject rows
-    document.getElementById('roc-subjects').innerHTML = data.subjects.map(s => {
+    document.getElementById('roc-subjects').innerHTML = subjects.map(s => {
       const sp = Math.round(s.obt / s.max * 100);
       return `<div class="roc-row">
         <span class="roc-sname">${s.n}</span>
@@ -1973,105 +1924,12 @@ function checkResult(e) {
 
     document.getElementById('resultDisplay').style.display = 'block';
     document.getElementById('resultDisplay').scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }, 900);
-}
-
-function printResult() {
-  const r = currentResult;
-  if (!r) return;
-  const today = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'long', year:'numeric' });
-  const rows = r.subjects.map((s,i) => {
-    const sp = Math.round(s.obt/s.max*100);
-    return `<tr style="background:${i%2===0?'#f8fafc':'#fff'}">
-      <td>${s.n}</td><td>${s.max}</td><td>${s.obt}</td>
-      <td>${sp}%</td><td>${calcGrade(sp)}</td>
-      <td style="color:${sp>=40?'#059669':'#e11d48'};font-weight:600">${sp>=40?'Pass':'Fail'}</td>
-    </tr>`;
-  }).join('');
-
-  const w = window.open('','_blank');
-  w.document.write(`<!DOCTYPE html><html><head><title>Result — ${r.name}</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;600;700&display=swap" rel="stylesheet">
-  <style>
-    *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:'DM Sans',sans-serif;color:#0f172a;padding:28px 32px;background:#fff}
-    .hd{background:#0a1628;color:#fff;padding:24px 28px;border-radius:10px 10px 0 0;display:flex;align-items:center;justify-content:space-between}
-    .cn{font-family:'Playfair Display',serif;font-size:1.4rem}
-    .cs{font-size:.7rem;opacity:.45;margin-top:3px}
-    .badge{font-size:.7rem;font-weight:700;padding:5px 16px;border-radius:99px;background:${r.passed?'rgba(5,150,105,.25)':'rgba(225,29,72,.25)'};color:${r.passed?'#34d399':'#fca5a5'};border:1px solid ${r.passed?'rgba(52,211,153,.3)':'rgba(252,165,165,.3)'}}
-    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #e2e8f0;border-top:none;border-radius:0}
-    .ic{padding:12px 18px;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0}
-    .ic:nth-child(3n){border-right:none}
-    .il{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:#64748b;margin-bottom:3px}
-    .iv{font-size:.86rem;font-weight:700}
-    .body{padding:22px 0}
-    table{width:100%;border-collapse:collapse;font-size:.82rem}
-    thead tr{background:#0a1628;color:#fff}
-    th{padding:10px 14px;font-size:.68rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;text-align:left}
-    td{padding:9px 14px;border-bottom:1px solid #e2e8f0}
-    .totals{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;background:#0a1628;border-radius:10px;padding:16px 20px;color:#fff;margin-top:20px}
-    .tv{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700}
-    .tl{font-size:.62rem;opacity:.5;text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
-    .footer{padding:14px 0;border-top:1px solid #e2e8f0;display:flex;justify-content:space-between;font-size:.7rem;color:#64748b;margin-top:20px}
-    .sigs{display:flex;justify-content:space-between;padding:0 20px;margin-top:40px}
-    .sig{border-top:1px solid #0a1628;padding-top:6px;font-size:.7rem;color:#64748b;text-align:center;min-width:140px}
-    @media print{body{padding:10px}@page{margin:12mm}}
-  </style>
-  </head><body>
-  <div class="hd">
-    <div><div class="cn">College of Excellence</div><div class="cs">Affiliated to State University · NAAC Accredited</div></div>
-    <div class="badge">${r.passed?'✓ PASSED':'✗ FAILED'}</div>
-  </div>
-  <div class="info-grid">
-    <div class="ic"><div class="il">Student Name</div><div class="iv">${r.name}</div></div>
-    <div class="ic"><div class="il">Symbol Number</div><div class="iv">${r.sym}</div></div>
-    <div class="ic"><div class="il">Department</div><div class="iv">${r.dept}</div></div>
-    <div class="ic"><div class="il">Semester</div><div class="iv">${r.sem}</div></div>
-    <div class="ic"><div class="il">Academic Year</div><div class="iv">2023–24</div></div>
-    <div class="ic"><div class="il">Exam Date</div><div class="iv">${today}</div></div>
-  </div>
-  <div class="body">
-    <table><thead><tr><th>Subject</th><th>Max</th><th>Obtained</th><th>%</th><th>Grade</th><th>Remarks</th></tr></thead>
-    <tbody>${rows}</tbody></table>
-  </div>
-  <div class="totals">
-    <div><div class="tv">${r.totMax}</div><div class="tl">Total Marks</div></div>
-    <div><div class="tv">${r.totObt}</div><div class="tl">Obtained</div></div>
-    <div><div class="tv">${r.pct}%</div><div class="tl">Percentage</div></div>
-  </div>
-  <div class="sigs">
-    <div class="sig">Class Teacher</div>
-    <div class="sig">Head of Department</div>
-    <div class="sig">Controller of Examinations</div>
-    <div class="sig">Principal</div>
-  </div>
-  <div class="footer">
-    <span>ResultHub — Academic Result Management System</span>
-    <span>Printed: ${today}</span>
-    <span style="font-style:italic;opacity:.6">Computer-generated document.</span>
-  </div>
-  </body></html>`);
-  w.document.close();
-  setTimeout(() => w.print(), 700);
-}
-
-// ── SCROLL REVEAL ANIMATIONS ──
-const revealObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = 'translateY(0)';
-      revealObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-document.querySelectorAll('.feature-card,.step-card,.testi-card,.price-card,.why-item,.team-member-card,.stat-block').forEach(el => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(22px)';
-  el.style.transition = 'opacity .55s ease, transform .55s ease';
-  revealObserver.observe(el);
-});
-</script>
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-search"></i> View My Result';
+    document.getElementById('noResultMsg').classList.add('show');
+    console.error('Error fetching result:', err);
+  }
+}</script>
 </body>
 </html>
