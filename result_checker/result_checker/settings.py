@@ -24,10 +24,12 @@ SECRET_KEY = 'django-insecure-#$%6vblr%6#^pbb*5^q$@x%i7$$6ip-dj*s)qgqd+ig=f5#y%8
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
-    "schoooli.onrender.com",  # Render default URL
+    "schoooli.onrender.com",
+      "suprimojha.com.np", 
+       "*", # Render default URL
 ]
 
 # Application definition
