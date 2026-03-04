@@ -128,16 +128,16 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os
-
-# Static files
-STATIC_URL = "static/"
+STATIC_URL = '/static/'# Path to static files you are actively developing
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static",
+    BASE_DIR / "result_checker" / "static",  # your development folder
 ]
 
+# Path where static files will be collected for production
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STATIC_URL = '/static/'
 # Media files
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
