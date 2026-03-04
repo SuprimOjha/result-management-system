@@ -23,10 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-#$%6vblr%6#^pbb*5^q$@x%i7$$6ip-dj*s)qgqd+ig=f5#y%8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+DEBUG = False
 
+ALLOWED_HOSTS = [
+    "schoooli.onrender.com",  # Render default URL
+]
 
 # Application definition
 
@@ -148,5 +150,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'lolo'
-EMAIL_HOST_PASSWORD = 'xyz'
+EMAIL_HOST_USER = 'suprimojha25@gmail.com'
+EMAIL_HOST_PASSWORD = 'ldjx hgei laai ztpl'
