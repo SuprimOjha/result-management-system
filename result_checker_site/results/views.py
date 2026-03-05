@@ -76,7 +76,10 @@ def signup(request):
 
 def verify_otp(request):
     if request.method == "POST":
-        entered_otp = request.POST.get("otp")
+        # Reconstruct OTP from individual digit inputs
+        otp_digits = [request.POST.get(f'd{i}', '') for i in range(1, 7)]
+        entered_otp = ''.join(otp_digits)
+        
         saved_otp = request.session.get("signup_otp")
 
         if str(entered_otp) == str(saved_otp):
