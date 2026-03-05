@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% csrf_token %}
+<meta name="csrf-token" content="{{ csrf_token }}">
 <title>Academia — College Result Management</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -183,6 +185,17 @@ body {
 .topbar-crumb { font-size: .7rem; color: var(--text-muted); }
 
 .topbar-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+.school-select {
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--white);
+  color: var(--text);
+  font-size: .8rem;
+  cursor: pointer;
+}
+.school-select:focus { outline: none; border-color: var(--blue); }
 
 .role-badge {
   background: var(--blue-muted);
@@ -930,9 +943,23 @@ table.data-tbl { width: 100%; border-collapse: collapse; min-width: 600px; }
     <button class="hamburger" onclick="toggleSb()"><i class="fas fa-bars"></i></button>
     <div>
       <div class="topbar-title">Result Management System</div>
-      <div class="topbar-crumb" id="tbCrumb">Dashboard</div>
+      {% if school %}
+      <div class="topbar-crumb" id="tbCrumb">School: {{ school.name }}</div>
+      {% else %}
+      <div class="topbar-crumb" id="tbCrumb">No School Assigned</div>
+      {% endif %}
     </div>
     <div class="topbar-right">
+      {% if school %}
+        <span class="school-select" style="padding:6px 10px;border:1px solid var(--border);border-radius:6px;background:var(--white);color:var(--text);font-size:.8rem;">{{ school.name }}</span>
+      {% else %}
+        <select id="schoolSelector" class="school-select" onchange="setSchool(this.value)" data-selected="{% if school %}{{ school.id }}{% endif %}">
+          <option value="">Select School</option>
+          {% for sch in schools %}
+          <option value="{{ sch.id }}" {% if school and school.id == sch.id %}selected{% endif %}>{{ sch.name }}</option>
+          {% endfor %}
+        </select>
+      {% endif %}
       <div class="role-badge"><i class="fas fa-shield-alt"></i> Admin</div>
       <div class="topbar-divider"></div>
       <div class="tb-icon-btn" title="Notifications">
@@ -1000,6 +1027,21 @@ table.data-tbl { width: 100%; border-collapse: collapse; min-width: 600px; }
           </div>
           <div class="stat-icon si-amber"><i class="fas fa-chart-line"></i></div>
         </div>
+      </div>
+
+      <!-- Manage Schools -->
+      <div class="card">
+        <div class="card-hd">
+          <div class="card-hd-l">
+            <div class="card-ico ci-blue"><i class="fas fa-school"></i></div>
+            <div>
+              <div class="card-title">Manage Schools</div>
+              <div class="card-sub">Add new schools to the system</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+       
       </div>
 
       <div class="dash-grid">
@@ -1369,7 +1411,165 @@ let filtered = [];     // view tab filtered
 let viewPage   = 1; const perPage = 12;
 let prevPage   = 1; const prevPerPage = 10;
 
-// ═══════════════════ SIDEBAR ═══════════════════
+// ═══════════════════ CSRF TOKEN ─────────────────────
+function getCsrfToken() {
+  return document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+         document.querySelector('meta[name="csrf-token"]')?.content || '';
+}
+
+// ═══════════════════ API FUNCTIONS ─────────────────────
+async function loadResultsFromDB() {
+  try {
+    const response = await fetch('/api/results/', {
+      method: 'GET',
+      credentials: 'same-origin'
+    });
+    const data = await response.json();
+    if (data.success) {
+      DB = data.results || [];
+      updateTabCount();
+      refreshDash();
+      toast(`Loaded ${DB.length} results from database`, 'ok');
+    } else {
+      console.error('Failed to load results:', data.error);
+    }
+  } catch (error) {
+    console.error('Error loading results:', error);
+  }
+}
+
+async function saveResultToAPI(resultObj) {
+  try {
+    const response = await fetch('/api/results/save/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify(resultObj)
+    });
+    const data = await response.json();
+    return data.success;
+  } catch (error) {
+    console.error('Error saving result:', error);
+    return false;
+  }
+}
+
+async function bulkSaveResultsToAPI(resultsArray) {
+  try {
+    const response = await fetch('/api/results/bulk-save/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({ results: resultsArray })
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error bulk saving results:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+async function deleteResultFromAPI(resultId) {
+  try {
+    const response = await fetch(`/api/results/delete/${resultId}/`, {
+      method: 'POST',
+      headers: {
+        'X-CSRFToken': getCsrfToken()
+      },
+      credentials: 'same-origin'
+    });
+    const data = await response.json();
+    return data.success;
+  } catch (error) {
+    console.error('Error deleting result:', error);
+    return false;
+  }
+}
+
+// ═══════════════════ SET SCHOOL ═════════───────
+async function setSchool(schoolId) {
+  if (!schoolId) return;
+  try {
+    const response = await fetch('/api/set-school/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      body: JSON.stringify({ school_id: schoolId })
+    });
+    const data = await response.json();
+    if (data.success) {
+      toast('School updated successfully', 'ok');
+      location.reload(); // Reload to update the display
+    } else {
+      toast('Failed to update school', 'error');
+    }
+  } catch (error) {
+    console.error('Error setting school:', error);
+    toast('Error updating school', 'error');
+  }
+}
+
+// ═══════════════════ ADD SCHOOL ═════════──────
+async function addSchool() {
+  const name = document.getElementById('newSchoolName').value.trim();
+  if (!name) {
+    toast('Please enter a school name', 'error');
+    return;
+  }
+  try {
+    const response = await fetch('/api/add-school/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCsrfToken()
+      },
+      body: JSON.stringify({ name: name })
+    });
+    const data = await response.json();
+    if (data.success) {
+      toast('School added successfully', 'ok');
+      document.getElementById('newSchoolName').value = '';
+      // Refresh the school selector
+      loadSchoolsForSelector();
+    } else {
+      toast('Failed to add school', 'error');
+    }
+  } catch (error) {
+    console.error('Error adding school:', error);
+    toast('Error adding school', 'error');
+  }
+}
+
+async function loadSchoolsForSelector() {
+  try {
+    const response = await fetch('/schools/');
+    const data = await response.json();
+    const selector = document.getElementById('schoolSelector');
+    selector.innerHTML = '<option value="">Select School</option>';
+    data.schools.forEach(school => {
+      const option = document.createElement('option');
+      option.value = school.id;
+      option.textContent = school.name;
+      if (school.id == selector.dataset.selected) {
+        option.selected = true;
+      }
+      selector.appendChild(option);
+    });
+  } catch (error) {
+    console.error('Error loading schools:', error);
+  }
+}
+
+// ═══════════════════ SIDEBAR ═════════────────────
 function toggleSb() {
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('sbOverlay').classList.toggle('active');
@@ -1384,7 +1584,7 @@ function setNav(el) {
   if (window.innerWidth <= 768) closeSb();
 }
 
-// ═══════════════════ TABS ═══════════════════
+// ═══════════════════ TABS ═════════────────────
 const tabs = ['dash','upload','manual','view','marksheet'];
 const crumbs = { dash:'Dashboard', upload:'Upload Results', manual:'Manual Entry', view:'View All Results', marksheet:'Marksheets' };
 
@@ -1398,7 +1598,7 @@ function switchTab(id) {
   if (id === 'dash') refreshDash();
 }
 
-// ═══════════════════ TOAST ═══════════════════
+// ═══════════════════ TOAST ═════════────────────
 function toast(msg, type='ok') {
   const icons = { ok:'fa-circle-check', err:'fa-circle-exclamation', info:'fa-circle-info' };
   const t = document.createElement('div');
@@ -1408,13 +1608,13 @@ function toast(msg, type='ok') {
   setTimeout(() => t.remove(), 3400);
 }
 
-// ═══════════════════ HELPERS ═══════════════════
+// ═══════════════════ HELPERS ═════════────────────
 const pct  = (obt, tot)  => tot ? Math.round(obt / tot * 100) : 0;
 const grade = p => p>=90?'A': p>=75?'B': p>=55?'C': p>=40?'D':'F';
 const gradeClass = g => `g-${g}`;
 const status = p => p >= 40 ? 'Pass' : 'Fail';
 
-// ═══════════════════ UPLOAD ═══════════════════
+// ═══════════════════ UPLOAD ═════════────────────
 const uzone = document.getElementById('uploadZone');
 uzone.addEventListener('dragover', e => { e.preventDefault(); uzone.classList.add('over'); });
 uzone.addEventListener('dragleave', () => uzone.classList.remove('over'));
@@ -1505,13 +1705,25 @@ function renderPreview() {
   }
 }
 
-function confirmImport() {
+async function confirmImport() {
   if (!preview.length) return;
-  DB = [...DB, ...preview];
-  updateTabCount();
-  clearUpload(); refreshDash();
-  toast(`${preview.length} results imported successfully!`, 'ok');
-  switchTab('view');
+  
+  // Save to database via API
+  const result = await bulkSaveResultsToAPI(preview);
+  if (result.success) {
+    DB = [...DB, ...preview];
+    updateTabCount();
+    clearUpload(); 
+    refreshDash();
+    toast(`${result.created} new records imported, ${result.updated} updated!`, 'ok');
+    if (result.errors && result.errors.length > 0) {
+      toast(`⚠️ ${result.errors.length} warnings - check console`, 'info');
+      console.warn('Import warnings:', result.errors);
+    }
+    switchTab('view');
+  } else {
+    toast(`Import failed: ${result.error}`, 'err');
+  }
 }
 
 function clearUpload() {
@@ -1613,18 +1825,32 @@ function buildManualObj() {
   return { name, roll, symbol, dept, sem, year, examType, total:totMax, obtained:totObt, pct:p, grade:grade(p), status:status(p), subjects };
 }
 
-function saveManual() {
+async function saveManual() {
   const obj = buildManualObj(); if (!obj) return;
-  DB.push(obj); updateTabCount(); refreshDash();
-  toast(`Result for ${obj.name} saved!`, 'ok');
-  clearManual();
+  
+  // Save to database via API
+  const saved = await saveResultToAPI(obj);
+  if (saved) {
+    DB.push(obj); updateTabCount(); refreshDash();
+    toast(`Result for ${obj.name} saved!`, 'ok');
+    clearManual();
+  } else {
+    toast('Failed to save result. Please try again.', 'err');
+  }
 }
 
-function saveAndNext() {
+async function saveAndNext() {
   const obj = buildManualObj(); if (!obj) return;
-  DB.push(obj); updateTabCount(); refreshDash();
-  toast(`Saved! Enter the next record.`, 'ok');
-  clearManual();
+  
+  // Save to database via API
+  const saved = await saveResultToAPI(obj);
+  if (saved) {
+    DB.push(obj); updateTabCount(); refreshDash();
+    toast(`Saved! Enter the next record.`, 'ok');
+    clearManual();
+  } else {
+    toast('Failed to save result. Please try again.', 'err');
+  }
 }
 
 function clearManual() {
@@ -1700,10 +1926,25 @@ function renderView() {
 
 function toggleAll(cb) { document.querySelectorAll('.row-chk').forEach(c=>c.checked=cb.checked); }
 
-function delResult(idx) {
+async function delResult(idx) {
   if (!confirm('Delete this result? This cannot be undone.')) return;
-  DB.splice(idx,1); filtered=[...DB]; updateTabCount(); refreshDash(); renderView();
-  toast('Result deleted.', 'info');
+  
+  const result = DB[idx];
+  
+  // Delete from database via API if it has an ID
+  if (result.id) {
+    const deleted = await deleteResultFromAPI(result.id);
+    if (deleted) {
+      DB.splice(idx,1); filtered=[...DB]; updateTabCount(); refreshDash(); renderView();
+      toast('Result deleted.', 'info');
+    } else {
+      toast('Failed to delete result. Please try again.', 'err');
+    }
+  } else {
+    // If no ID (in-memory only), just delete from local array
+    DB.splice(idx,1); filtered=[...DB]; updateTabCount(); refreshDash(); renderView();
+    toast('Result deleted.', 'info');
+  }
 }
 
 // ═══════════════════ EDIT MODAL ═══════════════════
@@ -2036,11 +2277,27 @@ const seed = [
   {name:'Vikram Joshi',roll:'2022CS003',symbol:'11201003',dept:'Computer Science',sem:'3rd Sem',year:'2023–24',examType:'Final Examination',total:600,obtained:540,pct:90,grade:'A',status:'Pass',subjects:[{name:'Data Structures',max:100,obt:92},{name:'DBMS',max:100,obt:90},{name:'OS',max:100,obt:90},{name:'Computer Networks',max:100,obt:88},{name:'Mathematics',max:100,obt:90},{name:'English',max:100,obt:90}]},
 ];
 
-DB = [...seed];
-filtered = [...DB];
-updateTabCount();
-refreshDash();
-initSubjects();
+// Initialize: Load from database or use seed data
+async function initializeDashboard() {
+  try {
+    await loadResultsFromDB();
+    await loadSchoolsForSelector();
+  } catch (error) {
+    console.warn('Could not load from database, using sample data:', error);
+    DB = [...seed];
+    filtered = [...DB];
+    updateTabCount();
+    refreshDash();
+  }
+  initSubjects();
+}
+
+// Start initialization when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeDashboard);
+} else {
+  initializeDashboard();
+}
 </script>
 
 </body>

@@ -1159,21 +1159,7 @@
               <label class="form-label"><i class="fas fa-school"></i> Select Your School / College</label>
               <div class="sel-wrap">
                 <select class="form-sel" id="schoolSelect" required>
-                  <option value="">— Choose your institution —</option>
-                  <optgroup label="Government Schools">
-                    <option value="ghs001">Government Higher Secondary School, Kathmandu</option>
-                    <option value="ghs002">Government Higher Secondary School, Pokhara</option>
-                    <option value="ghs003">Bal Batika Secondary School, Lalitpur</option>
-                  </optgroup>
-                  <optgroup label="Private Colleges">
-                    <option value="pc001">Tribhuvan Multiple Campus, Tansen</option>
-                    <option value="pc002">National College of Computer Studies, Kathmandu</option>
-                    <option value="pc003">Prime College, Nayabazar</option>
-                  </optgroup>
-                  <optgroup label="Technical Institutes">
-                    <option value="ti001">Institute of Engineering, Pulchowk</option>
-                    <option value="ti002">Nepal Engineering College, Bhaktapur</option>
-                  </optgroup>
+                  <option value="">— Loading schools... —</option>
                 </select>
               </div>
             </div>
@@ -1183,22 +1169,6 @@
               <input class="form-ctrl" type="text" id="symbolInput"
                 placeholder="e.g. 11201042" required maxlength="12"
                 oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-            </div>
-
-            <div class="form-group">
-              <label class="form-label"><i class="fas fa-book-open"></i> Examination Type</label>
-              <div class="sel-wrap">
-                <select class="form-sel" id="examSelect" required>
-                  <option value="">— Select examination —</option>
-                  <option value="semester1">Semester 1</option>
-                  <option value="semester2">Semester 2</option>
-                  <option value="semester3">Semester 3</option>
-                  <option value="semester4">Semester 4</option>
-                  <option value="annual">Annual Examination</option>
-                  <option value="midterm">Mid-Term</option>
-                  <option value="back">Back Paper / Supplementary</option>
-                </select>
-              </div>
             </div>
 
             <button type="submit" class="btn-check" id="checkBtn">
@@ -1842,26 +1812,16 @@ function calcGrade(p) {
   return 'F';
 }
 
-async function checkResult(e) {
-  e.preventDefault();
-  const sym    = document.getElementById('symbolInput').value.trim();
-  const school = document.getElementById('schoolSelect').value;
-  const exam   = document.getElementById('examSelect').value;
-  const btn    = document.getElementById('checkBtn');
-
-  // Reset
-  document.getElementById('resultDisplay').style.display = 'none';
-  document.getElementById('noResultMsg').classList.remove('show');
 // Populate school select dynamically
 async function loadSchools() {
   const schoolSelect = document.getElementById('schoolSelect');
   try {
     const res = await fetch('/schools/');
     const data = await res.json();
-    schoolSelect.innerHTML = '<option value="">Select School</option>'; // default
+    schoolSelect.innerHTML = '<option value="">— Choose your institution —</option>'; // default
     data.schools.forEach(s => {
       const opt = document.createElement('option');
-      opt.value = s.code;
+      opt.value = s.id;
       opt.textContent = s.name;
       schoolSelect.appendChild(opt);
     });
@@ -1872,13 +1832,29 @@ async function loadSchools() {
 
 // Call on page load
 window.addEventListener('DOMContentLoaded', loadSchools);
+
+async function checkResult(e) {
+  e.preventDefault();
+  const sym    = document.getElementById('symbolInput').value.trim();
+  const school = document.getElementById('schoolSelect').value;
+  const btn    = document.getElementById('checkBtn');
+
+  if (!school) {
+    document.getElementById('noResultMsg').classList.add('show');
+    return;
+  }
+
+  // Reset
+  document.getElementById('resultDisplay').style.display = 'none';
+  document.getElementById('noResultMsg').classList.remove('show');
+
   // Loading state
   btn.disabled = true;
   btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Searching…';
 
   try {
-    // Fetch from Django API
-    const response = await fetch(`/check-result/?school=${school}&symbol=${sym}&exam=${exam}`);
+    // Fetch from Django API without exam type filter
+    const response = await fetch(`/check-result/?school=${school}&symbol=${sym}`);
     const data = await response.json();
 
     btn.disabled = false;
@@ -1891,37 +1867,24 @@ window.addEventListener('DOMContentLoaded', loadSchools);
 
     const r = data.result;
 
-    // If your backend also provides subject-wise details, use them; otherwise, you can add a separate API for subjects
-    const subjects = r.subjects || []; // fallback to empty array
-
-    let totMax = 0, totObt = 0;
-    subjects.forEach(s => { totMax += s.max; totObt += s.obt; });
-    const pct    = Math.round(totObt / totMax * 100);
+    // Calculate percentage if not provided
+    const pct = r.percentage || Math.round(r.obtained / r.total * 100);
     const passed = pct >= 40;
 
-    currentResult = { ...r, sym, exam, totMax, totObt, pct, passed, subjects };
+    currentResult = { ...r, sym, pct, passed };
 
     // Populate card
     document.getElementById('roc-name').textContent     = r.name;
     document.getElementById('roc-meta').textContent     = `Symbol: ${sym} · ${r.semester} · ${r.department}`;
-    document.getElementById('roc-total').textContent    = totMax;
-    document.getElementById('roc-obtained').textContent = totObt;
+    document.getElementById('roc-total').textContent    = r.total;
+    document.getElementById('roc-obtained').textContent = r.obtained;
     document.getElementById('roc-pct').textContent      = pct + '%';
 
     const statusEl = document.getElementById('roc-status');
     statusEl.textContent = passed ? 'PASSED' : 'FAILED';
     statusEl.className   = 'roc-status ' + (passed ? 'roc-pass' : 'roc-fail');
 
-    // Subject rows
-    document.getElementById('roc-subjects').innerHTML = subjects.map(s => {
-      const sp = Math.round(s.obt / s.max * 100);
-      return `<div class="roc-row">
-        <span class="roc-sname">${s.n}</span>
-        <div class="roc-bar"><div class="roc-bar-fill" style="width:${sp}%"></div></div>
-        <span class="roc-score">${s.obt}/${s.max} <small style="opacity:.6">(${calcGrade(sp)})</small></span>
-      </div>`;
-    }).join('');
-
+    // Show result
     document.getElementById('resultDisplay').style.display = 'block';
     document.getElementById('resultDisplay').scrollIntoView({ behavior:'smooth', block:'nearest' });
   } catch (err) {

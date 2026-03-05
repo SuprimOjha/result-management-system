@@ -1,32 +1,406 @@
-<!-- templates/login.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — Schoooli</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+
+  :root {
+    --navy:       #0a1628;
+    --navy-2:     #112240;
+    --blue-2:     #2563eb;
+    --blue-light: #eff6ff;
+    --blue-mid:   #60a5fa;
+    --emerald:    #059669;
+    --emerald-bg: #ecfdf5;
+    --rose:       #e11d48;
+    --rose-bg:    #fff1f2;
+    --violet:     #7c3aed;
+    --amber:      #d97706;
+    --border:     #e2e8f0;
+    --bg:         #f8fafc;
+    --white:      #ffffff;
+    --text:       #0f172a;
+    --text-mid:   #334155;
+    --text-muted: #64748b;
+    --shadow-sm:  0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+    --shadow:     0 4px 16px rgba(0,0,0,.08);
+    --shadow-xl:  0 24px 60px rgba(0,0,0,.14);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    overflow-x: hidden;
+  }
+
+  /* ── LEFT PANEL ── */
+  .left-panel {
+    background: linear-gradient(155deg, var(--navy) 0%, var(--navy-2) 100%);
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    justify-content: center; padding: 72px 56px;
+    min-height: 100vh;
+  }
+  .left-panel::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 520px; height: 520px;
+    background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .left-panel::after {
+    content: '';
+    position: absolute; bottom: -140px; left: -80px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,.16) 0%, transparent 68%);
+    pointer-events: none;
+  }
+  .dot-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image: radial-gradient(rgba(255,255,255,.055) 1px, transparent 1px);
+    background-size: 26px 26px;
+  }
+  .left-content { position: relative; z-index: 1; }
+
+  /* Logo in left panel */
+  .panel-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none; margin-bottom: 56px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.22rem; font-weight: 700; color: #fff;
+  }
+  .panel-logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem; flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(37,99,235,.4);
+  }
+
+  .left-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
+    padding: 6px 14px 6px 8px; border-radius: 99px;
+    font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.82);
+    margin-bottom: 26px;
+    animation: fadeUp .5s ease both;
+  }
+  .left-badge-pip {
+    width: 22px; height: 22px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--emerald), #34d399);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: .65rem;
+  }
+
+  .left-content h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem; font-weight: 800;
+    color: #fff; line-height: 1.1;
+    letter-spacing: -.6px; margin-bottom: 16px;
+    animation: fadeUp .5s .08s ease both;
+  }
+  .left-content h1 .accent {
+    color: var(--blue-mid); position: relative; display: inline-block;
+  }
+  .left-content h1 .accent::after {
+    content: '';
+    position: absolute; bottom: -3px; left: 0; right: 0;
+    height: 2px; border-radius: 99px;
+    background: linear-gradient(90deg, var(--blue-mid), #a78bfa);
+  }
+  .left-content > p {
+    font-size: .9rem; color: rgba(255,255,255,.52);
+    line-height: 1.75; margin-bottom: 36px; max-width: 360px;
+    animation: fadeUp .5s .14s ease both;
+  }
+
+  .stat-list {
+    display: flex; flex-direction: column; gap: 14px;
+    animation: fadeUp .5s .2s ease both;
+  }
+  .stat-item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,.055);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 13px; transition: background .18s;
+  }
+  .stat-item:hover { background: rgba(255,255,255,.09); }
+  .stat-ico {
+    width: 40px; height: 40px; border-radius: 11px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: .9rem;
+  }
+  .si-blue   { background: rgba(37,99,235,.28); color: var(--blue-mid); }
+  .si-green  { background: rgba(5,150,105,.28); color: #34d399; }
+  .si-violet { background: rgba(124,58,237,.28); color: #c4b5fd; }
+  .stat-val  { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: #fff; }
+  .stat-lbl  { font-size: .72rem; color: rgba(255,255,255,.4); margin-top: 1px; }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    padding: 56px 40px;
+    overflow-y: auto;
+  }
+
+  .form-wrap {
+    width: 100%; max-width: 440px;
+    animation: fadeUp .5s .1s ease both;
+  }
+
+  .form-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 44px 40px;
+    box-shadow: var(--shadow-xl);
+    position: relative; overflow: hidden;
+  }
+  .form-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue-2), var(--violet), var(--emerald));
+  }
+
+  .form-header { margin-bottom: 32px; }
+  .section-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--blue-light); color: var(--blue-2);
+    font-size: .72rem; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; padding: 5px 14px;
+    border-radius: 99px; margin-bottom: 14px;
+    border: 1px solid rgba(37,99,235,.15);
+  }
+  .form-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.85rem; font-weight: 700; color: var(--navy);
+    margin-bottom: 7px; letter-spacing: -.3px;
+  }
+  .form-header p { font-size: .83rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* Messages */
+  .messages { list-style: none; margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px; }
+  .messages li {
+    display: flex; align-items: center; gap: 9px;
+    font-size: .82rem; font-weight: 600; color: var(--rose);
+    background: var(--rose-bg); border: 1px solid rgba(225,29,72,.15);
+    border-left: 3px solid var(--rose);
+    padding: 11px 14px; border-radius: 9px;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-label {
+    display: flex; align-items: center; gap: 6px;
+    font-size: .76rem; font-weight: 700;
+    color: var(--text-mid); margin-bottom: 7px;
+    letter-spacing: .3px; text-transform: uppercase;
+  }
+  .form-label i { color: var(--blue-2); font-size: .76rem; }
+
+  .input-wrap { position: relative; }
+  .input-wrap .input-icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted); font-size: .8rem;
+    pointer-events: none;
+    transition: color .18s;
+  }
+  .form-group:focus-within .input-icon { color: var(--blue-2); }
+
+  .form-ctrl {
+    width: 100%; height: 50px;
+    border: 1.5px solid var(--border); border-radius: 11px;
+    padding: 0 14px 0 42px;
+    font-family: 'DM Sans', sans-serif; font-size: .9rem;
+    color: var(--text); background: var(--white); outline: none;
+    transition: border-color .18s, box-shadow .18s;
+  }
+  .form-ctrl::placeholder { color: #c0ccd8; }
+  .form-ctrl:focus {
+    border-color: var(--blue-2);
+    box-shadow: 0 0 0 3.5px rgba(37,99,235,.1);
+  }
+
+  /* Remember + forgot row */
+  .form-meta {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 26px; flex-wrap: wrap; gap: 8px;
+  }
+  .remember-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: .8rem; color: var(--text-muted); cursor: pointer;
+  }
+  .remember-label input[type="checkbox"] {
+    width: 16px; height: 16px; border-radius: 4px;
+    accent-color: var(--blue-2); cursor: pointer;
+  }
+  .forgot-link {
+    font-size: .8rem; font-weight: 600; color: var(--blue-2);
+    text-decoration: none;
+  }
+  .forgot-link:hover { text-decoration: underline; }
+
+  .btn-submit {
+    width: 100%; height: 52px; border: none; border-radius: 11px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    color: #fff; font-family: 'DM Sans', sans-serif;
+    font-size: .94rem; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 18px rgba(37,99,235,.35);
+    text-decoration: none; position: relative; overflow: hidden;
+  }
+  .btn-submit::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+    opacity: 0; transition: opacity .2s;
+  }
+  .btn-submit:hover::after { opacity: 1; }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(37,99,235,.45); }
+  .btn-submit > * { position: relative; z-index: 1; }
+
+  .form-footer {
+    text-align: center; margin-top: 22px;
+    font-size: .83rem; color: var(--text-muted);
+  }
+  .form-footer a {
+    color: var(--blue-2); text-decoration: none; font-weight: 600;
+  }
+  .form-footer a:hover { text-decoration: underline; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
+
+  @media (max-width: 900px) {
+    body { grid-template-columns: 1fr; }
+    .left-panel { display: none; }
+    .right-panel { padding: 40px 20px; min-height: 100vh; }
+    .form-card { padding: 36px 24px; }
+  }
+  </style>
 </head>
 <body>
-    <h1>Login</h1>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li style="color: red;">{{ message }}</li>
-            {% endfor %}
+  <!-- ── LEFT PANEL ── -->
+  <div class="left-panel">
+    <div class="dot-grid"></div>
+    <div class="left-content">
+
+      <a href="/" class="panel-logo">
+        <div class="panel-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        Schoooli
+      </a>
+
+      <div class="left-badge">
+        <span class="left-badge-pip"><i class="fas fa-bolt"></i></span>
+        Welcome back — you're missed
+      </div>
+
+      <h1>Your Results,<br><span class="accent">One Click</span> Away</h1>
+      <p>Log back into your institution's dashboard. Upload results, track analytics, and give students instant access to their grades.</p>
+
+      <div class="stat-list">
+        <div class="stat-item">
+          <div class="stat-ico si-blue"><i class="fas fa-user-graduate"></i></div>
+          <div>
+            <div class="stat-val">25,000+</div>
+            <div class="stat-lbl">Students on the platform</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-ico si-green"><i class="fas fa-school"></i></div>
+          <div>
+            <div class="stat-val">800+</div>
+            <div class="stat-lbl">Schools &amp; Colleges registered</div>
+          </div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-ico si-violet"><i class="fas fa-server"></i></div>
+          <div>
+            <div class="stat-val">99.9%</div>
+            <div class="stat-lbl">Platform uptime guaranteed</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+    <div class="form-wrap">
+      <div class="form-card">
+
+        <div class="form-header">
+          <div class="section-label"><i class="fas fa-sign-in-alt"></i> Welcome Back</div>
+          <h2>Sign In to Your Account</h2>
+          <p>Enter your credentials to access your institution's result management dashboard.</p>
+        </div>
+
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
+          {% endfor %}
         </ul>
-    {% endif %}
+        {% endif %}
 
-    <form method="post">
-        {% csrf_token %}
-        <label for="email">Email:</label>
-        <input type="email" name="email" id="email" required><br><br>
+        <form method="post" id="loginForm">
+          {% csrf_token %}
 
-        <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required><br><br>
+          <div class="form-group">
+            <label class="form-label" for="email">
+              <i class="fas fa-envelope"></i> Email Address
+            </label>
+            <div class="input-wrap">
+              <i class="fas fa-envelope input-icon"></i>
+              <input class="form-ctrl" type="email" name="email" id="email"
+                     placeholder="you@institution.edu" required autofocus>
+            </div>
+          </div>
 
-        <button type="submit">Login</button>
-    </form>
+          <div class="form-group">
+            <label class="form-label" for="password">
+              <i class="fas fa-lock"></i> Password
+            </label>
+            <div class="input-wrap">
+              <i class="fas fa-lock input-icon"></i>
+              <input class="form-ctrl" type="password" name="password" id="password"
+                     placeholder="Enter your password" required>
+            </div>
+          </div>
 
-    <p>Don't have an account? <a href="{% url 'signup' %}">Signup here</a></p>
+          <div class="form-meta">
+            <label class="remember-label">
+              <input type="checkbox" name="remember" id="remember">
+              Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-sign-in-alt"></i>
+            <span>Sign In</span>
+          </button>
+        </form>
+
+        <p class="form-footer">
+          Don't have an account? <a href="{% url 'signup' %}">Sign up for free</a>
+        </p>
+
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

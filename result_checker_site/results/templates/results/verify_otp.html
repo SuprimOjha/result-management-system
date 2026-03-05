@@ -1,30 +1,294 @@
-<!-- templates/verify_otp.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Verify OTP</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP — Schoooli</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  :root {
+    --navy: #0a1628; --navy-2: #112240;
+    --blue-2: #2563eb; --blue-light: #eff6ff; --blue-mid: #60a5fa;
+    --emerald: #059669; --emerald-bg: #ecfdf5;
+    --rose: #e11d48; --rose-bg: #fff1f2;
+    --violet: #7c3aed;
+    --border: #e2e8f0; --bg: #f8fafc; --white: #ffffff;
+    --text: #0f172a; --text-mid: #334155; --text-muted: #64748b;
+    --shadow-xl: 0 24px 60px rgba(0,0,0,.14);
+  }
+  body {
+    font-family: 'DM Sans', sans-serif; color: var(--text);
+    min-height: 100vh; background: linear-gradient(155deg,#f0f7ff 0%,#ffffff 45%,#f5f3ff 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 32px 20px;
+  }
+
+  /* ── NAVBAR strip at top ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 99;
+    background: rgba(255,255,255,.93); backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(226,232,240,.6);
+    box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; height: 68px; gap: 16px;
+  }
+  .logo {
+    display: flex; align-items: center; gap: 10px; text-decoration: none;
+    font-family: 'Playfair Display', serif; font-size: 1.22rem; font-weight: 700; color: var(--navy);
+  }
+  .logo-icon {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 1rem; flex-shrink: 0;
+  }
+  .topbar-back {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    font-size: .84rem; font-weight: 600; color: var(--text-muted);
+    text-decoration: none; padding: 7px 14px; border-radius: 8px; transition: all .15s;
+  }
+  .topbar-back:hover { background: var(--bg); color: var(--navy); }
+
+  /* ── CARD ── */
+  .card-wrap {
+    width: 100%; max-width: 480px; margin-top: 68px;
+    animation: fadeUp .5s ease both;
+  }
+
+  /* Pulsing shield icon above card */
+  .icon-ring {
+    width: 76px; height: 76px; border-radius: 22px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.7rem; color: #fff;
+    margin: 0 auto 24px;
+    box-shadow: 0 8px 28px rgba(37,99,235,.35);
+    position: relative; animation: fadeUp .4s ease both;
+  }
+  .icon-ring::after {
+    content: ''; position: absolute; inset: -8px;
+    border-radius: 30px; border: 2px solid rgba(37,99,235,.2);
+    animation: ripple 2.4s ease-in-out infinite;
+  }
+  @keyframes ripple {
+    0%,100% { transform: scale(1); opacity: 1; }
+    50%      { transform: scale(1.1); opacity: .35; }
+  }
+
+  .card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 22px; padding: 44px 40px 40px;
+    box-shadow: var(--shadow-xl); position: relative; overflow: hidden; text-align: center;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue-2), var(--violet), var(--emerald));
+  }
+
+  /* Step progress */
+  .steps-row {
+    display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 32px;
+  }
+  .step-dot {
+    width: 32px; height: 32px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: .72rem; font-weight: 700;
+  }
+  .step-dot.done   { background: var(--emerald-bg); color: var(--emerald); border: 2px solid rgba(5,150,105,.2); }
+  .step-dot.active { background: linear-gradient(135deg,var(--blue-2),var(--violet)); color: #fff; box-shadow: 0 3px 12px rgba(37,99,235,.35); }
+  .step-dot.pending{ background: var(--bg); color: var(--text-muted); border: 2px solid var(--border); }
+  .step-line { flex: 1; height: 2px; background: var(--border); max-width: 44px; }
+  .step-line.done  { background: var(--emerald); }
+
+  .section-label {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: var(--blue-light); color: var(--blue-2);
+    font-size: .72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 99px; margin-bottom: 14px; border: 1px solid rgba(37,99,235,.15);
+  }
+  .card h2 {
+    font-family: 'Playfair Display', serif; font-size: 1.85rem; font-weight: 700;
+    color: var(--navy); margin-bottom: 10px; letter-spacing: -.3px;
+  }
+  .card > p {
+    font-size: .87rem; color: var(--text-muted); line-height: 1.68; margin-bottom: 32px;
+    max-width: 340px; margin-left: auto; margin-right: auto;
+  }
+  .card > p strong { color: var(--navy); font-weight: 600; }
+
+  /* Messages */
+  .messages { list-style: none; margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+  .messages li {
+    display: flex; align-items: center; gap: 9px;
+    font-size: .82rem; font-weight: 600; color: var(--rose);
+    background: var(--rose-bg); border: 1px solid rgba(225,29,72,.15);
+    border-left: 3px solid var(--rose); padding: 11px 14px; border-radius: 9px;
+  }
+
+  /* ── OTP input ── Single wide input styled as digit boxes via letter-spacing trick ── */
+  .otp-label {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-size: .76rem; font-weight: 700; color: var(--text-mid);
+    margin-bottom: 14px; letter-spacing: .3px; text-transform: uppercase;
+  }
+  .otp-label i { color: var(--blue-2); font-size: .76rem; }
+
+  /* Individual OTP box styling using CSS only — each is a real input */
+  .otp-inputs {
+    display: flex; gap: 10px; justify-content: center; margin-bottom: 30px;
+  }
+  .otp-inputs input {
+    width: 58px; height: 64px; border: 2px solid var(--border); border-radius: 13px;
+    font-family: 'Playfair Display', serif; font-size: 1.65rem; font-weight: 700;
+    color: var(--navy); text-align: center; background: var(--bg); outline: none;
+    transition: border-color .18s, box-shadow .18s, transform .18s, background .18s;
+    -webkit-appearance: none; appearance: none;
+    /* each input is named individually and submitted as separate fields — 
+       Django view can reconstruct: otp = d1+d2+d3+d4+d5+d6 */
+  }
+  .otp-inputs input:focus {
+    border-color: var(--blue-2); background: var(--white);
+    box-shadow: 0 0 0 3.5px rgba(37,99,235,.12); transform: translateY(-3px);
+  }
+  /* CSS-only filled state: when input has a value it gets a blue tint
+     We can't truly detect value in pure CSS, but :not(:placeholder-shown) works */
+  .otp-inputs input:not(:placeholder-shown) {
+    border-color: var(--blue-2); background: var(--blue-light);
+  }
+  /* Use invisible placeholder so :placeholder-shown trick works */
+  .otp-inputs input::placeholder { color: transparent; }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%; height: 52px; border: none; border-radius: 11px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    color: #fff; font-family: 'DM Sans', sans-serif; font-size: .94rem; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    box-shadow: 0 4px 18px rgba(37,99,235,.35); position: relative; overflow: hidden; margin-bottom: 22px;
+  }
+  .btn-submit::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9); opacity: 0; transition: opacity .2s;
+  }
+  .btn-submit:hover::after { opacity: 1; }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(37,99,235,.45); }
+  .btn-submit > * { position: relative; z-index: 1; }
+
+  /* Info strip */
+  .info-strip {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 16px; margin-bottom: 20px;
+  }
+  .info-strip i { color: var(--blue-2); font-size: .86rem; flex-shrink: 0; }
+  .info-strip p { font-size: .78rem; color: var(--text-muted); line-height: 1.5; text-align: left; }
+  .info-strip p strong { color: var(--text-mid); }
+
+  .card-footer {
+    padding-top: 18px; border-top: 1px solid var(--border);
+    font-size: .82rem; color: var(--text-muted);
+  }
+  .card-footer a { color: var(--blue-2); text-decoration: none; font-weight: 600; }
+  .card-footer a:hover { text-decoration: underline; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);} }
+
+  @media (max-width: 520px) {
+    .card { padding: 36px 22px 32px; }
+    .otp-inputs input { width: 46px; height: 56px; font-size: 1.4rem; border-radius: 10px; }
+    .otp-inputs { gap: 8px; }
+  }
+  </style>
 </head>
 <body>
-    <h1>Verify OTP</h1>
 
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li style="color: red;">{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        Schoooli
+      </a>
+      <a href="{% url 'signup' %}" class="topbar-back"><i class="fas fa-arrow-left"></i> Back to Signup</a>
+    </div>
+  </div>
 
-    <p>An OTP has been sent to your email. Please enter it below to verify your account.</p>
+  <div class="card-wrap">
 
-    <form method="post">
+    <div class="icon-ring"><i class="fas fa-shield-halved"></i></div>
+
+    <div class="card">
+
+      <!-- 3-step progress -->
+      <div class="steps-row">
+        <div class="step-dot done"><i class="fas fa-check"></i></div>
+        <div class="step-line done"></div>
+        <div class="step-dot active">2</div>
+        <div class="step-line"></div>
+        <div class="step-dot pending">3</div>
+      </div>
+
+      <div class="section-label"><i class="fas fa-shield-halved"></i> Email Verification</div>
+      <h2>Check Your Email</h2>
+      <p>We've sent a <strong>6-digit OTP</strong> to your registered email. Enter it below to verify your account and continue.</p>
+
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <form method="post">
         {% csrf_token %}
-        <label for="otp">OTP:</label>
-        <input type="text" name="otp" id="otp" required>
-        <button type="submit">Verify</button>
-    </form>
 
-    <p><a href="{% url 'signup' %}">Back to Signup</a></p>
+        <div class="otp-label"><i class="fas fa-key"></i> Enter 6-Digit OTP</div>
+
+        <!--
+          Pure CSS/HTML OTP: 6 individual inputs named d1–d6.
+          In your Django view, reconstruct with: otp = ''.join([request.POST.get(f'd{i}','') for i in range(1,7)])
+          Each input uses inputmode="numeric" for mobile number pad.
+        -->
+        <div class="otp-inputs">
+          <input type="text" name="d1" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+          <input type="text" name="d2" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+          <input type="text" name="d3" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+          <input type="text" name="d4" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+          <input type="text" name="d5" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+          <input type="text" name="d6" inputmode="numeric" maxlength="1"
+                 pattern="[0-9]" placeholder=" " autocomplete="off" required>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-check-circle"></i>
+          <span>Verify My Account</span>
+        </button>
+      </form>
+
+      <div class="info-strip">
+        <i class="fas fa-info-circle"></i>
+        <p><strong>Didn't receive the email?</strong> Check your spam folder or go back to signup and re-enter your email address.</p>
+      </div>
+
+      <div class="card-footer">
+        <i class="fas fa-envelope" style="margin-right:4px;opacity:.5"></i>
+        Wrong email? <a href="{% url 'signup' %}">Go back and re-enter</a>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>

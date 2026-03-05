@@ -28,6 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "result-management-system-wn3x.onrender.com",
+    "*",
 ]
 
 # Application definition
@@ -146,12 +147,11 @@ MEDIA_ROOT = BASE_DIR / "media"
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'admin_dashboard'
 
-from decouple import config
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = "your email address"
-EMAIL_HOST_PASSWORD = "your app password"
+EMAIL_HOST_USER = "suprimojha25@gmail.com"
+EMAIL_HOST_PASSWORD = "tdsm yqnp socw lqeh"
