@@ -917,7 +917,6 @@ table.data-tbl { width: 100%; border-collapse: collapse; min-width: 600px; }
   <a class="sb-link" onclick="setNav(this)"><i class="fas fa-users-cog"></i> Manage Teachers</a>
   <a class="sb-link" onclick="setNav(this)"><i class="fas fa-sitemap"></i> Departments</a>
   <a class="sb-link" onclick="setNav(this)"><i class="fas fa-book-open"></i> Subjects</a>
-
   <div class="sb-section">Export</div>
   <a class="sb-link" onclick="exportExcel()"><i class="fas fa-file-excel"></i> Export Excel</a>
   <a class="sb-link" onclick="exportCSV()"><i class="fas fa-file-csv"></i> Export CSV</a>
@@ -1041,8 +1040,14 @@ table.data-tbl { width: 100%; border-collapse: collapse; min-width: 600px; }
           </div>
         </div>
         <div class="card-body">
-       
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+            <input class="form-ctrl" id="newSchoolName" placeholder="Enter school name…" style="max-width:280px">
+            <button class="btn btn-blue btn-sm" onclick="addSchool()"><i class="fas fa-plus"></i> Add School</button>
+          </div>
+        </div>
       </div>
+
+      <div class="dash-grid">
 
       <div class="dash-grid">
         <!-- Grade Distribution -->

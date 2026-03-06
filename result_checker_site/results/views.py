@@ -170,6 +170,82 @@ def admin_dashboard(request):
     return render(request, "results/admin_dashboard.html", {'school': school, 'schools': schools})
 
 
+@login_required
+def upload_excel(request):
+    if request.method == 'POST':
+        # Handle file upload
+        excel_file = request.FILES.get('excel_file')
+        if not excel_file:
+            messages.error(request, 'Please select an Excel file.')
+            return redirect('upload_excel')
+        
+        try:
+            import pandas as pd
+            df = pd.read_excel(excel_file)
+            
+            # Process the dataframe similar to the bulk save
+            results = []
+            for _, row in df.iterrows():
+                name = row.get('name', '')
+                roll = str(row.get('roll', ''))
+                symbol = str(row.get('symbol', ''))
+                dept = row.get('department', '')
+                sem = row.get('semester', '')
+                total = float(row.get('total', 0))
+                obtained = float(row.get('obtained', 0))
+                pct_val = round(obtained / total * 100) if total > 0 else 0
+                grade_val = 'A' if pct_val >= 90 else 'B' if pct_val >= 75 else 'C' if pct_val >= 55 else 'D' if pct_val >= 40 else 'F'
+                status_val = 'Pass' if pct_val >= 40 else 'Fail'
+                
+                results.append({
+                    'name': name,
+                    'roll': roll,
+                    'symbol': symbol,
+                    'dept': dept,
+                    'sem': sem,
+                    'total': total,
+                    'obtained': obtained,
+                    'pct': pct_val,
+                    'grade': grade_val,
+                    'status': status_val,
+                    'year': '',
+                    'examType': 'Final Examination',
+                    'subjects': []
+                })
+            
+            # Save using the bulk API
+            from django.http import JsonResponse
+            result = api_bulk_save_results(request._get_raw_host(), results)  # Need to adjust
+            
+            # Since it's a view, not API, handle differently
+            # For simplicity, use the function directly
+            saved_results = []
+            for res in results:
+                result_obj = Result.objects.create(
+                    school=request.user.profile.school,
+                    student_name=res['name'],
+                    roll_number=res['roll'],
+                    symbol_number=res['symbol'],
+                    semester=res['sem'],
+                    exam_type=res['examType'],
+                    total_marks=res['total'],
+                    obtained_marks=res['obtained'],
+                    department=res['dept'],
+                    grade=res['grade'],
+                    status=res['status']
+                )
+                saved_results.append(result_obj)
+            
+            messages.success(request, f'Successfully uploaded {len(saved_results)} results.')
+            return redirect('admin_dashboard')
+            
+        except Exception as e:
+            messages.error(request, f'Error processing file: {str(e)}')
+            return redirect('upload_excel')
+    
+    return render(request, 'results/upload_excel.html')
+
+
 def home(request):
     # send schools to populate the dropdown
     schools = School.objects.all()
@@ -481,3 +557,6 @@ def api_set_school(request):
         return JsonResponse({'success': False, 'error': 'School not found'}, status=404)
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
+
+def blogs(request):
+    return render(request, 'results/blogs.html')

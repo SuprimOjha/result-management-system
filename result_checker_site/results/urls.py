@@ -8,8 +8,10 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('upload-excel/', views.upload_excel, name='upload_excel'),
     path('check-result/', views.check_result, name='check_result'),
     path('schools/', views.get_schools, name='get_schools'),
+    path('blogs/', views.blogs, name='blogs'),
     path('api/set-school/', views.api_set_school, name='api_set_school'),
     path('api/add-school/', views.api_add_school, name='api_add_school'),
     
