@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,11 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Blog — Schoooli</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
   <style>
-  /* ═══════════════════════════════════════
-     RESET & VARIABLES
-  ═══════════════════════════════════════ */
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { font-size: 15px; scroll-behavior: smooth; }
 
@@ -44,27 +42,20 @@
 
   body {
     font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    background: var(--white);
-    overflow-x: hidden;
-    line-height: 1.6;
+    color: var(--text); background: var(--white);
+    overflow-x: hidden; line-height: 1.6;
   }
-
   img { display: block; max-width: 100%; }
   a   { text-decoration: none; color: inherit; }
 
-  /* ═══════════════════════════════════════
-     NAVBAR
-  ═══════════════════════════════════════ */
+  /* ── NAVBAR ── */
   .navbar {
     position: fixed; top: 0; left: 0; right: 0; z-index: 900;
     background: rgba(255,255,255,.93);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(226,232,240,.6);
-    transition: box-shadow .25s;
+    box-shadow: var(--shadow-sm);
   }
-  .navbar.scrolled { box-shadow: var(--shadow); }
   .nav-inner {
     max-width: 1180px; margin: 0 auto; padding: 0 24px;
     display: flex; align-items: center; height: 68px; gap: 28px;
@@ -79,36 +70,25 @@
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 1rem; flex-shrink: 0;
   }
-  .nav-links { display: flex; gap: 2px; list-style: none; margin-right: auto; margin-left: auto; }
+  .nav-links { display: flex; gap: 2px; list-style: none; margin: 0 auto; }
   .nav-links a {
     display: block; padding: 7px 13px; font-size: .84rem; font-weight: 500;
     color: var(--text-mid); border-radius: 8px; transition: all .17s;
   }
   .nav-links a:hover, .nav-links a.active { color: var(--blue-2); background: var(--blue-light); }
   .nav-btn {
-    padding: 8px 18px; border-radius: 9px;
-    background: var(--blue-2); color: #fff;
-    font-size: .84rem; font-weight: 600;
-    box-shadow: 0 2px 8px rgba(37,99,235,.25); transition: all .17s;
+    padding: 8px 18px; border-radius: 9px; background: var(--blue-2); color: #fff;
+    font-size: .84rem; font-weight: 600; box-shadow: 0 2px 8px rgba(37,99,235,.25);
+    transition: all .17s; display: flex; align-items: center; gap: 6px;
   }
   .nav-btn:hover { background: #1d4ed8; }
   .nav-txt {
     padding: 7px 14px; border-radius: 8px;
-    font-size: .84rem; font-weight: 600; color: var(--text-mid); transition: background .15s;
+    font-size: .84rem; font-weight: 600; color: var(--text-muted); transition: background .15s;
   }
-  .nav-txt:hover { background: var(--bg); }
+  .nav-txt:hover { background: var(--bg); color: var(--navy); }
 
-  /* ═══════════════════════════════════════
-     PAGE VIEWS
-  ═══════════════════════════════════════ */
-  .view { display: none; }
-  .view.active { display: block; }
-
-  /* ═══════════════════════════════════════
-     BLOG LIST PAGE
-  ═══════════════════════════════════════ */
-
-  /* Hero header */
+  /* ── HERO ── */
   .blog-hero {
     padding: 120px 0 72px;
     background: linear-gradient(155deg, #f0f7ff 0%, #ffffff 40%, #f5f3ff 100%);
@@ -128,7 +108,7 @@
     max-width: 1180px; margin: 0 auto; padding: 0 24px;
     position: relative; z-index: 1;
   }
-  .blog-hero-label {
+  .section-label {
     display: inline-flex; align-items: center; gap: 7px;
     background: var(--blue-light); color: var(--blue-2);
     font-size: .72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
@@ -136,66 +116,58 @@
     border: 1px solid rgba(37,99,235,.15); animation: fadeUp .5s ease both;
   }
   .blog-hero h1 {
-    font-family: 'Playfair Display', serif; font-size: clamp(2rem,4vw,3rem);
+    font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem);
     font-weight: 800; color: var(--navy); line-height: 1.1; letter-spacing: -.6px;
     margin-bottom: 14px; animation: fadeUp .5s .08s ease both;
   }
-  .blog-hero h1 .accent { color: var(--blue-2); font-style: italic; }
+  .blog-hero h1 em { color: var(--blue-2); font-style: italic; }
   .blog-hero p {
     font-size: .95rem; color: var(--text-muted); max-width: 520px; line-height: 1.75;
     animation: fadeUp .5s .16s ease both;
   }
 
-  /* Featured post */
+  /* ── FEATURED ── */
   .featured-section {
     max-width: 1180px; margin: 0 auto; padding: 56px 24px 0;
   }
   .section-head {
     display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 28px; flex-wrap: wrap; gap: 12px;
+    margin-bottom: 26px; flex-wrap: wrap; gap: 12px;
   }
   .section-title {
     font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700;
     color: var(--navy); letter-spacing: -.3px;
   }
-  .see-all {
-    display: flex; align-items: center; gap: 6px;
-    font-size: .8rem; font-weight: 700; color: var(--blue-2);
-    transition: gap .15s; cursor: pointer;
-  }
-  .see-all:hover { gap: 10px; }
 
   .featured-card {
-    display: grid; grid-template-columns: 1fr 1.1fr;
-    gap: 0; border-radius: 20px; overflow: hidden;
+    display: grid; grid-template-columns: 1fr 1.1fr; gap: 0;
+    border-radius: 20px; overflow: hidden;
     border: 1px solid var(--border); box-shadow: var(--shadow-xl);
-    background: var(--white); cursor: pointer; transition: transform .25s, box-shadow .25s;
+    background: var(--white); transition: transform .25s, box-shadow .25s;
     animation: fadeUp .5s .1s ease both;
+    text-decoration: none; color: inherit;
   }
-  .featured-card:hover { transform: translateY(-6px); box-shadow: 0 28px 64px rgba(0,0,0,.18); }
+  .featured-card:hover { transform: translateY(-5px); box-shadow: 0 28px 64px rgba(0,0,0,.18); }
 
   .featured-content {
     padding: 48px 44px; display: flex; flex-direction: column; justify-content: center;
   }
-  .post-meta {
-    display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap;
-  }
+  .post-meta { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
   .post-cat {
     display: inline-flex; align-items: center; gap: 5px;
     font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .8px;
     padding: 4px 12px; border-radius: 99px;
   }
-  .cat-blue   { background: var(--blue-light);   color: var(--blue-2); }
-  .cat-green  { background: var(--emerald-bg);   color: var(--emerald); }
-  .cat-amber  { background: var(--amber-bg);     color: var(--amber); }
-  .cat-violet { background: var(--violet-bg);    color: var(--violet); }
-  .cat-rose   { background: var(--rose-bg);      color: var(--rose); }
-  .cat-teal   { background: var(--teal-bg);      color: var(--teal); }
+  .cat-blue   { background: var(--blue-light);  color: var(--blue-2); }
+  .cat-green  { background: var(--emerald-bg);  color: var(--emerald); }
+  .cat-amber  { background: var(--amber-bg);    color: var(--amber); }
+  .cat-violet { background: var(--violet-bg);   color: var(--violet); }
+  .cat-rose   { background: var(--rose-bg);     color: var(--rose); }
+  .cat-teal   { background: var(--teal-bg);     color: var(--teal); }
+  .cat-navy   { background: rgba(10,22,40,.08); color: var(--navy); }
 
-  .post-date {
-    display: flex; align-items: center; gap: 5px;
-    font-size: .76rem; color: var(--text-muted);
-  }
+  .post-date { display: flex; align-items: center; gap: 5px; font-size: .76rem; color: var(--text-muted); }
+
   .featured-content h2 {
     font-family: 'Playfair Display', serif; font-size: 1.85rem; font-weight: 700;
     color: var(--navy); line-height: 1.22; letter-spacing: -.3px; margin-bottom: 16px;
@@ -204,300 +176,137 @@
     font-size: .88rem; color: var(--text-muted); line-height: 1.75; margin-bottom: 28px;
   }
   .post-footer {
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
   }
   .author-row { display: flex; align-items: center; gap: 10px; }
   .author-av {
     width: 36px; height: 36px; border-radius: 50%;
     display: flex; align-items: center; justify-content: center;
     font-size: .76rem; font-weight: 700; color: #fff; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
   }
+  .author-av img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
   .author-name { font-size: .82rem; font-weight: 600; }
   .author-role { font-size: .7rem; color: var(--text-muted); }
+
   .read-btn {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 22px; border-radius: 10px;
     background: linear-gradient(135deg, var(--blue-2), var(--violet));
     color: #fff; font-size: .82rem; font-weight: 700;
-    box-shadow: 0 3px 12px rgba(37,99,235,.3);
-    cursor: pointer; border: none; font-family: 'DM Sans', sans-serif;
-    transition: all .2s;
+    box-shadow: 0 3px 12px rgba(37,99,235,.3); transition: all .2s;
   }
   .read-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(37,99,235,.4); }
 
-  .featured-img {
-    position: relative; overflow: hidden; min-height: 380px;
-  }
-  .featured-img img {
-    width: 100%; height: 100%; object-fit: cover;
-    transition: transform .5s ease;
-  }
+  .featured-img { position: relative; overflow: hidden; min-height: 380px; }
+  .featured-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
   .featured-card:hover .featured-img img { transform: scale(1.04); }
-  .featured-img-overlay {
+  .img-overlay {
     position: absolute; inset: 0;
-    background: linear-gradient(135deg, rgba(37,99,235,.1), rgba(124,58,237,.08));
+    background: linear-gradient(135deg, rgba(37,99,235,.08), rgba(124,58,237,.06));
     pointer-events: none;
   }
 
-  /* Category filter */
-  .filter-section {
-    max-width: 1180px; margin: 0 auto; padding: 52px 24px 0;
-  }
-  .filter-row {
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 4px;
-  }
-  .filter-btn {
+  /* ── FILTER ── */
+  .filter-section { max-width: 1180px; margin: 0 auto; padding: 52px 24px 0; }
+  .filter-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .filter-pill {
     padding: 8px 18px; border-radius: 99px; border: 1.5px solid var(--border);
     font-family: 'DM Sans', sans-serif; font-size: .8rem; font-weight: 600;
-    color: var(--text-muted); background: var(--white); cursor: pointer;
-    transition: all .18s; display: flex; align-items: center; gap: 6px;
+    color: var(--text-muted); background: var(--white);
+    display: flex; align-items: center; gap: 6px;
+    text-decoration: none; transition: all .18s;
   }
-  .filter-btn:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
-  .filter-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .filter-pill:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
+  .filter-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
 
-  /* Posts grid */
-  .posts-section {
-    max-width: 1180px; margin: 0 auto; padding: 40px 24px 96px;
-  }
-  .posts-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 26px;
-  }
+  /* ── POSTS GRID ── */
+  .posts-section { max-width: 1180px; margin: 0 auto; padding: 36px 24px 80px; }
+  .posts-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; }
 
   .post-card {
     background: var(--white); border: 1px solid var(--border);
     border-radius: var(--radius); overflow: hidden;
-    transition: all .22s; cursor: pointer;
-    animation: fadeUp .5s ease both;
-    display: flex; flex-direction: column;
+    transition: all .22s; display: flex; flex-direction: column;
+    animation: fadeUp .5s ease both; text-decoration: none; color: inherit;
   }
   .post-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-5px); border-color: transparent; }
+  .post-card:nth-child(1) { animation-delay: .05s; }
+  .post-card:nth-child(2) { animation-delay: .1s; }
+  .post-card:nth-child(3) { animation-delay: .15s; }
+  .post-card:nth-child(4) { animation-delay: .2s; }
+  .post-card:nth-child(5) { animation-delay: .25s; }
+  .post-card:nth-child(6) { animation-delay: .3s; }
 
-  .post-img {
-    position: relative; overflow: hidden; height: 200px;
-  }
-  .post-img img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
-  .post-card:hover .post-img img { transform: scale(1.06); }
-  .post-img-cat { position: absolute; top: 14px; left: 14px; }
+  .post-thumb { position: relative; overflow: hidden; height: 200px; background: var(--bg); }
+  .post-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+  .post-card:hover .post-thumb img { transform: scale(1.06); }
+  .thumb-cat { position: absolute; top: 14px; left: 14px; }
 
   .post-body { padding: 22px; flex: 1; display: flex; flex-direction: column; }
   .post-title {
     font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 700;
-    color: var(--navy); line-height: 1.35; margin-bottom: 10px;
-    transition: color .15s;
+    color: var(--navy); line-height: 1.35; margin-bottom: 10px; transition: color .15s;
   }
   .post-card:hover .post-title { color: var(--blue-2); }
   .post-excerpt { font-size: .8rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 18px; flex: 1; }
-  .post-card-footer {
+  .post-card-foot {
     display: flex; align-items: center; justify-content: space-between;
     padding-top: 14px; border-top: 1px solid var(--border);
   }
-  .post-read-more {
-    display: flex; align-items: center; gap: 5px;
-    font-size: .77rem; font-weight: 700; color: var(--blue-2); transition: gap .15s;
-  }
-  .post-card:hover .post-read-more { gap: 8px; }
+  .read-more { display: flex; align-items: center; gap: 5px; font-size: .77rem; font-weight: 700; color: var(--blue-2); transition: gap .15s; }
+  .post-card:hover .read-more { gap: 8px; }
   .read-time { font-size: .72rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
 
-  /* Sidebar layout for latest + newsletter */
-  .latest-section {
-    background: var(--bg); padding: 72px 0;
+  /* Empty state */
+  .empty-state {
+    grid-column: 1/-1; text-align: center; padding: 60px 24px;
+    color: var(--text-muted); font-size: .9rem;
   }
-  .latest-inner {
-    max-width: 1180px; margin: 0 auto; padding: 0 24px;
-    display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start;
-  }
-  .latest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .empty-state i { font-size: 2.5rem; margin-bottom: 16px; opacity: .35; display: block; }
 
-  .latest-card {
-    display: flex; gap: 14px; cursor: pointer;
-    padding: 14px; border-radius: 12px; transition: background .18s;
+  /* ── PAGINATION ── */
+  .pagination-row {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 1rem 0;
   }
-  .latest-card:hover { background: var(--white); box-shadow: var(--shadow); }
-  .latest-img {
-    width: 80px; height: 80px; border-radius: 10px; overflow: hidden; flex-shrink: 0;
-  }
-  .latest-img img { width: 100%; height: 100%; object-fit: cover; }
-  .latest-title {
-    font-family: 'Playfair Display', serif; font-size: .88rem; font-weight: 700;
-    color: var(--navy); line-height: 1.3; margin-bottom: 5px;
-  }
-  .latest-card:hover .latest-title { color: var(--blue-2); }
-  .latest-date { font-size: .7rem; color: var(--text-muted); display: flex; align-items: center; gap: 4px; }
-
-  /* Newsletter sidebar */
-  .newsletter-box {
-    background: linear-gradient(155deg, var(--navy), var(--navy-2));
-    border-radius: 18px; padding: 32px 28px;
-    position: relative; overflow: hidden;
-  }
-  .newsletter-box::before {
-    content: ''; position: absolute; top: -60px; right: -60px;
-    width: 180px; height: 180px;
-    background: radial-gradient(circle, rgba(37,99,235,.2) 0%, transparent 70%);
-  }
-  .newsletter-box h3 {
-    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700;
-    color: #fff; margin-bottom: 10px; position: relative; z-index: 1;
-  }
-  .newsletter-box p { font-size: .8rem; color: rgba(255,255,255,.52); line-height: 1.65; margin-bottom: 20px; position: relative; z-index: 1; }
-  .newsletter-input {
-    width: 100%; height: 44px; border-radius: 10px; border: none;
-    padding: 0 14px; font-family: 'DM Sans', sans-serif; font-size: .86rem;
-    background: rgba(255,255,255,.1); color: #fff; outline: none;
-    border: 1px solid rgba(255,255,255,.15); margin-bottom: 10px;
-    transition: border-color .18s; position: relative; z-index: 1;
-  }
-  .newsletter-input::placeholder { color: rgba(255,255,255,.35); }
-  .newsletter-input:focus { border-color: var(--blue-mid); background: rgba(255,255,255,.15); }
-  .newsletter-btn {
-    width: 100%; height: 44px; border: none; border-radius: 10px;
-    background: linear-gradient(135deg, var(--blue-2), var(--violet));
-    color: #fff; font-family: 'DM Sans', sans-serif;
-    font-size: .86rem; font-weight: 700; cursor: pointer;
-    box-shadow: 0 3px 12px rgba(37,99,235,.35);
-    transition: all .2s; position: relative; z-index: 1;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .newsletter-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(37,99,235,.45); }
-
-  /* Popular tags */
-  .tags-box { margin-top: 24px; }
-  .tags-box h4 {
-    font-size: .78rem; font-weight: 700; color: var(--text-mid);
-    text-transform: uppercase; letter-spacing: .8px; margin-bottom: 14px;
-  }
-  .tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
-  .tag {
-    padding: 5px 13px; border-radius: 99px; border: 1.5px solid var(--border);
-    font-size: .76rem; font-weight: 600; color: var(--text-muted);
-    cursor: pointer; transition: all .15s;
-  }
-  .tag:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
-
-  /* ═══════════════════════════════════════
-     SINGLE POST VIEW
-  ═══════════════════════════════════════ */
-  .post-hero {
-    padding: 110px 0 0; position: relative; overflow: hidden;
-  }
-  .post-hero-bg {
-    position: absolute; inset: 0; z-index: 0;
-    background: linear-gradient(155deg, var(--navy), var(--navy-2));
-  }
-  .dot-grid {
-    position: absolute; inset: 0;
-    background-image: radial-gradient(rgba(255,255,255,.05) 1px, transparent 1px);
-    background-size: 26px 26px;
-  }
-  .post-hero-inner {
-    max-width: 820px; margin: 0 auto; padding: 64px 24px 0;
-    position: relative; z-index: 1;
-  }
-  .back-btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    font-size: .82rem; font-weight: 600; color: rgba(255,255,255,.6);
-    cursor: pointer; margin-bottom: 32px; transition: color .15s; border: none; background: none;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .back-btn:hover { color: #fff; }
-  .post-hero h1 {
-    font-family: 'Playfair Display', serif; font-size: clamp(1.8rem,4vw,2.6rem);
-    font-weight: 800; color: #fff; line-height: 1.12; letter-spacing: -.5px; margin-bottom: 22px;
-  }
-  .post-hero-meta {
-    display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-bottom: 40px;
-  }
-  .hero-author { display: flex; align-items: center; gap: 10px; }
-  .hero-author-av {
-    width: 40px; height: 40px; border-radius: 50%;
+  .page-btn {
+    width: 38px; height: 38px; border-radius: 9px; border: 1.5px solid var(--border);
     display: flex; align-items: center; justify-content: center;
-    font-size: .78rem; font-weight: 700; color: #fff;
-    border: 2px solid rgba(255,255,255,.25);
+    font-size: .82rem; font-weight: 600; color: var(--text-muted);
+    text-decoration: none; transition: all .17s;
   }
-  .hero-author-name { font-size: .84rem; font-weight: 600; color: #fff; }
-  .hero-author-role { font-size: .7rem; color: rgba(255,255,255,.45); }
-  .meta-divider { width: 1px; height: 24px; background: rgba(255,255,255,.15); }
-  .meta-item { display: flex; align-items: center; gap: 6px; font-size: .76rem; color: rgba(255,255,255,.5); }
+  .page-btn:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
+  .page-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .page-btn.wide { width: auto; padding: 0 14px; }
 
-  .post-hero-img {
-    border-radius: 16px 16px 0 0; overflow: hidden;
-    box-shadow: 0 -8px 40px rgba(0,0,0,.3);
-    max-height: 420px;
+  /* ── FOOTER ── */
+  .footer {
+    background: var(--navy); padding: 52px 0 0; color: rgba(255,255,255,.55);
   }
-  .post-hero-img img { width: 100%; height: 100%; object-fit: cover; max-height: 420px; }
+  .footer-bottom {
+    max-width: 1180px; margin: 0 auto; padding: 20px 24px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .footer-bottom p { font-size: .78rem; color: rgba(255,255,255,.3); }
+  .footer-badges { display: flex; gap: 10px; }
+  .footer-badge {
+    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 7px; padding: 5px 12px; font-size: .7rem; color: rgba(255,255,255,.4);
+    display: flex; align-items: center; gap: 5px;
+  }
 
-  .post-body-wrap {
-    max-width: 820px; margin: 0 auto; padding: 56px 24px 96px;
-  }
-  .post-content {
-    font-size: .96rem; color: var(--text-mid); line-height: 1.85;
-  }
-  .post-content h2 {
-    font-family: 'Playfair Display', serif; font-size: 1.55rem; font-weight: 700;
-    color: var(--navy); margin: 40px 0 16px; letter-spacing: -.3px;
-  }
-  .post-content h3 {
-    font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700;
-    color: var(--navy); margin: 30px 0 12px;
-  }
-  .post-content p { margin-bottom: 20px; }
-  .post-content ul, .post-content ol { margin: 0 0 20px 24px; }
-  .post-content li { margin-bottom: 8px; }
-  .post-content blockquote {
-    border-left: 3px solid var(--blue-2); padding: 16px 20px;
-    background: var(--blue-light); border-radius: 0 10px 10px 0;
-    margin: 28px 0; font-style: italic; color: var(--navy);
-    font-family: 'Playfair Display', serif; font-size: 1.05rem;
-  }
-  .post-content .callout {
-    background: var(--bg); border: 1px solid var(--border);
-    border-radius: 12px; padding: 20px 22px; margin: 28px 0;
-    display: flex; gap: 14px;
-  }
-  .post-content .callout i { color: var(--blue-2); font-size: 1rem; flex-shrink: 0; margin-top: 2px; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
 
-  .post-tags-row {
-    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    padding: 24px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-    margin: 36px 0;
-  }
-  .post-tags-row span { font-size: .78rem; font-weight: 700; color: var(--text-muted); margin-right: 4px; }
-
-  .related-section { padding-top: 8px; }
-  .related-section h3 {
-    font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700;
-    color: var(--navy); margin-bottom: 24px;
-  }
-  .related-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
-
-  /* ═══════════════════════════════════════
-     UTILITIES & ANIMATIONS
-  ═══════════════════════════════════════ */
-  .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
-
-  @keyframes fadeUp   { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
-  @keyframes fadeIn   { from{opacity:0;}to{opacity:1;} }
-
-  /* Stagger cards */
-  .posts-grid .post-card:nth-child(1) { animation-delay: .05s; }
-  .posts-grid .post-card:nth-child(2) { animation-delay: .1s; }
-  .posts-grid .post-card:nth-child(3) { animation-delay: .15s; }
-  .posts-grid .post-card:nth-child(4) { animation-delay: .2s; }
-  .posts-grid .post-card:nth-child(5) { animation-delay: .25s; }
-  .posts-grid .post-card:nth-child(6) { animation-delay: .3s; }
-
-  /* ── RESPONSIVE ── */
   @media (max-width: 1024px) {
-    .latest-inner { grid-template-columns: 1fr; }
     .featured-card { grid-template-columns: 1fr; }
     .featured-img { min-height: 280px; }
   }
   @media (max-width: 768px) {
     .nav-links { display: none; }
     .posts-grid { grid-template-columns: 1fr 1fr; }
-    .latest-grid { grid-template-columns: 1fr; }
-    .related-grid { grid-template-columns: 1fr; }
   }
   @media (max-width: 520px) {
     .posts-grid { grid-template-columns: 1fr; }
@@ -508,447 +317,174 @@
 </head>
 <body>
 
-<!-- ═══════════════ NAVBAR ═══════════════ -->
-<nav class="navbar" id="navbar">
+<!-- NAVBAR -->
+<nav class="navbar">
   <div class="nav-inner">
-    <a href="/" class="logo">
+    <a href="{% url 'home' %}" class="logo">
       <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
       Schoooli
     </a>
     <ul class="nav-links">
-      <li><a href="/">Home</a></li>
-      <li><a href="/">Features</a></li>
-      <li><a href="#" class="active">Blog</a></li>
-      <li><a href="/">Pricing</a></li>
-      <li><a href="/">Contact</a></li>
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'blog_list' %}" class="active">Blogs</a></li>
+      <li><a href="{% url 'check_result' %}">Check Result</a></li>
     </ul>
-    <a href="/" class="nav-txt">Login</a>
-    <a href="/" class="nav-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
+    <a href="{% url 'login' %}" class="nav-txt">Login</a>
+    <a href="{% url 'signup' %}" class="nav-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
   </div>
 </nav>
 
+<!-- HERO -->
+<section class="blog-hero">
+  <div class="blog-hero-inner">
+    <div class="section-label"><i class="fas fa-newspaper"></i> Schoooli Blog</div>
+    <h1>Insights, Ideas &amp;<br><em>Education Stories</em></h1>
+    <p>The latest in academic result management, school technology, and education best practices — written by educators, for educators.</p>
+  </div>
+</section>
 
-<!-- ═══════════════ BLOG LIST VIEW ═══════════════ -->
-<div class="view active" id="view-list">
-
-  <!-- Hero -->
-  <section class="blog-hero">
-    <div class="blog-hero-inner">
-      <div class="blog-hero-label"><i class="fas fa-newspaper"></i> Schoooli Blog</div>
-      <h1>Insights, Ideas &amp;<br><span class="accent">Education Stories</span></h1>
-      <p>Stay up to date with the latest in academic result management, school tech, and education best practices — written by educators, for educators.</p>
-    </div>
-  </section>
-
-  <!-- Featured post -->
-  <section class="featured-section">
-    <div class="section-head">
-      <h2 class="section-title">Featured Post</h2>
-    </div>
-    <div class="featured-card" onclick="openPost(0)">
-      <div class="featured-content">
-        <div class="post-meta">
-          <span class="post-cat cat-blue"><i class="fas fa-star"></i> Featured</span>
-          <span class="post-date"><i class="fas fa-clock"></i> 12 Jun, 2024</span>
-        </div>
-        <h2>How Digital Result Management Is Transforming Schools Across Nepal</h2>
-        <p>From paper ledgers to instant online grade cards — discover how thousands of institutions are modernising their academic workflows, reducing errors, and giving students immediate access to their results.</p>
-        <div class="post-footer">
-          <div class="author-row">
-            <div class="author-av" style="background:linear-gradient(135deg,#2563eb,#818cf8)">MK</div>
-            <div>
-              <div class="author-name">Mr. Mahesh Karki</div>
-              <div class="author-role">Education Correspondent</div>
-            </div>
+<!-- FEATURED POST -->
+{% if featured_post %}
+<section class="featured-section">
+  <div class="section-head">
+    <h2 class="section-title">Featured Post</h2>
+  </div>
+  <a href="{% url 'blog_detail' featured_post.slug %}" class="featured-card">
+    <div class="featured-content">
+      <div class="post-meta">
+        {% if featured_post.category %}
+        <span class="post-cat cat-blue">
+          <i class="fas fa-tag"></i>
+          {{ featured_post.category.name }}
+        </span>
+        {% endif %}
+        <span class="post-date">
+          <i class="fas fa-clock"></i>
+          {{ featured_post.created_at|date:"j M, Y" }}
+        </span>
+      </div>
+      <h2>{{ featured_post.title }}</h2>
+      <p>{{ featured_post.excerpt }}</p>
+      <div class="post-footer">
+        <div class="author-row">
+          <div class="author-av">
+            {{ featured_post.author.first_name.0 }}{{ featured_post.author.last_name.0 }}
           </div>
-          <button class="read-btn"><i class="fas fa-book-open"></i> Read Article</button>
-        </div>
-      </div>
-      <div class="featured-img">
-        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80" alt="Featured post">
-        <div class="featured-img-overlay"></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Filter -->
-  <section class="filter-section">
-    <div class="section-head" style="margin-bottom:16px">
-      <h2 class="section-title">All Articles</h2>
-    </div>
-    <div class="filter-row" id="filterRow">
-      <button class="filter-btn active" data-cat="all"><i class="fas fa-th"></i> All Posts</button>
-      <button class="filter-btn" data-cat="technology"><i class="fas fa-laptop-code"></i> Technology</button>
-      <button class="filter-btn" data-cat="education"><i class="fas fa-graduation-cap"></i> Education</button>
-      <button class="filter-btn" data-cat="analytics"><i class="fas fa-chart-bar"></i> Analytics</button>
-      <button class="filter-btn" data-cat="security"><i class="fas fa-shield-alt"></i> Security</button>
-      <button class="filter-btn" data-cat="tips"><i class="fas fa-lightbulb"></i> Tips &amp; Tricks</button>
-    </div>
-  </section>
-
-  <!-- Posts grid -->
-  <section class="posts-section">
-    <div class="posts-grid" id="postsGrid"></div>
-  </section>
-
-  <!-- Latest + sidebar -->
-  <section class="latest-section">
-    <div class="latest-inner">
-      <div>
-        <div class="section-head" style="margin-bottom:24px">
-          <h2 class="section-title">Latest Posts</h2>
-          <span class="see-all" onclick="scrollToGrid()">See All <i class="fas fa-arrow-right"></i></span>
-        </div>
-        <div class="latest-grid" id="latestGrid"></div>
-      </div>
-      <div>
-        <!-- Newsletter -->
-        <div class="newsletter-box">
-          <h3>Get Weekly Insights</h3>
-          <p>Education tips, product updates, and case studies — straight to your inbox every Tuesday.</p>
-          <input class="newsletter-input" type="email" placeholder="your@email.com">
-          <button class="newsletter-btn"><i class="fas fa-paper-plane"></i> Subscribe Free</button>
-        </div>
-        <!-- Tags -->
-        <div class="tags-box" style="margin-top:28px;background:var(--white);border:1px solid var(--border);border-radius:14px;padding:22px;">
-          <h4>Popular Topics</h4>
-          <div class="tags-wrap">
-            <span class="tag">Result Management</span>
-            <span class="tag">Excel Upload</span>
-            <span class="tag">Grade Cards</span>
-            <span class="tag">Analytics</span>
-            <span class="tag">Student Portal</span>
-            <span class="tag">PDF Export</span>
-            <span class="tag">School Admin</span>
-            <span class="tag">Data Security</span>
-            <span class="tag">Bulk Print</span>
+          <div>
+            <div class="author-name">{{ featured_post.author.get_full_name }}</div>
+            <div class="author-role">Author</div>
           </div>
         </div>
+        <span class="read-btn"><i class="fas fa-book-open"></i> Read Article</span>
       </div>
     </div>
-  </section>
-
-</div><!-- /view-list -->
-
-
-<!-- ═══════════════ SINGLE POST VIEW ═══════════════ -->
-<div class="view" id="view-post">
-  <section class="post-hero">
-    <div class="post-hero-bg"></div>
-    <div class="dot-grid"></div>
-    <div class="post-hero-inner">
-      <button class="back-btn" onclick="closePost()"><i class="fas fa-arrow-left"></i> Back to Blog</button>
-      <div class="post-meta" style="margin-bottom:18px" id="single-meta"></div>
-      <h1 id="single-title"></h1>
-      <div class="post-hero-meta" id="single-author-meta"></div>
-      <div class="post-hero-img">
-        <img id="single-img" src="" alt="">
-      </div>
+    <div class="featured-img">
+      {% if featured_post.featured_image %}
+        <img src="{{ featured_post.featured_image.url }}" alt="{{ featured_post.title }}">
+      {% else %}
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80" alt="{{ featured_post.title }}">
+      {% endif %}
+      <div class="img-overlay"></div>
     </div>
-  </section>
+  </a>
+</section>
+{% endif %}
 
-  <div class="post-body-wrap">
-    <div class="post-content" id="single-content"></div>
-    <div class="post-tags-row" id="single-tags"></div>
-    <div class="related-section">
-      <h3>You Might Also Like</h3>
-      <div class="related-grid" id="related-grid"></div>
+<!-- CATEGORY FILTER -->
+<section class="filter-section">
+  <div class="section-head" style="margin-bottom:16px">
+    <h2 class="section-title">All Articles</h2>
+  </div>
+  <div class="filter-row">
+    <a href="{% url 'blog_list' %}"
+       class="filter-pill {% if not current_category %}active{% endif %}">
+      All Articles
+    </a>
+    {% for cat in categories %}
+    <a href="{% url 'blog_list_by_category' cat.slug %}"
+       class="filter-pill {% if current_category.id == cat.id %}active{% endif %}">
+      {{ cat.name }}
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- POSTS GRID -->
+<section class="posts-section">
+  <div class="posts-grid">
+    {% for post in posts %}
+    <a href="{% url 'blog_detail' post.slug %}" class="post-card">
+      <div class="post-thumb">
+        {% if post.featured_image %}
+          <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+        {% else %}
+          <div style="width: 100%; height: 100%; background: linear-gradient(135deg, var(--blue-light), var(--violet-bg)); display: flex; align-items: center; justify-content: center;">
+            <i class="fas fa-image" style="font-size: 3rem; color: rgba(0,0,0,0.1);"></i>
+          </div>
+        {% endif %}
+        {% if post.category %}
+        <span class="thumb-cat post-cat cat-blue">
+          <i class="fas fa-tag"></i> {{ post.category.name }}
+        </span>
+        {% endif %}
+      </div>
+      <div class="post-body">
+        <h3 class="post-title">{{ post.title }}</h3>
+        <p class="post-excerpt">{{ post.excerpt }}</p>
+        <div class="post-card-foot">
+          <span class="read-more">
+            <i class="fas fa-arrow-right"></i> Read More
+          </span>
+          <span class="read-time">
+            <i class="fas fa-clock"></i> {{ post.read_time }}
+          </span>
+        </div>
+      </div>
+    </a>
+    {% empty %}
+    <div class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>No blog posts yet. Check back soon!</p>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination -->
+  {% if posts.has_other_pages %}
+  <div class="pagination-row">
+    {% if posts.has_previous %}
+    <a href="?page={{ posts.previous_page_number }}{% if current_category %}&category={{ current_category.slug }}{% endif %}" class="page-btn wide">
+      <i class="fas fa-chevron-left"></i> Previous
+    </a>
+    {% endif %}
+    {% for num in posts.paginator.page_range %}
+      {% if posts.number == num %}
+        <span class="page-btn active">{{ num }}</span>
+      {% else %}
+        <a href="?page={{ num }}{% if current_category %}&category={{ current_category.slug }}{% endif %}" class="page-btn">
+          {{ num }}
+        </a>
+      {% endif %}
+    {% endfor %}
+    {% if posts.has_next %}
+    <a href="?page={{ posts.next_page_number }}{% if current_category %}&category={{ current_category.slug }}{% endif %}" class="page-btn wide">
+      Next <i class="fas fa-chevron-right"></i>
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-bottom">
+    <p>&copy; 2025 Schoooli. All rights reserved.</p>
+    <div class="footer-badges">
+      <div class="footer-badge"><i class="fas fa-shield-alt"></i> Secure</div>
+      <div class="footer-badge"><i class="fas fa-lightning-bolt"></i> Fast</div>
     </div>
   </div>
-</div><!-- /view-post -->
+</footer>
 
-
-<script>
-/* ═══════════════════════════════════════
-   DATA
-═══════════════════════════════════════ */
-const POSTS = [
-  {
-    id: 0,
-    title: "How Digital Result Management Is Transforming Schools Across Nepal",
-    excerpt: "From paper ledgers to instant online grade cards — discover how thousands of institutions are modernising their academic workflows.",
-    cat: "technology", catLabel: "Technology", catClass: "cat-blue",
-    date: "12 Jun, 2024", readTime: "6 min read",
-    img: "https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&q=80",
-    author: "Mr. Mahesh Karki", authorRole: "Education Correspondent",
-    authorBg: "linear-gradient(135deg,#2563eb,#818cf8)", authorInitials: "MK",
-    tags: ["Digital Transformation","Result Management","Nepal Education"],
-    content: `
-      <p>In classrooms and administrative offices across Nepal, a quiet revolution is underway. Schools that once relied on handwritten ledgers and manually calculated percentages are now uploading Excel sheets and watching their entire result system go live in minutes.</p>
-      <h2>The Old Way Was Broken</h2>
-      <p>For decades, academic result management meant physical record books, error-prone manual calculations, and a waiting period of days — sometimes weeks — before students could learn their grades. Errors were common. Disputes were frequent. And the human effort involved was enormous.</p>
-      <blockquote>"What used to take three days of exhausting manual work is now done before lunch. Our exam coordinator calls it a miracle." — Principal, Kathmandu Secondary School</blockquote>
-      <h2>What Changed Everything</h2>
-      <p>The shift began when cloud-based result management platforms became accessible to institutions of all sizes. Today, a school with 200 students and one with 5,000 can both benefit from the same system — uploading their existing Excel result sheets and having them parsed, validated and published within minutes.</p>
-      <div class="callout"><i class="fas fa-lightbulb"></i><div><strong>Key Insight:</strong> The biggest barrier to adoption was not cost or technology — it was familiarity. Platforms that accepted existing Excel formats removed the single biggest friction point.</div></div>
-      <h2>The Student Experience</h2>
-      <p>From the student's perspective, the change is equally dramatic. Instead of queuing at notice boards or waiting for postal mark sheets, students now simply enter their symbol number on their phone and get a complete, printable grade card within seconds.</p>
-      <ul>
-        <li>Instant access from any device, any location</li>
-        <li>Subject-wise breakdown with grade and percentage</li>
-        <li>Downloadable PDF for university applications</li>
-        <li>Historical results accessible anytime</li>
-      </ul>
-      <h2>What the Data Shows</h2>
-      <p>Institutions using digital result management report a 94% reduction in result-related administrative queries. Parent satisfaction scores have risen sharply, and the number of result disputes — a time-consuming headache for registrars — has dropped to near zero due to the audit trail every change leaves behind.</p>
-      <p>The future of academic result management in Nepal is clearly digital. The question is no longer whether to modernise — it is simply how quickly institutions can make the transition.</p>
-    `
-  },
-  {
-    id: 1,
-    title: "5 Excel Mistakes That Corrupt Your Result Uploads (And How to Fix Them)",
-    excerpt: "Avoid the most common formatting pitfalls that cause upload failures and incorrect grade calculations in result management systems.",
-    cat: "tips", catLabel: "Tips & Tricks", catClass: "cat-amber",
-    date: "3 Jun, 2024", readTime: "4 min read",
-    img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&q=80",
-    author: "Ms. Sita Rana", authorRole: "Product Specialist",
-    authorBg: "linear-gradient(135deg,#059669,#34d399)", authorInitials: "SR",
-    tags: ["Excel","Upload","Tips","Troubleshooting"],
-    content: `
-      <p>Every exam season, our support team fields dozens of queries from administrators whose uploads are failing or producing incorrect results. Nine times out of ten, the issue is one of five common Excel mistakes.</p>
-      <h2>Mistake 1: Mixed Data Types in Mark Columns</h2>
-      <p>The most frequent offender. If a marks column contains text values like "AB" (absent) or "EX" (exempt) mixed with numeric scores, our parser will flag the entire column. Solution: use dedicated columns for special statuses and keep mark columns purely numeric.</p>
-      <h2>Mistake 2: Merged Cells in Header Rows</h2>
-      <p>Many schools use merged cells for aesthetics in their Excel templates. These look fine on screen but are invisible to automated parsers. Always unmerge header cells before uploading.</p>
-      <div class="callout"><i class="fas fa-exclamation-triangle"></i><div><strong>Quick Fix:</strong> Select all cells → Home → Merge &amp; Center dropdown → Unmerge Cells. Then re-check that each column has a unique header in row 1.</div></div>
-      <h2>Mistake 3: Symbol Numbers Stored as Numbers</h2>
-      <p>If symbol numbers start with a zero (e.g. 0112041), Excel will silently strip the leading zero unless the column is formatted as Text. Always set symbol number columns to Text format before entering data.</p>
-      <h2>Mistake 4: Hidden Rows or Columns</h2>
-      <p>Filtered or hidden rows are still included in uploads — they just cause unexpected extra records. Always show all rows and columns and delete any that should not be uploaded.</p>
-      <h2>Mistake 5: Inconsistent Subject Names Across Sheets</h2>
-      <p>If you upload multiple sheets and subject names differ by even a space or capital letter ("Math" vs "Mathematics" vs "math"), the system will treat them as different subjects. Standardise your subject names before the first upload of each academic year.</p>
-    `
-  },
-  {
-    id: 2,
-    title: "Understanding Grade Analytics: Reading Your Dashboard Like a Pro",
-    excerpt: "Your analytics dashboard holds insights beyond pass/fail rates. Here's how to extract actionable intelligence from your result data.",
-    cat: "analytics", catLabel: "Analytics", catClass: "cat-violet",
-    date: "28 May, 2024", readTime: "5 min read",
-    img: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80",
-    author: "Dr. Ram Bahadur", authorRole: "Academic Director",
-    authorBg: "linear-gradient(135deg,#7c3aed,#c4b5fd)", authorInitials: "RB",
-    tags: ["Analytics","Dashboard","Data","Grades"],
-    content: `
-      <p>Most administrators look at their dashboard, note the pass rate, and move on. But the analytics available in a modern result management system can reveal far more nuanced and actionable insights — if you know where to look.</p>
-      <h2>Beyond Pass / Fail: Distribution Matters</h2>
-      <p>A 78% pass rate tells you how many passed. It tells you nothing about why 22% failed, or how close the passing students were to failing. Grade distribution histograms reveal clustering — a spike of students scoring 41–45% is a warning sign that many passed narrowly and may struggle next semester.</p>
-      <h2>Subject-Level Weak Points</h2>
-      <p>Cross-referencing subject averages against class averages identifies teaching or curriculum gaps. When a single subject consistently underperforms across multiple classes and teachers, the issue is usually the syllabus. When one class underperforms on all subjects, the issue is usually with that class's learning environment.</p>
-      <blockquote>"The dashboard told us our Grade 11 Science class had a 34% average in Organic Chemistry — three years running. That's when we changed the curriculum." — Vice Principal, Prime College</blockquote>
-      <h2>Tracking Improvement Over Time</h2>
-      <p>Longitudinal comparison — comparing the same cohort across semesters — is the most powerful indicator of genuine educational improvement versus grade inflation. Look for consistent upward trends, not just high absolute numbers.</p>
-    `
-  },
-  {
-    id: 3,
-    title: "Role-Based Access Control: Who Should See What in Your System",
-    excerpt: "A practical guide to setting up user roles so that teachers, admins, and students each see exactly what they need — and nothing more.",
-    cat: "security", catLabel: "Security", catClass: "cat-rose",
-    date: "18 May, 2024", readTime: "7 min read",
-    img: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&q=80",
-    author: "Prakash Shrestha", authorRole: "IT Administrator",
-    authorBg: "linear-gradient(135deg,#e11d48,#fca5a5)", authorInitials: "PS",
-    tags: ["Security","Access Control","Admin","Privacy"],
-    content: `
-      <p>One of the most common security mistakes in institutional result management is treating access control as an afterthought. The principle of least privilege — each user sees only what they need — protects both data integrity and student privacy.</p>
-      <h2>Three Core Roles</h2>
-      <p>Most institutions need exactly three access levels to start:</p>
-      <ul>
-        <li><strong>Super Admin:</strong> Full access to all records, user management, and audit logs. Should be limited to one or two senior administrators.</li>
-        <li><strong>Teacher / Department Head:</strong> Can enter and edit marks for their assigned subjects only. Can view reports for their classes. Cannot see other departments.</li>
-        <li><strong>Student (Public Portal):</strong> Can view their own result only, accessed via symbol number. No login required. No ability to see others' results.</li>
-      </ul>
-      <div class="callout"><i class="fas fa-shield-alt"></i><div><strong>Best Practice:</strong> Create a separate read-only "Viewer" role for school management and board members who need to see reports but should never be able to modify data.</div></div>
-      <h2>Audit Logs Are Non-Negotiable</h2>
-      <p>Every change to a result record should be logged: who made it, when, and what changed. This protects against both accidental errors and deliberate tampering, and is invaluable during result disputes.</p>
-    `
-  },
-  {
-    id: 4,
-    title: "How to Set Up Your Institution on ResultHub in Under 10 Minutes",
-    excerpt: "A step-by-step onboarding guide covering account setup, your first Excel upload, and publishing your first result set.",
-    cat: "education", catLabel: "Education", catClass: "cat-green",
-    date: "10 May, 2024", readTime: "3 min read",
-    img: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80",
-    author: "Geeta Devi", authorRole: "Customer Success",
-    authorBg: "linear-gradient(135deg,#0d9488,#5eead4)", authorInitials: "GD",
-    tags: ["Onboarding","Getting Started","Setup","Tutorial"],
-    content: `
-      <p>Getting your first result set live is easier than you think. Follow these steps and your students will be checking grades in under 10 minutes.</p>
-      <h2>Step 1: Create Your Account</h2>
-      <p>Go to schoooli.com/signup. Enter your institution name, admin email, and create a password. You'll receive a verification email — click the link to activate your account.</p>
-      <h2>Step 2: Prepare Your Excel File</h2>
-      <p>Your Excel file needs at minimum: a Symbol Number column, a Student Name column, and one or more subject mark columns. Column headers must be in row 1. Download our template if you're starting fresh.</p>
-      <h2>Step 3: Upload and Review</h2>
-      <p>In your dashboard, click Upload Results → Choose File → select your Excel file. Our system will show you a preview with any detected issues highlighted in orange. Fix issues in your file and re-upload, or proceed if everything looks correct.</p>
-      <div class="callout"><i class="fas fa-check-circle"></i><div><strong>Pro Tip:</strong> Use the preview to confirm that grade calculations look correct before publishing. Once published, students can immediately see their results.</div></div>
-      <h2>Step 4: Publish</h2>
-      <p>Click Publish Results. Choose whether results are public (anyone with a symbol number can view) or institution-restricted (requires login). That's it — your students can now check their grades instantly.</p>
-    `
-  },
-  {
-    id: 5,
-    title: "Generating PDF Marksheets: Customising Headers, Logos and Signatures",
-    excerpt: "Make your digital marksheets look as official as printed ones — with your institution's branding, principal signature, and grade seal.",
-    cat: "technology", catLabel: "Technology", catClass: "cat-blue",
-    date: "2 May, 2024", readTime: "5 min read",
-    img: "https://images.unsplash.com/photo-1568667256549-094345857637?w=800&q=80",
-    author: "Anita Poudel", authorRole: "Design Lead",
-    authorBg: "linear-gradient(135deg,#7c3aed,#c4b5fd)", authorInitials: "AP",
-    tags: ["PDF","Marksheet","Branding","Export"],
-    content: `
-      <p>A PDF marksheet is often the first official document a student presents to a university or employer. It needs to look the part. Here's how to customise every element.</p>
-      <h2>Adding Your Institution Logo</h2>
-      <p>Go to Settings → Marksheet Template → Header. Upload your institution logo (PNG with transparent background works best). Set the position to Left, Centre, or Right, and adjust the size using the slider. The preview updates in real time.</p>
-      <h2>Setting the Official Header Text</h2>
-      <p>The header typically includes your institution's full official name, address, affiliation (e.g. "Affiliated to Tribhuvan University"), and the exam name. Use the multi-line text editor to format this exactly as it appears on your official letterhead.</p>
-      <blockquote>The marksheet is often a student's first professional credential. Make it look like one.</blockquote>
-      <h2>Signature Fields</h2>
-      <p>Upload scanned signatures for up to three signatories (e.g. Principal, Exam Controller, Registrar). Each signature block can have a custom title below it. For digital authenticity, enable the QR code verification stamp — this generates a unique code on each marksheet that anyone can scan to verify authenticity.</p>
-      <h2>Grade and Seal Watermark</h2>
-      <p>Add a diagonal watermark with your institution name for an extra layer of authenticity. Set the opacity low enough to be visible but not interfere with readability — 8–12% opacity works well in practice.</p>
-    `
-  }
-];
-
-/* ═══════════════════════════════════════
-   RENDER POSTS GRID
-═══════════════════════════════════════ */
-function renderGrid(cat) {
-  const grid = document.getElementById('postsGrid');
-  const filtered = cat === 'all' ? POSTS : POSTS.filter(p => p.cat === cat);
-  grid.innerHTML = filtered.map((p, i) => `
-    <div class="post-card" onclick="openPost(${p.id})" style="animation-delay:${i*0.07}s">
-      <div class="post-img">
-        <img src="${p.img}" alt="${p.title}" loading="lazy">
-        <div class="post-img-cat">
-          <span class="post-cat ${p.catClass}">${p.catLabel}</span>
-        </div>
-      </div>
-      <div class="post-body">
-        <h3 class="post-title">${p.title}</h3>
-        <p class="post-excerpt">${p.excerpt}</p>
-        <div class="post-card-footer">
-          <span class="post-read-more">Read more <i class="fas fa-arrow-right"></i></span>
-          <span class="read-time"><i class="fas fa-clock"></i> ${p.readTime}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ═══════════════════════════════════════
-   RENDER LATEST (sidebar)
-═══════════════════════════════════════ */
-function renderLatest() {
-  const grid = document.getElementById('latestGrid');
-  grid.innerHTML = POSTS.slice(0, 6).map(p => `
-    <div class="latest-card" onclick="openPost(${p.id})">
-      <div class="latest-img">
-        <img src="${p.img}" alt="${p.title}" loading="lazy">
-      </div>
-      <div>
-        <div class="latest-title">${p.title}</div>
-        <div class="latest-date"><i class="fas fa-clock"></i> ${p.date} · ${p.readTime}</div>
-      </div>
-    </div>
-  `).join('');
-}
-
-/* ═══════════════════════════════════════
-   FILTER BUTTONS
-═══════════════════════════════════════ */
-document.getElementById('filterRow').addEventListener('click', (e) => {
-  const btn = e.target.closest('.filter-btn');
-  if (!btn) return;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  renderGrid(btn.dataset.cat);
-});
-
-/* ═══════════════════════════════════════
-   OPEN / CLOSE POST
-═══════════════════════════════════════ */
-function openPost(id) {
-  const p = POSTS[id];
-
-  // Meta pill + date
-  document.getElementById('single-meta').innerHTML = `
-    <span class="post-cat ${p.catClass}">${p.catLabel}</span>
-    <span class="post-date" style="color:rgba(255,255,255,.5)"><i class="fas fa-clock"></i> ${p.date} · ${p.readTime}</span>
-  `;
-
-  document.getElementById('single-title').textContent = p.title;
-
-  document.getElementById('single-author-meta').innerHTML = `
-    <div class="hero-author">
-      <div class="hero-author-av" style="background:${p.authorBg}">${p.authorInitials}</div>
-      <div>
-        <div class="hero-author-name">${p.author}</div>
-        <div class="hero-author-role">${p.authorRole}</div>
-      </div>
-    </div>
-    <div class="meta-divider"></div>
-    <div class="meta-item"><i class="fas fa-calendar"></i> ${p.date}</div>
-    <div class="meta-item"><i class="fas fa-clock"></i> ${p.readTime}</div>
-  `;
-
-  document.getElementById('single-img').src  = p.img;
-  document.getElementById('single-img').alt  = p.title;
-  document.getElementById('single-content').innerHTML = p.content;
-
-  // Tags
-  document.getElementById('single-tags').innerHTML = `
-    <span>Tags:</span>
-    ${p.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-  `;
-
-  // Related posts (3 random others)
-  const related = POSTS.filter(r => r.id !== id).slice(0, 3);
-  document.getElementById('related-grid').innerHTML = related.map(r => `
-    <div class="post-card" onclick="openPost(${r.id})" style="animation:fadeUp .4s ease both">
-      <div class="post-img" style="height:160px">
-        <img src="${r.img}" alt="${r.title}" loading="lazy">
-        <div class="post-img-cat"><span class="post-cat ${r.catClass}">${r.catLabel}</span></div>
-      </div>
-      <div class="post-body">
-        <h3 class="post-title" style="font-size:.9rem">${r.title}</h3>
-        <div class="post-card-footer">
-          <span class="post-read-more">Read <i class="fas fa-arrow-right"></i></span>
-          <span class="read-time"><i class="fas fa-clock"></i> ${r.readTime}</span>
-        </div>
-      </div>
-    </div>
-  `).join('');
-
-  document.getElementById('view-list').classList.remove('active');
-  document.getElementById('view-post').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function closePost() {
-  document.getElementById('view-post').classList.remove('active');
-  document.getElementById('view-list').classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function scrollToGrid() {
-  document.querySelector('.posts-section').scrollIntoView({ behavior: 'smooth' });
-}
-
-/* ═══════════════════════════════════════
-   NAVBAR SCROLL
-═══════════════════════════════════════ */
-window.addEventListener('scroll', () => {
-  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
-}, { passive: true });
-
-/* ═══════════════════════════════════════
-   INIT
-═══════════════════════════════════════ */
-renderGrid('all');
-renderLatest();
-</script>
 </body>
 </html>

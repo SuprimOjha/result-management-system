@@ -1,6 +1,8 @@
 # results/models.py
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+from tinymce.models import HTMLField
 
 class School(models.Model):
     code = models.CharField(max_length=10, unique=True)
@@ -48,3 +50,65 @@ class Result(models.Model):
 
     def __str__(self):
         return f"{self.student_name} ({self.symbol_number})"
+
+
+class BlogCategory(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    description = models.TextField(blank=True, null=True)
+    
+    class Meta:
+        verbose_name_plural = "Blog Categories"
+    
+    def __str__(self):
+        return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+class Blog(models.Model):
+    title = models.CharField(max_length=300)
+    slug = models.SlugField(unique=True, blank=True)
+    excerpt = models.TextField(help_text="Short summary of the blog post (150-200 characters)")
+    content = HTMLField(help_text="Write your blog content here")
+    featured_image = models.ImageField(upload_to='blog_images/', null=True, blank=True)
+    category = models.ForeignKey(BlogCategory, on_delete=models.SET_NULL, null=True, blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
+    
+    # SEO Meta fields
+    meta_description = models.CharField(max_length=160, blank=True, help_text="SEO meta description")
+    meta_keywords = models.CharField(max_length=200, blank=True, help_text="comma-separated keywords")
+    
+    # Publishing control
+    is_published = models.BooleanField(default=True)
+    featured = models.BooleanField(default=False, help_text="Mark as featured blog")
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    # Views tracking
+    views = models.IntegerField(default=0)
+    
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Blog Post"
+        verbose_name_plural = "Blog Posts"
+    
+    def __str__(self):
+        return self.title
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+    
+    @property
+    def read_time(self):
+        """Calculate estimated reading time in minutes"""
+        word_count = len(self.content.split())
+        reading_time = max(1, word_count // 200)  # Assuming 200 words per minute
+        return f"{reading_time} min read"

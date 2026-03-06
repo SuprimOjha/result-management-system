@@ -1,6 +1,6 @@
 import random
 import json
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -11,7 +11,8 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
-from .models import Result, School, UserProfile
+from django.core.paginator import Paginator
+from .models import Result, School, UserProfile, Blog, BlogCategory
 import string
 import random
 
@@ -37,37 +38,56 @@ def _generate_school_code(name: str) -> str:
 
 def signup(request):
     if request.method == "POST":
-        email = request.POST.get("email")
-        password = request.POST.get("password")
-        full_name = request.POST.get("full_name")   # optional admin name
-        school_name = request.POST.get("school")
+        try:
+            email = request.POST.get("email", "").strip()
+            password = request.POST.get("password", "").strip()
+            full_name = request.POST.get("full_name", "").strip()
+            school_name = request.POST.get("school", "").strip()
 
-        if User.objects.filter(username=email).exists():
-            messages.error(request, "Email already registered")
+            # Validate inputs
+            if not email or not password:
+                messages.error(request, "Email and password are required")
+                return redirect("signup")
+
+            if not school_name:
+                messages.error(request, "Please provide a school name")
+                return redirect("signup")
+
+            # Check if email already registered
+            if User.objects.filter(username=email).exists():
+                messages.error(request, "Email already registered")
+                return redirect("signup")
+
+            # Generate OTP
+            otp = random.randint(100000, 999999)
+
+            # Store data in session
+            request.session["signup_email"] = email
+            request.session["signup_password"] = password
+            request.session["signup_full_name"] = full_name
+            request.session["signup_school"] = school_name
+            request.session["signup_otp"] = otp
+            request.session.set_expiry(600)  # OTP valid for 10 minutes
+
+            # Try to send OTP email
+            try:
+                send_mail(
+                    "Your OTP Code",
+                    f"Your OTP for account verification is: {otp}\n\nThis OTP is valid for 10 minutes.",
+                    settings.EMAIL_HOST_USER,
+                    [email],
+                    fail_silently=False,
+                )
+                return redirect("verify_otp")
+            except Exception as email_error:
+                # If email fails, still allow OTP verification but show warning
+                messages.warning(request, "Could not send OTP via email. Please check admin settings.")
+                print(f"Email error: {str(email_error)}")  # Log for debugging
+                return redirect("verify_otp")
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
             return redirect("signup")
-
-        if not school_name:
-            messages.error(request, "Please provide a school name")
-            return redirect("signup")
-
-        otp = random.randint(100000, 999999)
-
-        # keep extra data in session so it can be used after OTP verification
-        request.session["signup_email"] = email
-        request.session["signup_password"] = password
-        request.session["signup_full_name"] = full_name
-        request.session["signup_school"] = school_name
-        request.session["signup_otp"] = otp
-
-        send_mail(
-            "Your OTP Code",
-            f"Your OTP for account verification is: {otp}",
-            settings.EMAIL_HOST_USER,
-            [email],
-            fail_silently=False,
-        )
-
-        return redirect("verify_otp")
 
     return render(request, "results/signup.html")
 
@@ -76,50 +96,78 @@ def signup(request):
 
 def verify_otp(request):
     if request.method == "POST":
-        # Reconstruct OTP from individual digit inputs
-        otp_digits = [request.POST.get(f'd{i}', '') for i in range(1, 7)]
-        entered_otp = ''.join(otp_digits)
-        
-        saved_otp = request.session.get("signup_otp")
+        try:
+            # Reconstruct OTP from individual digit inputs
+            otp_digits = [request.POST.get(f'd{i}', '') for i in range(1, 7)]
+            entered_otp = ''.join(otp_digits)
+            
+            saved_otp = request.session.get("signup_otp")
 
-        if str(entered_otp) == str(saved_otp):
-            email = request.session.get("signup_email")
-            password = request.session.get("signup_password")
-            full_name = request.session.get("signup_full_name")
-            school_name = request.session.get("signup_school")
+            if str(entered_otp) == str(saved_otp):
+                # Get session data with validation
+                email = request.session.get("signup_email")
+                password = request.session.get("signup_password")
+                full_name = request.session.get("signup_full_name") or ""
+                school_name = request.session.get("signup_school")
 
-            # create user and populate name if provided
-            user = User.objects.create_user(
-                username=email,
-                email=email,
-                password=password,
-                first_name=full_name or "",
-            )
+                # Validate required session data
+                if not email or not password:
+                    messages.error(request, "Session expired. Please sign up again.")
+                    return redirect("signup")
 
-            # look up existing school by name or create a new one with a unique code
-            school = None
-            if school_name:
-                school, created = School.objects.get_or_create(
-                    name=school_name,
-                    defaults={'code': _generate_school_code(school_name)}
-                )
-                # if the school existed but had no code (legacy), ensure it has one
-                if not school.code:
-                    school.code = _generate_school_code(school_name)
-                    school.save()
+                # Check if user already exists
+                if User.objects.filter(username=email).exists():
+                    messages.error(request, "This email has already been registered.")
+                    return redirect("login")
 
-            # Create UserProfile for the new user with school linked
-            UserProfile.objects.create(user=user, school=school)
+                try:
+                    # Create user
+                    user = User.objects.create_user(
+                        username=email,
+                        email=email,
+                        password=password,
+                        first_name=full_name,
+                    )
+                except Exception as e:
+                    messages.error(request, f"Failed to create account: {str(e)}")
+                    return redirect("signup")
 
-            login(request, user)
+                # Look up or create school
+                school = None
+                if school_name:
+                    try:
+                        school, created = School.objects.get_or_create(
+                            name=school_name,
+                            defaults={'code': _generate_school_code(school_name)}
+                        )
+                        # If school existed but has no code, generate one
+                        if not school.code:
+                            school.code = _generate_school_code(school_name)
+                            school.save()
+                    except Exception as e:
+                        messages.warning(request, f"Could not link school: {str(e)}")
+                        school = None
 
-            # Clear session
-            request.session.flush()
+                # Create UserProfile
+                try:
+                    UserProfile.objects.create(user=user, school=school)
+                except Exception as e:
+                    messages.warning(request, f"Profile creation issue: {str(e)}")
 
-            return redirect("admin_dashboard")
+                # Login user
+                login(request, user)
+                
+                # Clear session
+                request.session.flush()
 
-        else:
-            messages.error(request, "Invalid OTP")
+                messages.success(request, "Account created successfully!")
+                return redirect("admin_dashboard")
+
+            else:
+                messages.error(request, "Invalid OTP. Please try again.")
+
+        except Exception as e:
+            messages.error(request, f"An error occurred: {str(e)}")
 
     return render(request, "results/verify_otp.html")
 
@@ -152,7 +200,6 @@ def logout_view(request):
 # ------------------ ADMIN DASHBOARD ------------------
 
 @login_required
-@login_required
 def admin_dashboard(request):
     try:
         user_profile = UserProfile.objects.get(user=request.user)
@@ -167,7 +214,19 @@ def admin_dashboard(request):
     else:
         schools = School.objects.all()
 
-    return render(request, "results/admin_dashboard.html", {'school': school, 'schools': schools})
+    # Get user's full name (first name and last name)
+    user_full_name = request.user.get_full_name() or request.user.first_name or request.user.username
+    school_name = school.name if school else "No School Assigned"
+    
+    context = {
+        'school': school,
+        'schools': schools,
+        'user_full_name': user_full_name,
+        'school_name': school_name,
+        'initials': ''.join([word[0].upper() for word in user_full_name.split()[:2]])
+    }
+
+    return render(request, "results/admin_dashboard.html", context)
 
 
 @login_required
@@ -341,11 +400,20 @@ def api_save_result(request):
     try:
         data = json.loads(request.body)
         
-        # Validate required fields
-        required_fields = ['name', 'roll', 'symbol', 'total', 'obtained']
+        # Validate required fields - check for existence, not truthiness
+        required_fields = ['name', 'roll', 'symbol']
         for field in required_fields:
-            if not data.get(field):
+            if field not in data or data.get(field) is None or str(data.get(field)).strip() == '':
                 return JsonResponse({'success': False, 'error': f'{field} is required'}, status=400)
+        
+        # Validate numeric fields
+        try:
+            total = int(data.get('total', 0))
+            obtained = int(data.get('obtained', 0))
+            if total <= 0:
+                return JsonResponse({'success': False, 'error': 'Total marks must be greater than 0'}, status=400)
+        except (ValueError, TypeError):
+            return JsonResponse({'success': False, 'error': 'Total and obtained marks must be valid numbers'}, status=400)
         
         # Get the admin's school from their profile
         try:
@@ -359,23 +427,21 @@ def api_save_result(request):
             return JsonResponse({'success': False, 'error': 'Please set your school first'}, status=400)
         
         # Calculate grade and status
-        total = int(data.get('total', 0))
-        obtained = int(data.get('obtained', 0))
         pct = round(obtained / total * 100) if total > 0 else 0
         grade = 'A' if pct >= 90 else 'B' if pct >= 75 else 'C' if pct >= 55 else 'D' if pct >= 40 else 'F'
         status = 'Pass' if pct >= 40 else 'Fail'
         
         # Check if result already exists
         existing = Result.objects.filter(
-            symbol_number=data.get('symbol'),
+            symbol_number=str(data.get('symbol')).strip(),
             school=school,
-            exam_type=data.get('examType', 'Regular')
+            exam_type=data.get('examType', 'Final Examination')
         ).first()
         
         if existing:
             # Update existing
-            existing.student_name = data.get('name')
-            existing.roll_number = data.get('roll')
+            existing.student_name = str(data.get('name')).strip()
+            existing.roll_number = str(data.get('roll')).strip()
             existing.semester = data.get('sem', '')
             existing.total_marks = total
             existing.obtained_marks = obtained
@@ -387,11 +453,11 @@ def api_save_result(request):
             # Create new
             result = Result(
                 school=school,
-                student_name=data.get('name'),
-                roll_number=data.get('roll'),
-                symbol_number=data.get('symbol'),
+                student_name=str(data.get('name')).strip(),
+                roll_number=str(data.get('roll')).strip(),
+                symbol_number=str(data.get('symbol')).strip(),
                 semester=data.get('sem', ''),
-                exam_type=data.get('examType', 'Regular'),
+                exam_type=data.get('examType', 'Final Examination'),
                 total_marks=total,
                 obtained_marks=obtained,
                 department=data.get('dept', ''),
@@ -402,8 +468,10 @@ def api_save_result(request):
         
         return JsonResponse({'success': True, 'message': 'Result saved successfully'})
     
+    except json.JSONDecodeError:
+        return JsonResponse({'success': False, 'error': 'Invalid JSON format'}, status=400)
     except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=400)
+        return JsonResponse({'success': False, 'error': f'Server error: {str(e)}'}, status=400)
 
 
 @login_required
@@ -558,5 +626,101 @@ def api_set_school(request):
     except Exception as e:
         return JsonResponse({'success': False, 'error': str(e)}, status=400)
 
-def blogs(request):
-    return render(request, 'results/blogs.html')
+def blog_list(request):
+    """Display all published blog posts"""
+    page_num = request.GET.get('page', 1)
+    category_slug = request.GET.get('category')
+    
+    # Get all published blogs
+    blogs = Blog.objects.filter(is_published=True).order_by('-created_at')
+    
+    # Filter by category if provided
+    current_category = None
+    if category_slug:
+        current_category = get_object_or_404(BlogCategory, slug=category_slug)
+        blogs = blogs.filter(category=current_category)
+    
+    # Get featured post
+    featured_post = blogs.filter(featured=True).first()
+    if featured_post:
+        blogs = blogs.exclude(id=featured_post.id)
+    
+    # Get all categories for filter
+    categories = BlogCategory.objects.all()
+    
+    # Paginate results
+    paginator = Paginator(blogs, 6)  # 6 posts per page
+    page_obj = paginator.get_page(page_num)
+    
+    context = {
+        'featured_post': featured_post,
+        'posts': page_obj,
+        'categories': categories,
+        'current_category': current_category,
+    }
+    
+    return render(request, 'results/blogs.html', context)
+
+
+def blog_list_by_category(request, slug):
+    """Display blogs filtered by category"""
+    category = get_object_or_404(BlogCategory, slug=slug)
+    page_num = request.GET.get('page', 1)
+    
+    # Get blogs for this category
+    blogs = Blog.objects.filter(category=category, is_published=True).order_by('-created_at')
+    
+    # Get featured post for this category
+    featured_post = blogs.filter(featured=True).first()
+    if featured_post:
+        blogs = blogs.exclude(id=featured_post.id)
+    
+    # Get all categories
+    categories = BlogCategory.objects.all()
+    
+    # Paginate
+    paginator = Paginator(blogs, 6)
+    page_obj = paginator.get_page(page_num)
+    
+    context = {
+        'featured_post': featured_post,
+        'posts': page_obj,
+        'categories': categories,
+        'current_category': category,
+    }
+    
+    return render(request, 'results/blogs.html', context)
+
+
+def blog_detail(request, slug):
+    """Display detailed blog post view"""
+    post = get_object_or_404(Blog, slug=slug, is_published=True)
+    
+    # Increment view count
+    post.views += 1
+    post.save(update_fields=['views'])
+    
+    # Get related posts from same category
+    related_posts = Blog.objects.filter(
+        category=post.category,
+        is_published=True
+    ).exclude(id=post.id).order_by('-created_at')[:3]
+    
+    # Get latest posts for sidebar
+    latest_posts = Blog.objects.filter(is_published=True).order_by('-created_at')[:5]
+    
+    # Get all categories for sidebar
+    categories = BlogCategory.objects.all()
+    
+    # Process tags from meta_keywords
+    tags = [tag.strip() for tag in post.meta_keywords.split(',') if tag.strip()] if post.meta_keywords else []
+    
+    context = {
+        'post': post,
+        'related_posts': related_posts,
+        'latest_posts': latest_posts,
+        'all_categories': categories,
+        'tags': tags,
+    }
+    
+    return render(request, 'results/blogs_detail.html', context)

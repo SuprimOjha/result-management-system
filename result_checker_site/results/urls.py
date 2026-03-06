@@ -11,7 +11,13 @@ urlpatterns = [
     path('upload-excel/', views.upload_excel, name='upload_excel'),
     path('check-result/', views.check_result, name='check_result'),
     path('schools/', views.get_schools, name='get_schools'),
-    path('blogs/', views.blogs, name='blogs'),
+    
+    # Blog URLs
+    path('blogs/', views.blog_list, name='blog_list'),
+    path('blogs/<slug:slug>/', views.blog_detail, name='blog_detail'),
+    path('blogs/category/<slug:slug>/', views.blog_list_by_category, name='blog_list_by_category'),
+    
+    # API endpoints
     path('api/set-school/', views.api_set_school, name='api_set_school'),
     path('api/add-school/', views.api_add_school, name='api_add_school'),
     

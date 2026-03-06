@@ -1,0 +1,34 @@
+services:
+  - type: web
+    name: result-management-system
+    env: python
+    plan: free
+    buildCommand: |
+      pip install --upgrade pip
+      pip install -r requirements.txt
+      python result_checker_site/manage.py collectstatic --noinput
+      python result_checker_site/manage.py migrate --noinput
+    startCommand: gunicorn --chdir result_checker_site result_checker.wsgi:application
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postgres_db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+
+databases:
+  - name: postgres_db
+    plan: free
+    region: ohio
+    databaseName: result_db
+    user: postgres
+    preDeleteStatement: SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND pid <> pg_backend_pid();
