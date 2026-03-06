@@ -1,0 +1,45 @@
+{% load static %}
+<nav class="navbar" id="navbar">
+  <div class="container">
+    <div class="nav-content">
+
+      <a href="/" class="logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        Schoooli
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="/#about">About Us</a></li>
+        <li><a href="/#features">Features</a></li>
+        <li><a href="{% url 'blog_list' %}">Blogs</a></li>
+        <li><a href="/#pricing">Pricing</a></li>
+        <li><a href="/#check-results">Check Results</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+
+      <div class="nav-buttons">
+        <a href="{% url 'login' %}" class="btn-text">Login</a>
+        <a href="{% url 'signup' %}" class="btn-primary-small"><i class="fas fa-user-plus"></i> Sign up</a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- Mobile Drawer -->
+<div class="mobile-drawer" id="mobileDrawer">
+  <a href="/#about"         onclick="closeMob()"><i class="fas fa-info-circle"></i> About Us</a>
+  <a href="/#how-it-works"  onclick="closeMob()"><i class="fas fa-list-ol"></i> How It Works</a>
+  <a href="/#features"      onclick="closeMob()"><i class="fas fa-star"></i> Features</a>
+  <a href="{% url 'blog_list'%}" onclick="closeMob()"><i class="fas fa-blog"></i> Blogs</a>
+  <a href="/#why-us"        onclick="closeMob()"><i class="fas fa-shield-alt"></i> Why Us</a>
+  <a href="/#pricing"       onclick="closeMob()"><i class="fas fa-tags"></i> Pricing</a>
+  <a href="/#check-results" onclick="closeMob()"><i class="fas fa-search"></i> Check Results</a>
+  <a href="/#contact"       onclick="closeMob()"><i class="fas fa-envelope"></i> Contact</a>
+  <div class="mob-divider"></div>
+  <a href="{% url 'login' %}"  onclick="closeMob()"><i class="fas fa-sign-in-alt"></i> Login</a>
+  <a href="{% url 'signup' %}" onclick="closeMob()" class="mob-signup"><i class="fas fa-user-plus"></i> Sign Up Free</a>
+</div>

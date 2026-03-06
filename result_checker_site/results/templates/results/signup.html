@@ -1,319 +1,673 @@
+{% extends 'results/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign Up — Schoooli</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-  <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 15px; }
-  :root {
-    --navy: #0a1628; --navy-2: #112240;
-    --blue-2: #2563eb; --blue-light: #eff6ff; --blue-mid: #60a5fa;
-    --emerald: #059669; --emerald-bg: #ecfdf5;
-    --rose: #e11d48; --rose-bg: #fff1f2;
-    --violet: #7c3aed; --amber: #d97706;
-    --border: #e2e8f0; --bg: #f8fafc; --white: #ffffff;
-    --text: #0f172a; --text-mid: #334155; --text-muted: #64748b;
-    --shadow-xl: 0 24px 60px rgba(0,0,0,.14);
-  }
+
+{% block title %}Sign Up — Schoooli{% endblock %}
+
+{% block extra_style %}
+<style>
+  /* ─────────────────────────────────────────────────────── */
+  /* AUTH LAYOUT OVERRIDES - Base body grid for sign up page */
+  /* ─────────────────────────────────────────────────────── */
   body {
-    font-family: 'DM Sans', sans-serif; color: var(--text);
-    min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; overflow-x: hidden;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    overflow-x: hidden;
   }
+
+  /* Hide navbar and footer on auth pages */
+  .navbar { display: none; }
+  .footer { display: none; }
+
+  /* ─────────────────────────────────────────────────────── */
+  /* LEFT PANEL STYLES */
+  /* ─────────────────────────────────────────────────────── */
   .left-panel {
     background: linear-gradient(155deg, var(--navy) 0%, var(--navy-2) 100%);
-    position: relative; overflow: hidden;
-    display: flex; flex-direction: column; justify-content: center;
-    padding: 64px 52px; min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 64px 52px;
+    min-height: 100vh;
   }
+
   .left-panel::before {
-    content: ''; position: absolute; top: -180px; right: -180px;
-    width: 500px; height: 500px;
-    background: radial-gradient(circle, rgba(37,99,235,.18) 0%, transparent 68%);
+    content: '';
+    position: absolute;
+    top: -180px;
+    right: -180px;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, transparent 68%);
   }
+
   .left-panel::after {
-    content: ''; position: absolute; bottom: -120px; left: -80px;
-    width: 380px; height: 380px;
-    background: radial-gradient(circle, rgba(124,58,237,.14) 0%, transparent 68%);
+    content: '';
+    position: absolute;
+    bottom: -120px;
+    left: -80px;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(124, 58, 237, 0.14) 0%, transparent 68%);
   }
+
   .dot-grid {
-    position: absolute; inset: 0; z-index: 0;
-    background-image: radial-gradient(rgba(255,255,255,.055) 1px, transparent 1px);
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.055) 1px, transparent 1px);
     background-size: 26px 26px;
   }
-  .left-content { position: relative; z-index: 1; }
+
+  .left-content {
+    position: relative;
+    z-index: 1;
+  }
+
   .panel-logo {
-    display: flex; align-items: center; gap: 10px; text-decoration: none;
-    margin-bottom: 52px; font-family: 'Playfair Display', serif;
-    font-size: 1.22rem; font-weight: 700; color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    margin-bottom: 52px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.22rem;
+    font-weight: 700;
+    color: #fff;
   }
+
   .panel-logo-icon {
-    width: 38px; height: 38px; border-radius: 10px;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
     background: linear-gradient(135deg, var(--blue-2), var(--violet));
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 1rem; flex-shrink: 0;
-    box-shadow: 0 4px 14px rgba(37,99,235,.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
   }
+
   .left-badge {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-    padding: 6px 14px 6px 8px; border-radius: 99px;
-    font-size: .75rem; font-weight: 600; color: rgba(255,255,255,.82);
-    margin-bottom: 26px; animation: fadeUp .5s ease both;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 6px 14px 6px 8px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.82);
+    margin-bottom: 26px;
+    animation: fadeUp 0.5s ease both;
   }
+
   .left-badge-pip {
-    width: 22px; height: 22px; border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
     background: linear-gradient(135deg, var(--emerald), #34d399);
-    display: flex; align-items: center; justify-content: center; color: #fff; font-size: .65rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.65rem;
   }
+
   .left-content h1 {
-    font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 800;
-    color: #fff; line-height: 1.1; letter-spacing: -.6px; margin-bottom: 16px;
-    animation: fadeUp .5s .08s ease both;
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.1;
+    letter-spacing: -0.6px;
+    margin-bottom: 16px;
+    animation: fadeUp 0.5s 0.08s ease both;
   }
-  .left-content h1 .accent { color: var(--blue-mid); position: relative; display: inline-block; }
+
+  .left-content h1 .accent {
+    color: var(--blue-mid);
+    position: relative;
+    display: inline-block;
+  }
+
   .left-content h1 .accent::after {
-    content: ''; position: absolute; bottom: -3px; left: 0; right: 0;
-    height: 2px; border-radius: 99px;
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 99px;
     background: linear-gradient(90deg, var(--blue-mid), #a78bfa);
   }
-  .left-content > p {
-    font-size: .9rem; color: rgba(255,255,255,.52); line-height: 1.75;
-    margin-bottom: 32px; max-width: 360px; animation: fadeUp .5s .14s ease both;
-  }
-  .benefit-list { display: flex; flex-direction: column; gap: 12px; animation: fadeUp .5s .2s ease both; }
-  .benefit-item {
-    display: flex; align-items: center; gap: 12px; padding: 13px 15px;
-    background: rgba(255,255,255,.055); border: 1px solid rgba(255,255,255,.08);
-    border-radius: 12px; transition: background .18s;
-  }
-  .benefit-item:hover { background: rgba(255,255,255,.1); }
-  .benefit-ico {
-    width: 38px; height: 38px; border-radius: 10px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: .86rem;
-  }
-  .bi-blue   { background: rgba(37,99,235,.25); color: var(--blue-mid); }
-  .bi-green  { background: rgba(5,150,105,.25); color: #34d399; }
-  .bi-violet { background: rgba(124,58,237,.25); color: #c4b5fd; }
-  .bi-amber  { background: rgba(217,119,6,.25); color: #fcd34d; }
-  .benefit-text { font-size: .84rem; font-weight: 500; color: rgba(255,255,255,.82); }
-  .benefit-sub  { font-size: .71rem; color: rgba(255,255,255,.38); margin-top: 1px; }
-  .trust-row {
-    margin-top: 30px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.08);
-    display: flex; align-items: center; gap: 14px; animation: fadeUp .5s .28s ease both;
-  }
-  .trust-avatars { display: flex; }
-  .trust-avatars span {
-    width: 32px; height: 32px; border-radius: 50%;
-    border: 2px solid rgba(255,255,255,.2);
-    display: flex; align-items: center; justify-content: center;
-    font-size: .68rem; font-weight: 700; color: #fff; margin-left: -9px;
-  }
-  .trust-avatars span:first-child { margin-left: 0; }
-  .trust-info { font-size: .78rem; color: rgba(255,255,255,.42); }
-  .trust-info strong { color: rgba(255,255,255,.85); }
 
+  .left-content > p {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.52);
+    line-height: 1.75;
+    margin-bottom: 32px;
+    max-width: 360px;
+    animation: fadeUp 0.5s 0.14s ease both;
+  }
+
+  .benefit-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    animation: fadeUp 0.5s 0.2s ease both;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 15px;
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    transition: background 0.18s;
+  }
+
+  .benefit-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .benefit-ico {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.86rem;
+  }
+
+  .bi-blue {
+    background: rgba(37, 99, 235, 0.25);
+    color: var(--blue-mid);
+  }
+
+  .bi-green {
+    background: rgba(5, 150, 105, 0.25);
+    color: #34d399;
+  }
+
+  .bi-violet {
+    background: rgba(124, 58, 237, 0.25);
+    color: #c4b5fd;
+  }
+
+  .bi-amber {
+    background: rgba(217, 119, 6, 0.25);
+    color: #fcd34d;
+  }
+
+  .benefit-text {
+    font-size: 0.84rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.82);
+  }
+
+  .benefit-sub {
+    font-size: 0.71rem;
+    color: rgba(255, 255, 255, 0.38);
+    margin-top: 1px;
+  }
+
+  .trust-row {
+    margin-top: 30px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    animation: fadeUp 0.5s 0.28s ease both;
+  }
+
+  .trust-avatars {
+    display: flex;
+  }
+
+  .trust-avatars span {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.68rem;
+    font-weight: 700;
+    color: #fff;
+    margin-left: -9px;
+  }
+
+  .trust-avatars span:first-child {
+    margin-left: 0;
+  }
+
+  .trust-info {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  .trust-info strong {
+    color: rgba(255, 255, 255, 0.85);
+  }
+
+  /* ─────────────────────────────────────────────────────── */
+  /* RIGHT PANEL STYLES - Form Section */
+  /* ─────────────────────────────────────────────────────── */
   .right-panel {
-    background: var(--bg); display: flex; align-items: center; justify-content: center;
-    padding: 52px 40px; overflow-y: auto;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 52px 40px;
+    overflow-y: auto;
   }
-  .form-wrap { width: 100%; max-width: 460px; animation: fadeUp .5s .1s ease both; }
+
+  .form-wrap {
+    width: 100%;
+    max-width: 460px;
+    animation: fadeUp 0.5s 0.1s ease both;
+  }
+
   .form-card {
-    background: var(--white); border: 1px solid var(--border);
-    border-radius: 22px; padding: 42px 38px;
-    box-shadow: var(--shadow-xl); position: relative; overflow: hidden;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 22px;
+    padding: 42px 38px;
+    box-shadow: var(--shadow-xl);
+    position: relative;
+    overflow: hidden;
   }
+
   .form-card::before {
-    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
     background: linear-gradient(90deg, var(--blue-2), var(--violet), var(--emerald));
   }
-  .form-header { margin-bottom: 28px; }
-  .section-label {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--blue-light); color: var(--blue-2);
-    font-size: .72rem; font-weight: 700; letter-spacing: 1px;
-    text-transform: uppercase; padding: 5px 14px; border-radius: 99px;
-    margin-bottom: 14px; border: 1px solid rgba(37,99,235,.15);
-  }
-  .form-header h2 {
-    font-family: 'Playfair Display', serif; font-size: 1.78rem; font-weight: 700;
-    color: var(--navy); margin-bottom: 7px; letter-spacing: -.3px;
-  }
-  .form-header p { font-size: .83rem; color: var(--text-muted); line-height: 1.65; }
-  .messages { list-style: none; margin-bottom: 22px; display: flex; flex-direction: column; gap: 8px; }
-  .messages li {
-    display: flex; align-items: center; gap: 9px;
-    font-size: .82rem; font-weight: 600; color: var(--rose);
-    background: var(--rose-bg); border: 1px solid rgba(225,29,72,.15);
-    border-left: 3px solid var(--rose); padding: 11px 14px; border-radius: 9px;
-  }
-  .form-group { margin-bottom: 18px; }
-  .form-label {
-    display: flex; align-items: center; gap: 6px;
-    font-size: .76rem; font-weight: 700; color: var(--text-mid);
-    margin-bottom: 7px; letter-spacing: .3px; text-transform: uppercase;
-  }
-  .form-label i { color: var(--blue-2); font-size: .76rem; }
-  .form-label .opt {
-    font-size: .65rem; font-weight: 600; background: #f1f5f9; color: var(--text-muted);
-    padding: 1px 8px; border-radius: 99px; text-transform: none; letter-spacing: 0;
-  }
-  .input-wrap { position: relative; }
-  .input-wrap .input-icon {
-    position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
-    color: var(--text-muted); font-size: .8rem; pointer-events: none; transition: color .18s;
-  }
-  .form-group:focus-within .input-icon { color: var(--blue-2); }
-  .form-ctrl {
-    width: 100%; height: 50px; border: 1.5px solid var(--border); border-radius: 11px;
-    padding: 0 14px 0 42px; font-family: 'DM Sans', sans-serif; font-size: .9rem;
-    color: var(--text); background: var(--white); outline: none;
-    transition: border-color .18s, box-shadow .18s;
-  }
-  .form-ctrl::placeholder { color: #c0ccd8; }
-  .form-ctrl:focus { border-color: var(--blue-2); box-shadow: 0 0 0 3.5px rgba(37,99,235,.1); }
-  .checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin: 20px 0; }
-  .checkbox-group input[type="checkbox"] {
-    width: 17px; height: 17px; border-radius: 5px;
-    accent-color: var(--blue-2); flex-shrink: 0; margin-top: 2px; cursor: pointer;
-  }
-  .checkbox-group label { font-size: .8rem; color: var(--text-muted); line-height: 1.55; cursor: pointer; }
-  .checkbox-group label a { color: var(--blue-2); text-decoration: none; font-weight: 600; }
-  .checkbox-group label a:hover { text-decoration: underline; }
-  .btn-submit {
-    width: 100%; height: 52px; border: none; border-radius: 11px;
-    background: linear-gradient(135deg, var(--blue-2), var(--violet));
-    color: #fff; font-family: 'DM Sans', sans-serif; font-size: .94rem; font-weight: 700;
-    cursor: pointer; transition: all .2s;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    box-shadow: 0 4px 18px rgba(37,99,235,.35); position: relative; overflow: hidden;
-  }
-  .btn-submit::after {
-    content: ''; position: absolute; inset: 0;
-    background: linear-gradient(135deg, #1d4ed8, #6d28d9); opacity: 0; transition: opacity .2s;
-  }
-  .btn-submit:hover::after { opacity: 1; }
-  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(37,99,235,.45); }
-  .btn-submit > * { position: relative; z-index: 1; }
-  .form-footer { text-align: center; margin-top: 20px; font-size: .83rem; color: var(--text-muted); }
-  .form-footer a { color: var(--blue-2); text-decoration: none; font-weight: 600; }
-  .form-footer a:hover { text-decoration: underline; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
-  @media (max-width: 900px) {
-    body { grid-template-columns: 1fr; }
-    .left-panel { display: none; }
-    .right-panel { padding: 40px 20px; min-height: 100vh; }
-    .form-card { padding: 36px 24px; }
-  }
-  </style>
-</head>
-<body>
-  <div class="left-panel">
-    <div class="dot-grid"></div>
-    <div class="left-content">
-      <a href="/" class="panel-logo">
-        <div class="panel-logo-icon"><i class="fas fa-graduation-cap"></i></div>
-        Schoooli
-      </a>
-      <div class="left-badge">
-        <span class="left-badge-pip"><i class="fas fa-bolt"></i></span>
-        Trusted by 800+ Institutions
-      </div>
-      <h1>Manage Results<br>the <span class="accent">Smart Way</span></h1>
-      <p>Set up your institution in minutes. Upload Excel sheets, publish results instantly, and let students check their grades anytime.</p>
-      <div class="benefit-list">
-        <div class="benefit-item">
-          <div class="benefit-ico bi-blue"><i class="fas fa-file-excel"></i></div>
-          <div><div class="benefit-text">Upload Excel → Live in 5 Minutes</div><div class="benefit-sub">No technical expertise required</div></div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-ico bi-green"><i class="fas fa-search"></i></div>
-          <div><div class="benefit-text">Instant Student Result Lookup</div><div class="benefit-sub">Symbol number → full grade card instantly</div></div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-ico bi-violet"><i class="fas fa-chart-bar"></i></div>
-          <div><div class="benefit-text">Real-Time Analytics Dashboard</div><div class="benefit-sub">Pass rates, grade distribution & top performers</div></div>
-        </div>
-        <div class="benefit-item">
-          <div class="benefit-ico bi-amber"><i class="fas fa-lock"></i></div>
-          <div><div class="benefit-text">Bank-Grade Data Security</div><div class="benefit-sub">End-to-end encrypted, role-controlled access</div></div>
-        </div>
-      </div>
-      <div class="trust-row">
-        <div class="trust-avatars">
-          <span style="background:#4f46e5">M</span>
-          <span style="background:#059669">S</span>
-          <span style="background:#d97706">A</span>
-          <span style="background:#e11d48">R</span>
-          <span style="background:#7c3aed">P</span>
-        </div>
-        <div class="trust-info"><strong>25,000+ students</strong> already on the platform</div>
-      </div>
-    </div>
-  </div>
 
-  <div class="right-panel">
-    <div class="form-wrap">
-      <div class="form-card">
-        <div class="form-header">
-          <div class="section-label"><i class="fas fa-user-plus"></i> Create Account</div>
-          <h2>Get Started for Free</h2>
-          <p>Register your institution and start publishing results in minutes. No credit card required.</p>
-        </div>
-        {% if messages %}
-        <ul class="messages">
-          {% for message in messages %}
-          <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-        <form method="post" novalidate>
-          {% csrf_token %}
-          <div class="form-group">
-            <label class="form-label" for="full_name">
-              <i class="fas fa-user"></i> Full Name <span class="opt">Optional</span>
-            </label>
-            <div class="input-wrap">
-              <i class="fas fa-user input-icon"></i>
-              <input class="form-ctrl" type="text" name="full_name" id="full_name" placeholder="e.g. Aarav Sharma">
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="school"><i class="fas fa-school"></i> School / Institution Name</label>
-            <div class="input-wrap">
-              <i class="fas fa-school input-icon"></i>
-              <input class="form-ctrl" type="text" name="school" id="school" placeholder="e.g. Riverside Higher Secondary" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="email"><i class="fas fa-envelope"></i> Email Address</label>
-            <div class="input-wrap">
-              <i class="fas fa-envelope input-icon"></i>
-              <input class="form-ctrl" type="email" name="email" id="email" placeholder="you@institution.edu" required>
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="password"><i class="fas fa-lock"></i> Password</label>
-            <div class="input-wrap">
-              <i class="fas fa-lock input-icon"></i>
-              <input class="form-ctrl" type="password" name="password" id="password" placeholder="Minimum 8 characters" required>
-            </div>
-          </div>
-          <div class="checkbox-group">
-            <input type="checkbox" id="agreeTerms" name="agree_terms" required>
-            <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. My institution's data will be handled securely.</label>
-          </div>
-          <button type="submit" class="btn-submit">
-            <i class="fas fa-rocket"></i><span>Create My Free Account</span>
-          </button>
-        </form>
-        <p class="form-footer">Already have an account? <a href="{% url 'login' %}">Sign in here</a></p>
+  .form-header {
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--blue-light);
+    color: var(--blue-2);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 99px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(37, 99, 235, 0.15);
+  }
+
+  .form-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.78rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 7px;
+    letter-spacing: -0.3px;
+  }
+
+  .form-header p {
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    line-height: 1.65;
+  }
+
+  .messages {
+    list-style: none;
+    margin-bottom: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .messages li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--rose);
+    background: var(--rose-bg);
+    border: 1px solid rgba(225, 29, 72, 0.15);
+    border-left: 3px solid var(--rose);
+    padding: 11px 14px;
+    border-radius: 9px;
+  }
+
+  .form-group {
+    margin-bottom: 18px;
+  }
+
+  .form-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    color: var(--text-mid);
+    margin-bottom: 7px;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+  }
+
+  .form-label i {
+    color: var(--blue-2);
+    font-size: 0.76rem;
+  }
+
+  .form-label .opt {
+    font-size: 0.65rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: var(--text-muted);
+    padding: 1px 8px;
+    border-radius: 99px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+
+  .input-wrap .input-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    pointer-events: none;
+    transition: color 0.18s;
+  }
+
+  .form-group:focus-within .input-icon {
+    color: var(--blue-2);
+  }
+
+  .form-ctrl {
+    width: 100%;
+    height: 50px;
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    padding: 0 14px 0 42px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--text);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.18s, box-shadow 0.18s;
+  }
+
+  .form-ctrl::placeholder {
+    color: #c0ccd8;
+  }
+
+  .form-ctrl:focus {
+    border-color: var(--blue-2);
+    box-shadow: 0 0 0 3.5px rgba(37, 99, 235, 0.1);
+  }
+
+  .checkbox-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .checkbox-group input[type='checkbox'] {
+    width: 17px;
+    height: 17px;
+    border-radius: 5px;
+    accent-color: var(--blue-2);
+    flex-shrink: 0;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .checkbox-group label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+    cursor: pointer;
+  }
+
+  .checkbox-group label a {
+    color: var(--blue-2);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .checkbox-group label a:hover {
+    text-decoration: underline;
+  }
+
+  .btn-submit {
+    width: 100%;
+    height: 52px;
+    border: none;
+    border-radius: 11px;
+    background: linear-gradient(135deg, var(--blue-2), var(--violet));
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.94rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 18px rgba(37, 99, 235, 0.35);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #1d4ed8, #6d28d9);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-submit:hover::after {
+    opacity: 1;
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 26px rgba(37, 99, 235, 0.45);
+  }
+
+  .btn-submit > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .form-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+  }
+
+  .form-footer a {
+    color: var(--blue-2);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .form-footer a:hover {
+    text-decoration: underline;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* ─────────────────────────────────────────────────────── */
+  /* RESPONSIVE DESIGN - Mobile breakpoint */
+  /* ─────────────────────────────────────────────────────── */
+  @media (max-width: 900px) {
+    body {
+      grid-template-columns: 1fr;
+    }
+
+    .left-panel {
+      display: none;
+    }
+
+    .right-panel {
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    .form-card {
+      padding: 36px 24px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- ────────────────────────────────────── -->
+<!-- LEFT PANEL - Institution Benefits     -->
+<!-- ────────────────────────────────────── -->
+<div class="left-panel">
+  <div class="dot-grid"></div>
+  <div class="left-content">
+    <a href="/" class="panel-logo">
+      <div class="panel-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+      Schoooli
+    </a>
+    <div class="left-badge">
+      <span class="left-badge-pip"><i class="fas fa-bolt"></i></span>
+      Trusted by 800+ Institutions
+    </div>
+    <h1>Manage Results<br>the <span class="accent">Smart Way</span></h1>
+    <p>Set up your institution in minutes. Upload Excel sheets, publish results instantly, and let students check their grades anytime.</p>
+    <div class="benefit-list">
+      <div class="benefit-item">
+        <div class="benefit-ico bi-blue"><i class="fas fa-file-excel"></i></div>
+        <div><div class="benefit-text">Upload Excel → Live in 5 Minutes</div><div class="benefit-sub">No technical expertise required</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-ico bi-green"><i class="fas fa-search"></i></div>
+        <div><div class="benefit-text">Instant Student Result Lookup</div><div class="benefit-sub">Symbol number → full grade card instantly</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-ico bi-violet"><i class="fas fa-chart-bar"></i></div>
+        <div><div class="benefit-text">Real-Time Analytics Dashboard</div><div class="benefit-sub">Pass rates, grade distribution & top performers</div></div>
+      </div>
+      <div class="benefit-item">
+        <div class="benefit-ico bi-amber"><i class="fas fa-lock"></i></div>
+        <div><div class="benefit-text">Bank-Grade Data Security</div><div class="benefit-sub">End-to-end encrypted, role-controlled access</div></div>
       </div>
     </div>
+    <div class="trust-row">
+      <div class="trust-avatars">
+        <span style="background: #4f46e5">M</span>
+        <span style="background: #059669">S</span>
+        <span style="background: #d97706">A</span>
+        <span style="background: #e11d48">R</span>
+        <span style="background: #7c3aed">P</span>
+      </div>
+      <div class="trust-info"><strong>25,000+ students</strong> already on the platform</div>
+    </div>
   </div>
-</body>
-</html>
+</div>
+
+<!-- ────────────────────────────────────── -->
+<!-- RIGHT PANEL - Sign Up Form            -->
+<!-- ────────────────────────────────────── -->
+<div class="right-panel">
+  <div class="form-wrap">
+    <div class="form-card">
+      <div class="form-header">
+        <div class="section-label"><i class="fas fa-user-plus"></i> Create Account</div>
+        <h2>Get Started for Free</h2>
+        <p>Register your institution and start publishing results in minutes. No credit card required.</p>
+      </div>
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="form-group">
+          <label class="form-label" for="full_name">
+            <i class="fas fa-user"></i> Full Name <span class="opt">Optional</span>
+          </label>
+          <div class="input-wrap">
+            <i class="fas fa-user input-icon"></i>
+            <input class="form-ctrl" type="text" name="full_name" id="full_name" placeholder="e.g. Aarav Sharma">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="school"><i class="fas fa-school"></i> School / Institution Name</label>
+          <div class="input-wrap">
+            <i class="fas fa-school input-icon"></i>
+            <input class="form-ctrl" type="text" name="school" id="school" placeholder="e.g. Riverside Higher Secondary" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email"><i class="fas fa-envelope"></i> Email Address</label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input class="form-ctrl" type="email" name="email" id="email" placeholder="you@institution.edu" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password"><i class="fas fa-lock"></i> Password</label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input class="form-ctrl" type="password" name="password" id="password" placeholder="Minimum 8 characters" required>
+          </div>
+        </div>
+        <div class="checkbox-group">
+          <input type="checkbox" id="agreeTerms" name="agree_terms" required>
+          <label for="agreeTerms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>. My institution's data will be handled securely.</label>
+        </div>
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-rocket"></i><span>Create My Free Account</span>
+        </button>
+      </form>
+      <p class="form-footer">Already have an account? <a href="{% url 'login' %}">Sign in here</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

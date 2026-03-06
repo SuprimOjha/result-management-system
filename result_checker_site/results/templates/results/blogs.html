@@ -1,94 +1,11 @@
+{% extends 'results/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog — Schoooli</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-  <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 15px; scroll-behavior: smooth; }
 
-  :root {
-    --navy:       #0a1628;
-    --navy-2:     #112240;
-    --blue-2:     #2563eb;
-    --blue-light: #eff6ff;
-    --blue-mid:   #60a5fa;
-    --emerald:    #059669;
-    --emerald-bg: #ecfdf5;
-    --amber:      #d97706;
-    --amber-bg:   #fffbeb;
-    --rose:       #e11d48;
-    --rose-bg:    #fff1f2;
-    --violet:     #7c3aed;
-    --violet-bg:  #f5f3ff;
-    --teal:       #0d9488;
-    --teal-bg:    #f0fdfa;
-    --border:     #e2e8f0;
-    --bg:         #f8fafc;
-    --white:      #ffffff;
-    --text:       #0f172a;
-    --text-mid:   #334155;
-    --text-muted: #64748b;
-    --shadow-sm:  0 1px 3px rgba(0,0,0,.06);
-    --shadow:     0 4px 16px rgba(0,0,0,.08);
-    --shadow-lg:  0 12px 40px rgba(0,0,0,.12);
-    --shadow-xl:  0 24px 60px rgba(0,0,0,.16);
-    --radius:     14px;
-  }
+{% block title %}Blog — Schoooli{% endblock %}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text); background: var(--white);
-    overflow-x: hidden; line-height: 1.6;
-  }
-  img { display: block; max-width: 100%; }
-  a   { text-decoration: none; color: inherit; }
-
-  /* ── NAVBAR ── */
-  .navbar {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 900;
-    background: rgba(255,255,255,.93);
-    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid rgba(226,232,240,.6);
-    box-shadow: var(--shadow-sm);
-  }
-  .nav-inner {
-    max-width: 1180px; margin: 0 auto; padding: 0 24px;
-    display: flex; align-items: center; height: 68px; gap: 28px;
-  }
-  .logo {
-    display: flex; align-items: center; gap: 10px;
-    font-family: 'Playfair Display', serif; font-size: 1.22rem; font-weight: 700; color: var(--navy);
-  }
-  .logo-icon {
-    width: 38px; height: 38px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--blue-2), var(--violet));
-    display: flex; align-items: center; justify-content: center;
-    color: #fff; font-size: 1rem; flex-shrink: 0;
-  }
-  .nav-links { display: flex; gap: 2px; list-style: none; margin: 0 auto; }
-  .nav-links a {
-    display: block; padding: 7px 13px; font-size: .84rem; font-weight: 500;
-    color: var(--text-mid); border-radius: 8px; transition: all .17s;
-  }
-  .nav-links a:hover, .nav-links a.active { color: var(--blue-2); background: var(--blue-light); }
-  .nav-btn {
-    padding: 8px 18px; border-radius: 9px; background: var(--blue-2); color: #fff;
-    font-size: .84rem; font-weight: 600; box-shadow: 0 2px 8px rgba(37,99,235,.25);
-    transition: all .17s; display: flex; align-items: center; gap: 6px;
-  }
-  .nav-btn:hover { background: #1d4ed8; }
-  .nav-txt {
-    padding: 7px 14px; border-radius: 8px;
-    font-size: .84rem; font-weight: 600; color: var(--text-muted); transition: background .15s;
-  }
-  .nav-txt:hover { background: var(--bg); color: var(--navy); }
-
-  /* ── HERO ── */
+{% block extra_style %}
+<style>
+  /* ── BLOG HERO ── */
   .blog-hero {
     padding: 120px 0 72px;
     background: linear-gradient(155deg, #f0f7ff 0%, #ffffff 40%, #f5f3ff 100%);
@@ -107,13 +24,6 @@
   .blog-hero-inner {
     max-width: 1180px; margin: 0 auto; padding: 0 24px;
     position: relative; z-index: 1;
-  }
-  .section-label {
-    display: inline-flex; align-items: center; gap: 7px;
-    background: var(--blue-light); color: var(--blue-2);
-    font-size: .72rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-    padding: 5px 14px; border-radius: 99px; margin-bottom: 16px;
-    border: 1px solid rgba(37,99,235,.15); animation: fadeUp .5s ease both;
   }
   .blog-hero h1 {
     font-family: 'Playfair Display', serif; font-size: clamp(2rem, 4vw, 3rem);
@@ -217,6 +127,7 @@
     color: var(--text-muted); background: var(--white);
     display: flex; align-items: center; gap: 6px;
     text-decoration: none; transition: all .18s;
+    -webkit-tap-highlight-color: transparent;
   }
   .filter-pill:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
   .filter-pill.active { background: var(--navy); color: #fff; border-color: var(--navy); }
@@ -230,6 +141,7 @@
     border-radius: var(--radius); overflow: hidden;
     transition: all .22s; display: flex; flex-direction: column;
     animation: fadeUp .5s ease both; text-decoration: none; color: inherit;
+    -webkit-tap-highlight-color: transparent;
   }
   .post-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-5px); border-color: transparent; }
   .post-card:nth-child(1) { animation-delay: .05s; }
@@ -276,36 +188,17 @@
     display: flex; align-items: center; justify-content: center;
     font-size: .82rem; font-weight: 600; color: var(--text-muted);
     text-decoration: none; transition: all .17s;
+    -webkit-tap-highlight-color: transparent;
   }
   .page-btn:hover { border-color: var(--blue-2); color: var(--blue-2); background: var(--blue-light); }
   .page-btn.active { background: var(--navy); color: #fff; border-color: var(--navy); }
   .page-btn.wide { width: auto; padding: 0 14px; }
-
-  /* ── FOOTER ── */
-  .footer {
-    background: var(--navy); padding: 52px 0 0; color: rgba(255,255,255,.55);
-  }
-  .footer-bottom {
-    max-width: 1180px; margin: 0 auto; padding: 20px 24px;
-    border-top: 1px solid rgba(255,255,255,.07);
-    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
-  }
-  .footer-bottom p { font-size: .78rem; color: rgba(255,255,255,.3); }
-  .footer-badges { display: flex; gap: 10px; }
-  .footer-badge {
-    background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.09);
-    border-radius: 7px; padding: 5px 12px; font-size: .7rem; color: rgba(255,255,255,.4);
-    display: flex; align-items: center; gap: 5px;
-  }
-
-  @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
 
   @media (max-width: 1024px) {
     .featured-card { grid-template-columns: 1fr; }
     .featured-img { min-height: 280px; }
   }
   @media (max-width: 768px) {
-    .nav-links { display: none; }
     .posts-grid { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 520px) {
@@ -313,27 +206,10 @@
     .featured-content { padding: 28px 22px; }
     .featured-content h2 { font-size: 1.4rem; }
   }
-  </style>
-</head>
-<body>
+</style>
+{% endblock %}
 
-<!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-inner">
-    <a href="{% url 'home' %}" class="logo">
-      <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
-      Schoooli
-    </a>
-    <ul class="nav-links">
-      <li><a href="{% url 'home' %}">Home</a></li>
-      <li><a href="{% url 'blog_list' %}" class="active">Blogs</a></li>
-      <li><a href="{% url 'check_result' %}">Check Result</a></li>
-    </ul>
-    <a href="{% url 'login' %}" class="nav-txt">Login</a>
-    <a href="{% url 'signup' %}" class="nav-btn"><i class="fas fa-user-plus"></i> Sign Up</a>
-  </div>
-</nav>
-
+{% block content %}
 <!-- HERO -->
 <section class="blog-hero">
   <div class="blog-hero-inner">
@@ -474,17 +350,4 @@
   </div>
   {% endif %}
 </section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="footer-bottom">
-    <p>&copy; 2025 Schoooli. All rights reserved.</p>
-    <div class="footer-badges">
-      <div class="footer-badge"><i class="fas fa-shield-alt"></i> Secure</div>
-      <div class="footer-badge"><i class="fas fa-lightning-bolt"></i> Fast</div>
-    </div>
-  </div>
-</footer>
-
-</body>
-</html>
+{% endblock %}

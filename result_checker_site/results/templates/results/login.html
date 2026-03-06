@@ -1,47 +1,16 @@
+{% extends 'results/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — Schoooli</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-  <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html { font-size: 15px; }
 
-  :root {
-    --navy:       #0a1628;
-    --navy-2:     #112240;
-    --blue-2:     #2563eb;
-    --blue-light: #eff6ff;
-    --blue-mid:   #60a5fa;
-    --emerald:    #059669;
-    --emerald-bg: #ecfdf5;
-    --rose:       #e11d48;
-    --rose-bg:    #fff1f2;
-    --violet:     #7c3aed;
-    --amber:      #d97706;
-    --border:     #e2e8f0;
-    --bg:         #f8fafc;
-    --white:      #ffffff;
-    --text:       #0f172a;
-    --text-mid:   #334155;
-    --text-muted: #64748b;
-    --shadow-sm:  0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
-    --shadow:     0 4px 16px rgba(0,0,0,.08);
-    --shadow-xl:  0 24px 60px rgba(0,0,0,.14);
-  }
+{% block title %}Login — Schoooli{% endblock %}
 
-  body {
-    font-family: 'DM Sans', sans-serif;
-    color: var(--text);
-    min-height: 100vh;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    overflow-x: hidden;
-  }
+{% block extra_style %}
+<style>
+  /* Override body for auth layout */
+  body { display: grid !important; grid-template-columns: 1fr 1fr; overflow-x: hidden; }
+  
+  /* Hide navbar and footer on auth pages */
+  .navbar { display: none; }
+  .footer { display: none; }
 
   /* ── LEFT PANEL ── */
   .left-panel {
@@ -78,6 +47,7 @@
     text-decoration: none; margin-bottom: 56px;
     font-family: 'Playfair Display', serif;
     font-size: 1.22rem; font-weight: 700; color: #fff;
+    -webkit-tap-highlight-color: transparent;
   }
   .panel-logo-icon {
     width: 38px; height: 38px; border-radius: 10px;
@@ -152,6 +122,7 @@
     display: flex; align-items: center; justify-content: center;
     padding: 56px 40px;
     overflow-y: auto;
+    min-height: 100vh;
   }
 
   .form-wrap {
@@ -225,6 +196,7 @@
     font-family: 'DM Sans', sans-serif; font-size: .9rem;
     color: var(--text); background: var(--white); outline: none;
     transition: border-color .18s, box-shadow .18s;
+    -webkit-tap-highlight-color: transparent;
   }
   .form-ctrl::placeholder { color: #c0ccd8; }
   .form-ctrl:focus {
@@ -247,7 +219,7 @@
   }
   .forgot-link {
     font-size: .8rem; font-weight: 600; color: var(--blue-2);
-    text-decoration: none;
+    text-decoration: none; -webkit-tap-highlight-color: transparent;
   }
   .forgot-link:hover { text-decoration: underline; }
 
@@ -260,6 +232,7 @@
     display: flex; align-items: center; justify-content: center; gap: 10px;
     box-shadow: 0 4px 18px rgba(37,99,235,.35);
     text-decoration: none; position: relative; overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
   }
   .btn-submit::after {
     content: ''; position: absolute; inset: 0;
@@ -282,125 +255,123 @@
   @keyframes fadeUp { from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);} }
 
   @media (max-width: 900px) {
-    body { grid-template-columns: 1fr; }
+    body { grid-template-columns: 1fr !important; }
     .left-panel { display: none; }
     .right-panel { padding: 40px 20px; min-height: 100vh; }
     .form-card { padding: 36px 24px; }
   }
-  </style>
-</head>
-<body>
+</style>
+{% endblock %}
 
-  <!-- ── LEFT PANEL ── -->
-  <div class="left-panel">
-    <div class="dot-grid"></div>
-    <div class="left-content">
+{% block content %}
+<!-- ── LEFT PANEL ── -->
+<div class="left-panel">
+  <div class="dot-grid"></div>
+  <div class="left-content">
 
-      <a href="/" class="panel-logo">
-        <div class="panel-logo-icon"><i class="fas fa-graduation-cap"></i></div>
-        Schoooli
-      </a>
+    <a href="/" class="panel-logo">
+      <div class="panel-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+      Schoooli
+    </a>
 
-      <div class="left-badge">
-        <span class="left-badge-pip"><i class="fas fa-bolt"></i></span>
-        Welcome back — you're missed
-      </div>
+    <div class="left-badge">
+      <span class="left-badge-pip"><i class="fas fa-bolt"></i></span>
+      Welcome back — you're missed
+    </div>
 
-      <h1>Your Results,<br><span class="accent">One Click</span> Away</h1>
-      <p>Log back into your institution's dashboard. Upload results, track analytics, and give students instant access to their grades.</p>
+    <h1>Your Results,<br><span class="accent">One Click</span> Away</h1>
+    <p>Log back into your institution's dashboard. Upload results, track analytics, and give students instant access to their grades.</p>
 
-      <div class="stat-list">
-        <div class="stat-item">
-          <div class="stat-ico si-blue"><i class="fas fa-user-graduate"></i></div>
-          <div>
-            <div class="stat-val">25,000+</div>
-            <div class="stat-lbl">Students on the platform</div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-ico si-green"><i class="fas fa-school"></i></div>
-          <div>
-            <div class="stat-val">800+</div>
-            <div class="stat-lbl">Schools &amp; Colleges registered</div>
-          </div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-ico si-violet"><i class="fas fa-server"></i></div>
-          <div>
-            <div class="stat-val">99.9%</div>
-            <div class="stat-lbl">Platform uptime guaranteed</div>
-          </div>
+    <div class="stat-list">
+      <div class="stat-item">
+        <div class="stat-ico si-blue"><i class="fas fa-user-graduate"></i></div>
+        <div>
+          <div class="stat-val">25,000+</div>
+          <div class="stat-lbl">Students on the platform</div>
         </div>
       </div>
+      <div class="stat-item">
+        <div class="stat-ico si-green"><i class="fas fa-school"></i></div>
+        <div>
+          <div class="stat-val">800+</div>
+          <div class="stat-lbl">Schools &amp; Colleges registered</div>
+        </div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-ico si-violet"><i class="fas fa-server"></i></div>
+        <div>
+          <div class="stat-val">99.9%</div>
+          <div class="stat-lbl">Platform uptime guaranteed</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── RIGHT PANEL ── -->
+<div class="right-panel">
+  <div class="form-wrap">
+    <div class="form-card">
+
+      <div class="form-header">
+        <div class="section-label"><i class="fas fa-sign-in-alt"></i> Welcome Back</div>
+        <h2>Sign In to Your Account</h2>
+        <p>Enter your credentials to access your institution's result management dashboard.</p>
+      </div>
+
+      {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+        <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+
+      <form method="post" id="loginForm">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label class="form-label" for="email">
+            <i class="fas fa-envelope"></i> Email Address
+          </label>
+          <div class="input-wrap">
+            <i class="fas fa-envelope input-icon"></i>
+            <input class="form-ctrl" type="email" name="email" id="email"
+                   placeholder="you@institution.edu" required autofocus>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">
+            <i class="fas fa-lock"></i> Password
+          </label>
+          <div class="input-wrap">
+            <i class="fas fa-lock input-icon"></i>
+            <input class="form-ctrl" type="password" name="password" id="password"
+                   placeholder="Enter your password" required>
+          </div>
+        </div>
+
+        <div class="form-meta">
+          <label class="remember-label">
+            <input type="checkbox" name="remember" id="remember">
+            Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn-submit">
+          <i class="fas fa-sign-in-alt"></i>
+          <span>Sign In</span>
+        </button>
+      </form>
+
+      <p class="form-footer">
+        Don't have an account? <a href="{% url 'signup' %}">Sign up for free</a>
+      </p>
 
     </div>
   </div>
-
-  <!-- ── RIGHT PANEL ── -->
-  <div class="right-panel">
-    <div class="form-wrap">
-      <div class="form-card">
-
-        <div class="form-header">
-          <div class="section-label"><i class="fas fa-sign-in-alt"></i> Welcome Back</div>
-          <h2>Sign In to Your Account</h2>
-          <p>Enter your credentials to access your institution's result management dashboard.</p>
-        </div>
-
-        {% if messages %}
-        <ul class="messages">
-          {% for message in messages %}
-          <li><i class="fas fa-exclamation-circle"></i> {{ message }}</li>
-          {% endfor %}
-        </ul>
-        {% endif %}
-
-        <form method="post" id="loginForm">
-          {% csrf_token %}
-
-          <div class="form-group">
-            <label class="form-label" for="email">
-              <i class="fas fa-envelope"></i> Email Address
-            </label>
-            <div class="input-wrap">
-              <i class="fas fa-envelope input-icon"></i>
-              <input class="form-ctrl" type="email" name="email" id="email"
-                     placeholder="you@institution.edu" required autofocus>
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="password">
-              <i class="fas fa-lock"></i> Password
-            </label>
-            <div class="input-wrap">
-              <i class="fas fa-lock input-icon"></i>
-              <input class="form-ctrl" type="password" name="password" id="password"
-                     placeholder="Enter your password" required>
-            </div>
-          </div>
-
-          <div class="form-meta">
-            <label class="remember-label">
-              <input type="checkbox" name="remember" id="remember">
-              Remember me
-            </label>
-            <a href="#" class="forgot-link">Forgot password?</a>
-          </div>
-
-          <button type="submit" class="btn-submit">
-            <i class="fas fa-sign-in-alt"></i>
-            <span>Sign In</span>
-          </button>
-        </form>
-
-        <p class="form-footer">
-          Don't have an account? <a href="{% url 'signup' %}">Sign up for free</a>
-        </p>
-
-      </div>
-    </div>
-  </div>
-
-</body>
-</html>
+</div>
+{% endblock %}

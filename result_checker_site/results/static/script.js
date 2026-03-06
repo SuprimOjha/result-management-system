@@ -1,15 +1,38 @@
 // Mobile Menu Toggle
 const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+const mobileDrawer = document.getElementById('mobileDrawer');
 const navLinks = document.querySelector('.nav-links');
 const navButtons = document.querySelector('.nav-buttons');
 
 if (mobileMenuBtn) {
     mobileMenuBtn.addEventListener('click', () => {
         mobileMenuBtn.classList.toggle('active');
-        // You can add mobile menu functionality here
-        console.log('Mobile menu clicked');
+        mobileDrawer.classList.toggle('open');
     });
 }
+
+// Close Mobile Menu
+function closeMob() {
+    mobileMenuBtn.classList.remove('active');
+    mobileDrawer.classList.remove('open');
+}
+
+// Close drawer when clicking outside
+if (mobileDrawer) {
+    mobileDrawer.addEventListener('click', (e) => {
+        // Only close if clicking on the drawer element itself, not on links
+        if (e.target === mobileDrawer) {
+            closeMob();
+        }
+    });
+}
+
+// Close drawer when pressing Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileDrawer.classList.contains('open')) {
+        closeMob();
+    }
+});
 
 // Result Form Submission
 const resultForm = document.getElementById('resultForm');

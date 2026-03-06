@@ -148,7 +148,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Static files configuration for WhiteNoise
 STATICFILES_DIRS = [
-    BASE_DIR / "result_checker" / "static",
+    BASE_DIR / "results" / "static",
 ]
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
