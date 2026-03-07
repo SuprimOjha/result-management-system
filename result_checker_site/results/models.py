@@ -69,6 +69,24 @@ class BlogCategory(models.Model):
         super().save(*args, **kwargs)
 
 
+class TeamMember(models.Model):
+    name = models.CharField(max_length=100)
+    role = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    photo = models.ImageField(upload_to='team/')
+    facebook = models.URLField(blank=True, null=True)
+    twitter = models.URLField(blank=True, null=True)
+    instagram = models.URLField(blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Team Member"
+        verbose_name_plural = "Team Members"
+
+    def __str__(self):
+        return self.name
+
+
 class Blog(models.Model):
     title = models.CharField(max_length=300)
     slug = models.SlugField(unique=True, blank=True)

@@ -12,7 +12,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator
-from .models import Result, School, UserProfile, Blog, BlogCategory
+from .models import Result, School, UserProfile, Blog, BlogCategory, TeamMember
 import string
 import random
 
@@ -308,7 +308,11 @@ def upload_excel(request):
 def home(request):
     # send schools to populate the dropdown
     schools = School.objects.all()
-    return render(request, 'results/index.html', {'schools': schools})
+    team_members = TeamMember.objects.all()
+    return render(request, 'results/index.html', {
+        'schools': schools,
+        'team_members': team_members
+    })
 
 def get_schools(request):
     schools = list(School.objects.values('id', 'code', 'name'))

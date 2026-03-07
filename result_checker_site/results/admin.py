@@ -1,6 +1,6 @@
 # results/admin.py
 from django.contrib import admin
-from .models import School, Result, Blog, BlogCategory
+from .models import School, Result, Blog, BlogCategory, TeamMember
 
 @admin.register(School)
 class SchoolAdmin(admin.ModelAdmin):
@@ -11,6 +11,20 @@ class ResultAdmin(admin.ModelAdmin):
     list_display = ('student_name', 'symbol_number', 'school', 'semester', 'exam_type', 'obtained_marks', 'total_marks', 'status')
     search_fields = ('student_name', 'symbol_number', 'roll_number')
     list_filter = ('school', 'semester', 'exam_type', 'status')
+
+@admin.register(TeamMember)
+class TeamMemberAdmin(admin.ModelAdmin):
+    list_display = ('name', 'role', 'photo')
+    search_fields = ('name', 'role')
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'role', 'description', 'photo')
+        }),
+        ('Social Links', {
+            'fields': ('facebook', 'twitter', 'instagram', 'linkedin'),
+            'classes': ('collapse',)
+        }),
+    )
 
 @admin.register(BlogCategory)
 class BlogCategoryAdmin(admin.ModelAdmin):
